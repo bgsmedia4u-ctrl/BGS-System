@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { pdfService } from '../api/pdfService';
 import toast from 'react-hot-toast';
+import { Shield, BarChart2, ClipboardList, Users, Megaphone, CheckCircle, FileEdit, XCircle, TrendingUp, Phone, Calendar, BookOpen, AlertTriangle, Trash2, Download, Send, Loader } from 'lucide-react';
 
 /* ── Cream & Maroon Design Tokens ── */
 const C = {
@@ -318,7 +319,7 @@ export default function AdminPortalPage() {
       {/* ── NAVBAR ── */}
       <nav style={s.navbar}>
         <div style={s.brand}>
-          <div style={s.brandIcon}>🛡️</div>
+          <div style={s.brandIcon}><Shield size={20} /></div>
           <div>
             <div style={s.brandText}>BGS Admin Portal</div>
             <div style={s.brandSub}>Shidlaghatta · Management Access</div>
@@ -346,10 +347,10 @@ export default function AdminPortalPage() {
 
         {/* TABS */}
         <div style={{ ...s.tabBar, flexWrap: 'wrap' }}>
-          <button style={s.tab(activeTab === 'monitor')} onClick={() => setActiveTab('monitor')}>📊 Daily Monitor</button>
-          <button style={s.tab(activeTab === 'reports')} onClick={() => setActiveTab('reports')}>📋 All Reports</button>
-          <button style={s.tab(activeTab === 'teachers')} onClick={() => setActiveTab('teachers')}>👩‍🏫 Teacher Profiles</button>
-          <button style={s.tab(activeTab === 'announcements')} onClick={() => setActiveTab('announcements')}>📢 Announcements</button>
+          <button style={s.tab(activeTab === 'monitor')} onClick={() => setActiveTab('monitor')}><BarChart2 size={16} style={{marginRight: 6}} /> Daily Monitor</button>
+          <button style={s.tab(activeTab === 'reports')} onClick={() => setActiveTab('reports')}><ClipboardList size={16} style={{marginRight: 6}} /> All Reports</button>
+          <button style={s.tab(activeTab === 'teachers')} onClick={() => setActiveTab('teachers')}><Users size={16} style={{marginRight: 6}} /> Teacher Profiles</button>
+          <button style={s.tab(activeTab === 'announcements')} onClick={() => setActiveTab('announcements')}><Megaphone size={16} style={{marginRight: 6}} /> Announcements</button>
         </div>
 
         {/* ══ TAB 1: DAILY MONITOR ══ */}
@@ -371,25 +372,25 @@ export default function AdminPortalPage() {
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
               <div style={s.statCard(C.maroon600)}>
                 <div style={{ fontSize: 30, fontWeight: 800, color: C.maroon700 }}>{teachers.length}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}>👩‍🏫 Total Teachers</div>
+                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><span style={{display:"flex", alignItems:"center", gap:4}}><Users size={14} /> Total Teachers</span></div>
               </div>
               <div style={s.statCard('#059669')}>
                 <div style={{ fontSize: 30, fontWeight: 800, color: '#065F46' }}>{submitted}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}>✅ Submitted</div>
+                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><><CheckCircle size={14} /> Submitted</></div>
               </div>
               <div style={s.statCard('#D97706')}>
                 <div style={{ fontSize: 30, fontWeight: 800, color: '#92400E' }}>{draft}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}>📝 Draft</div>
+                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><><FileEdit size={14} /> Draft</></div>
               </div>
               <div style={s.statCard('#DC2626')}>
                 <div style={{ fontSize: 30, fontWeight: 800, color: '#991B1B' }}>{missing}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}>❌ Not Started</div>
+                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><><XCircle size={14} /> Not Started</></div>
               </div>
               <div style={{ ...s.statCard(C.maroon400), background: `linear-gradient(135deg, ${C.maroon900}, ${C.maroon700})` }}>
                 <div style={{ fontSize: 30, fontWeight: 800, color: C.cream100 }}>
                   {teachers.length > 0 ? Math.round((submitted / teachers.length) * 100) : 0}%
                 </div>
-                <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.6)', marginTop: 4, fontWeight: 600 }}>📈 Completion Rate</div>
+                <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.6)', marginTop: 4, fontWeight: 600 }}><TrendingUp size={14} style={{marginRight:4}} /> Completion Rate</div>
               </div>
             </div>
 
@@ -398,9 +399,9 @@ export default function AdminPortalPage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
                 <div style={{ fontWeight: 700, fontSize: 15, color: C.maroon700 }}>Submission Status for {selectedDate}</div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <span style={s.badge('submitted')}>✅ {submitted}</span>
-                  <span style={s.badge('draft')}>📝 {draft}</span>
-                  <span style={s.badge('missing')}>❌ {missing}</span>
+                  <span style={s.badge('submitted')}><CheckCircle size={14} /> {submitted}</span>
+                  <span style={s.badge('draft')}><FileEdit size={14} /> {draft}</span>
+                  <span style={s.badge('missing')}><XCircle size={14} /> {missing}</span>
                 </div>
               </div>
               {monitorLoading ? (
@@ -428,16 +429,16 @@ export default function AdminPortalPage() {
                           </td>
                           <td style={s.td}>
                             {t.phone
-                              ? <span style={{ fontSize: 13, color: C.mutedText }}>📱 {t.phone}</span>
+                              ? <span style={{ fontSize: 13, color: C.mutedText }}><Phone size={14} style={{marginRight:4}} /> {t.phone}</span>
                               : <span style={{ fontSize: 12, color: C.cream300 }}>—</span>}
                           </td>
                           <td style={s.td}>
                             <span style={{ color: C.maroon600, fontWeight: 600, fontSize: 13 }}>{t.report?.subject || '—'}</span>
                           </td>
                           <td style={s.td}>
-                            {!t.report && <span style={s.badge('missing')}>❌ Not Started</span>}
-                            {t.report?.status === 'draft' && <span style={s.badge('draft')}>📝 Draft</span>}
-                            {t.report?.status === 'submitted' && <span style={s.badge('submitted')}>✅ Submitted</span>}
+                            {!t.report && <span style={s.badge('missing')}><><XCircle size={14} /> Not Started</></span>}
+                            {t.report?.status === 'draft' && <span style={s.badge('draft')}><><FileEdit size={14} /> Draft</></span>}
+                            {t.report?.status === 'submitted' && <span style={s.badge('submitted')}><><CheckCircle size={14} /> Submitted</></span>}
                           </td>
                           <td style={{ ...s.td, maxWidth: 240, color: C.mutedText, fontSize: 13 }}>
                             {t.report?.topics_covered ? t.report.topics_covered.substring(0, 55) + '...' : '—'}
@@ -471,12 +472,12 @@ export default function AdminPortalPage() {
               <div key={date} style={s.card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
                   <div>
-                    <div style={{ fontWeight: 800, fontSize: 16, color: C.maroon700 }}>📅 {date}</div>
+                    <div style={{ fontWeight: 800, fontSize: 16, color: C.maroon700 }}><Calendar size={16} style={{marginRight:6}} /> {date}</div>
                     <div style={{ fontSize: 12, color: C.mutedText, marginTop: 3 }}>
                       {reps.filter(r => r.status === 'submitted').length} submitted · {reps.filter(r => r.status === 'draft').length} draft
                     </div>
                   </div>
-                  <button style={s.primaryBtn} onClick={() => handleExportPdf(date)}>⬇ Download PDF</button>
+                  <button style={s.primaryBtn} onClick={() => handleExportPdf(date)}><><Download size={14} style={{marginRight:6}} /> Download PDF</></button>
                 </div>
 
                 {reps.map(r => (
@@ -488,7 +489,7 @@ export default function AdminPortalPage() {
                         <div style={{ fontSize: 12, color: C.mutedText, marginTop: 3 }}>{r.profiles?.email}</div>
                       </div>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                        {r.status === 'submitted' ? <span style={s.badge('submitted')}>✅ Submitted</span> : <span style={s.badge('draft')}>📝 Draft</span>}
+                        {r.status === 'submitted' ? <span style={s.badge('submitted')}><><CheckCircle size={14} /> Submitted</></span> : <span style={s.badge('draft')}><><FileEdit size={14} /> Draft</></span>}
                         <button style={s.ghostBtn} onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}>
                           {expandedId === r.id ? 'Hide ▲' : 'View ▼'}
                         </button>
@@ -498,10 +499,10 @@ export default function AdminPortalPage() {
                     {expandedId === r.id && (
                       <div style={{ padding: '0 18px 18px' }}>
                         <div style={s.detailBox(C.maroon500)}>
-                          <div style={{ fontWeight: 700, color: C.maroon700, marginBottom: 10, fontSize: 13 }}>📖 Last Week Overview</div>
+                          <div style={{ fontWeight: 700, color: C.maroon700, marginBottom: 10, fontSize: 13 }}><BookOpen size={16} style={{marginRight:6}} /> Last Week Overview</div>
                           <div style={{ fontSize: 13, color: C.creamText, marginBottom: 6 }}><strong>Topics:</strong> {r.topics_covered || 'Not specified'}</div>
                           <div style={{ fontSize: 13, marginBottom: 6, color: r.is_on_schedule ? '#065F46' : '#991B1B', fontWeight: 600 }}>
-                            {r.is_on_schedule ? '✅ On schedule' : '⚠️ Behind schedule'}
+                            {r.is_on_schedule ? '<CheckCircle size={14} /> On schedule' : '<AlertTriangle size={14} /> Behind schedule'}
                           </div>
                           {r.challenges && <div style={{ fontSize: 13, color: C.mutedText }}><strong>Challenges:</strong> {r.challenges}</div>}
                         </div>
@@ -519,7 +520,7 @@ export default function AdminPortalPage() {
                           return (
                             <div key={sec} style={{ ...s.detailBox(accent), marginTop: 10 }}>
                               <div style={{ fontWeight: 700, fontSize: 13, color: accent, marginBottom: 10 }}>{sec.toUpperCase()} Section</div>
-                              {r[`${sec}_book`] && <div style={{ fontSize: 13, color: C.mutedText, marginBottom: 10 }}>📚 <strong>Book:</strong> {r[`${sec}_book`]}</div>}
+                              {r[`${sec}_book`] && <div style={{ fontSize: 13, color: C.mutedText, marginBottom: 10 }}><BookOpen size={14} style={{marginRight:4}} /> <strong>Book:</strong> {r[`${sec}_book`]}</div>}
                               {[['Questions Done', qs, 'questions'], ['Tests Conducted', ts, 'tests'], ['Doubt Classes', ds, 'classes']].map(([label, rows, unit]) =>
                                 rows.length > 0 ? (
                                   <div key={label} style={{ marginBottom: 8 }}>
@@ -589,7 +590,7 @@ export default function AdminPortalPage() {
                         ))}
                       </div>
                       {t.phone && (
-                        <div style={{ marginTop: 14, fontSize: 13, color: C.mutedText }}>📱 {t.phone}</div>
+                        <div style={{ marginTop: 14, fontSize: 13, color: C.mutedText }}><Phone size={14} style={{marginRight:4}} /> {t.phone}</div>
                       )}
                     </div>
                   );
@@ -607,7 +608,7 @@ export default function AdminPortalPage() {
           <>
             {/* Compose */}
             <div style={s.card}>
-              <div style={{ fontWeight: 700, fontSize: 15, color: C.maroon700, marginBottom: 16 }}>📢 Post New Announcement</div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: C.maroon700, marginBottom: 16 }}><Megaphone size={16} style={{marginRight: 6}} /> Post New Announcement</div>
               <div style={{ marginBottom: 14 }}>
                 <div style={s.label}>Title</div>
                 <input type="text" style={s.input} placeholder="e.g. Staff meeting tomorrow" value={newAnnTitle} onChange={e => setNewAnnTitle(e.target.value)} />
@@ -617,7 +618,7 @@ export default function AdminPortalPage() {
                 <textarea style={{ ...s.input, minHeight: 90, resize: 'vertical' }} placeholder="Type your announcement here..." value={newAnnBody} onChange={e => setNewAnnBody(e.target.value)} />
               </div>
               <button style={{ ...s.primaryBtn, opacity: annPosting ? 0.6 : 1 }} disabled={annPosting} onClick={postAnnouncement}>
-                {annPosting ? '⏳ Posting...' : '📤 Broadcast to All Teachers'}
+                {annPosting ? '<Loader size={16} style={{marginRight:6}} /> Posting...' : '<Send size={16} style={{marginRight:6}} /> Broadcast to All Teachers'}
               </button>
             </div>
 
@@ -643,7 +644,7 @@ export default function AdminPortalPage() {
                       style={{ ...s.ghostBtn, color: '#991B1B', borderColor: '#FECACA', background: '#FEF2F2', fontSize: 11 }}
                       onClick={() => deleteAnnouncement(a.id)}
                     >
-                      🗑 Delete
+                      <><Trash2 size={14} style={{marginRight:4}} /> Delete</>
                     </button>
                   </div>
                 </div>

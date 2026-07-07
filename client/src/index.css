@@ -20,48 +20,58 @@
   --navy-100: #F2BBBB;
   --navy-50: #FDF2F2;
 
-  /* White/Silver palette (Accent) */
-  --gold-500: #FFFFFF;
-  --gold-400: #F0F2F5;
-  --gold-300: #E4E7EB;
-  --gold-200: #D1D5DB;
-  --gold-100: #F3F4F6;
-  --gold-600: #9CA3AF;
-  --gold-700: #6B7280;
+  /* Cream palette (Background) */
+  --cream-500: #EBE5D0;
+  --cream-400: #F0EAD6;
+  --cream-300: #F5EFE0;
+  --cream-200: #Faf5E6;
+  --cream-100: #FFFDF5;
+  --cream-50:  #FFFFFF;
+
+  /* Neutral palette (Text/Borders) */
+  --neutral-900: #1A1515;
+  --neutral-800: #332B2B;
+  --neutral-700: #4C4141;
+  --neutral-600: #665858;
+  --neutral-500: #807171;
+  --neutral-400: #998C8C;
+  --neutral-300: #B3A8A8;
+  --neutral-200: #CCC4C4;
+  --neutral-100: #E6E1E1;
 
   /* Semantic */
-  --bg-primary: var(--navy-900);
-  --bg-secondary: var(--navy-800);
-  --bg-card: rgba(255, 255, 255, 0.05);
-  --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --bg-input: rgba(255, 255, 255, 0.07);
-  --bg-input-focus: rgba(255, 255, 255, 0.1);
+  --bg-primary: var(--cream-100);
+  --bg-secondary: var(--cream-200);
+  --bg-card: var(--cream-50);
+  --bg-card-hover: var(--cream-300);
+  --bg-input: var(--cream-50);
+  --bg-input-focus: var(--cream-100);
 
-  --text-primary: #F0F2F5;
-  --text-secondary: #A0AAC0;
-  --text-muted: #6B7A96;
-  --text-inverse: var(--navy-900);
+  --text-primary: var(--neutral-900);
+  --text-secondary: var(--neutral-700);
+  --text-muted: var(--neutral-500);
+  --text-inverse: #FFFFFF;
 
-  --accent: var(--gold-500);
-  --accent-hover: var(--gold-400);
-  --accent-glow: rgba(201, 168, 76, 0.3);
+  --accent: var(--navy-700);
+  --accent-hover: var(--navy-600);
+  --accent-glow: rgba(122, 26, 26, 0.2);
 
-  --success: #34D399;
-  --success-bg: rgba(52, 211, 153, 0.1);
-  --warning: #FBBF24;
-  --warning-bg: rgba(251, 191, 36, 0.1);
-  --error: #F87171;
-  --error-bg: rgba(248, 113, 113, 0.1);
-  --info: #60A5FA;
-  --info-bg: rgba(96, 165, 250, 0.1);
+  --success: #059669;
+  --success-bg: #D1FAE5;
+  --warning: #D97706;
+  --warning-bg: #FEF3C7;
+  --error: #DC2626;
+  --error-bg: #FEE2E2;
+  --info: #2563EB;
+  --info-bg: #DBEAFE;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-active: var(--gold-500);
+  --border: var(--neutral-200);
+  --border-active: var(--navy-500);
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-glow: 0 0 20px var(--accent-glow);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-glow: 0 0 15px var(--accent-glow);
 
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -169,7 +179,7 @@ img {
 .sidebar-logo {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, var(--gold-500), var(--gold-300));
+  background: var(--cream-100);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -178,6 +188,13 @@ img {
   font-size: 18px;
   color: var(--navy-900);
   flex-shrink: 0;
+  overflow: hidden;
+}
+
+.sidebar-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .sidebar-title {
@@ -320,7 +337,7 @@ img {
 .page-header {
   padding: 24px 32px;
   border-bottom: 1px solid var(--border);
-  background: rgba(15, 26, 46, 0.8);
+  background: rgba(255, 253, 245, 0.8);
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -356,12 +373,12 @@ img {
 
 .card:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
 .card-glass {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: var(--radius-lg);
   padding: 24px;
   backdrop-filter: blur(20px);

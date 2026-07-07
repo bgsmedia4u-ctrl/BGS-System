@@ -49,7 +49,9 @@ export default function Layout({ children }) {
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <div className="sidebar-logo">B</div>
+          <div className="sidebar-logo">
+            <img src="/logo.png" alt="BGS Logo" className="sidebar-logo-img" />
+          </div>
           <div>
             <div className="sidebar-title">BGS Portal</div>
             <div className="sidebar-subtitle">Teachers Portal</div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { Shield, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function AdminLoginPage() {
@@ -29,7 +30,7 @@ export default function AdminLoginPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #1a0505 0%, #2D0A0A 50%, #3E0C0C 100%)',
+      background: 'linear-gradient(135deg, #FFFDF5 0%, #F5EFE0 100%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -39,18 +40,18 @@ export default function AdminLoginPage() {
       {/* Background pattern */}
       <div style={{
         position: 'fixed', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse at 20% 50%, rgba(163,33,33,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(200,50,50,0.08) 0%, transparent 50%)',
+        background: 'radial-gradient(ellipse at 20% 50%, rgba(122,26,26,0.05) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(168,36,36,0.03) 0%, transparent 50%)',
       }} />
 
       <div style={{
-        background: 'rgba(255,255,255,0.04)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        background: 'rgba(255,255,255,0.8)',
+        border: '1px solid rgba(122,26,26,0.1)',
         borderRadius: 20,
         padding: '48px 40px',
         width: '100%',
         maxWidth: 420,
         backdropFilter: 'blur(20px)',
-        boxShadow: '0 25px 60px rgba(0,0,0,0.5)',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.05)',
         position: 'relative',
       }}>
         {/* Shield icon */}
@@ -59,24 +60,26 @@ export default function AdminLoginPage() {
           background: 'linear-gradient(135deg, #7A1A1A, #A82424)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           margin: '0 auto 24px',
-          boxShadow: '0 8px 24px rgba(168,36,36,0.4)',
-          fontSize: 32,
-        }}>🛡️</div>
+          boxShadow: '0 8px 24px rgba(168,36,36,0.3)',
+          color: '#fff',
+        }}>
+          <Shield size={36} />
+        </div>
 
-        <h1 style={{ color: '#fff', fontSize: 26, fontWeight: 700, textAlign: 'center', margin: '0 0 6px' }}>
+        <h1 style={{ color: '#1A1515', fontSize: 26, fontWeight: 700, textAlign: 'center', margin: '0 0 6px' }}>
           Admin Portal
         </h1>
-        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center', margin: '0 0 8px' }}>
+        <p style={{ color: '#665858', fontSize: 14, textAlign: 'center', margin: '0 0 8px' }}>
           BGS Public School & PU College
         </p>
-        <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13, textAlign: 'center', margin: '0 0 36px' }}>
+        <p style={{ color: '#998C8C', fontSize: 13, textAlign: 'center', margin: '0 0 36px' }}>
           Restricted access — administrators only
         </p>
 
         {/* Warning bar */}
         <div style={{
-          background: 'rgba(168,36,36,0.15)',
-          border: '1px solid rgba(168,36,36,0.3)',
+          background: 'rgba(168,36,36,0.05)',
+          border: '1px solid rgba(168,36,36,0.2)',
           borderRadius: 10,
           padding: '12px 16px',
           marginBottom: 28,
@@ -84,8 +87,8 @@ export default function AdminLoginPage() {
           alignItems: 'center',
           gap: 10,
         }}>
-          <span style={{ fontSize: 18 }}>⚠️</span>
-          <span style={{ color: 'rgba(255,160,160,0.9)', fontSize: 13 }}>
+          <AlertTriangle size={20} color="#DC2626" />
+          <span style={{ color: '#7A1A1A', fontSize: 13, fontWeight: 500 }}>
             Only authorised admin accounts can access this portal.
           </span>
         </div>
@@ -96,7 +99,7 @@ export default function AdminLoginPage() {
           style={{
             width: '100%',
             padding: '14px 20px',
-            background: checking ? 'rgba(255,255,255,0.05)' : 'rgba(255,255,255,0.92)',
+            background: checking ? 'rgba(0,0,0,0.05)' : '#1A1515',
             border: 'none',
             borderRadius: 12,
             display: 'flex',
@@ -106,14 +109,14 @@ export default function AdminLoginPage() {
             cursor: checking ? 'not-allowed' : 'pointer',
             fontSize: 15,
             fontWeight: 600,
-            color: '#1a1a1a',
+            color: checking ? '#665858' : '#fff',
             transition: 'all 0.2s',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+            boxShadow: checking ? 'none' : '0 4px 16px rgba(0,0,0,0.15)',
           }}
         >
           {checking ? (
             <>
-              <div style={{ width: 20, height: 20, border: '2px solid #999', borderTopColor: '#333', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              <div style={{ width: 20, height: 20, border: '2px solid #ccc', borderTopColor: '#666', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
               Verifying...
             </>
           ) : (
@@ -129,13 +132,13 @@ export default function AdminLoginPage() {
           )}
         </button>
 
-        <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 12, textAlign: 'center', marginTop: 24 }}>
+        <p style={{ color: '#998C8C', fontSize: 12, textAlign: 'center', marginTop: 24 }}>
           BGS Sidlaghatta · Admin Access Only
         </p>
 
         {/* Link back to teacher portal */}
         <div style={{ textAlign: 'center', marginTop: 20 }}>
-          <a href="/login" style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, textDecoration: 'none' }}>
+          <a href="/login" style={{ color: '#7A1A1A', fontSize: 12, textDecoration: 'none', fontWeight: 500 }}>
             ← Back to Teacher Portal
           </a>
         </div>

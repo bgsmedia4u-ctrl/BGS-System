@@ -6,6 +6,7 @@ import {
   FileText,
   ClipboardCheck,
   PenLine,
+  CalendarDays,
   LogOut,
   Menu,
   X,
@@ -85,11 +86,6 @@ export default function Layout({ children }) {
           >
             <ClipboardCheck className="nav-icon" />
             Mark Attendance
-            <span style={{
-              marginLeft: 'auto', fontSize: 10, fontWeight: 700,
-              background: 'rgba(251,191,36,0.15)', color: 'var(--warning)',
-              padding: '2px 7px', borderRadius: 6,
-            }}>SOON</span>
           </NavLink>
           <NavLink
             to="/marks"
@@ -98,11 +94,14 @@ export default function Layout({ children }) {
           >
             <PenLine className="nav-icon" />
             Enter Marks
-            <span style={{
-              marginLeft: 'auto', fontSize: 10, fontWeight: 700,
-              background: 'rgba(251,191,36,0.15)', color: 'var(--warning)',
-              padding: '2px 7px', borderRadius: 6,
-            }}>SOON</span>
+          </NavLink>
+          <NavLink
+            to="/meetings"
+            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={() => setSidebarOpen(false)}
+          >
+            <CalendarDays className="nav-icon" />
+            Meetings
           </NavLink>
         </nav>
 

@@ -114,5 +114,68 @@ export const pdfService = {
     };
 
     pdfMakeObj.createPdf(docDefinition).download(`BGS_Report_${dateLabel}.pdf`);
+  },
+
+  generateMarksReport: (testName, batchLabel, subjects, rankedResults, totalMaxMarks) => {
+    const content = [
+      { text: 'BGS Public School & PU College, Shidlaghatta', style: 'header', alignment: 'center' },
+      { text: `Test Results: ${testName}`, style: 'subheader', alignment: 'center', margin: [0, 5, 0, 0] },
+      { text: `Batch: ${batchLabel}`, alignment: 'center', margin: [0, 5, 0, 20], color: 'gray' },
+    ];
+
+    if (!rankedResults || rankedResults.length === 0) {
+      content.push({ text: 'No students found.', alignment: 'center', margin: [0, 20, 0, 0] });
+    } else {
+      const tableHeaders = [
+        { text: 'Rank', style: 'tableHeader', alignment: 'center' },
+        { text: 'Roll', style: 'tableHeader' },
+        { text: 'Name', style: 'tableHeader' },
+        ...subjects.map(sub => ({ text: `${sub.name}\n(${sub.maxMarks})`, style: 'tableHeader', alignment: 'center' })),
+        { text: `Total\n(${totalMaxMarks})`, style: 'tableHeader', alignment: 'center' }
+      ];
+
+      const tableBody = [tableHeaders];
+
+      rankedResults.forEach((st, idx) => {
+        const rank = st.is_absent ? '-' : (idx + 1).toString();
+        const row = [
+          { text: rank, alignment: 'center' },
+          { text: (st.roll_number || '-').toString() },
+          { text: st.name },
+          ...subjects.map(sub => {
+            let cellContent = '-';
+            if (st.is_absent) cellContent = 'AB';
+            else if (st.has_entry) cellContent = (st.marks[sub.name] ?? '-').toString();
+            return { text: cellContent, alignment: 'center', color: st.is_absent ? 'red' : 'black' };
+          }),
+          { text: st.is_absent ? 'AB' : st.total_marks.toString(), alignment: 'center', bold: true }
+        ];
+        tableBody.push(row);
+      });
+
+      content.push({
+        table: {
+          headerRows: 1,
+          widths: ['auto', 'auto', '*', ...subjects.map(() => 'auto'), 'auto'],
+          body: tableBody
+        },
+        layout: 'lightHorizontalLines',
+        margin: [0, 0, 0, 15]
+      });
+    }
+
+    const docDefinition = {
+      content: content,
+      styles: {
+        header: { fontSize: 18, bold: true, color: '#800000' },
+        subheader: { fontSize: 14, bold: true, color: '#444444' },
+        tableHeader: { bold: true, fontSize: 11, color: 'black', fillColor: '#f5f5f5' }
+      },
+      defaultStyle: {
+        fontSize: 10
+      }
+    };
+
+    pdfMakeObj.createPdf(docDefinition).download(`BGS_Marks_${testName}_${batchLabel.replace(/[^a-z0-9]/gi, '_')}.pdf`);
   }
 };

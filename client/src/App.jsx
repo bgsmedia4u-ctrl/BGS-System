@@ -13,6 +13,7 @@ import AdminExportPage from './pages/AdminExportPage';
 import AdminPortalPage from './pages/AdminPortalPage';
 import AttendancePage from './pages/AttendancePage';
 import MarksPage from './pages/MarksPage';
+import TeacherMeetingsPage from './pages/TeacherMeetingsPage';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/report/:dateParam?" element={<ProtectedRoute><ReportFormPage /></ProtectedRoute>} />
         <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />
         <Route path="/marks" element={<ProtectedRoute><MarksPage /></ProtectedRoute>} />
+        <Route path="/meetings" element={<ProtectedRoute><TeacherMeetingsPage /></ProtectedRoute>} />
         
         {/* Protected Admin Routes (sidebar-based) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../api/supabase';
+import { getReportByDate, saveReport } from '../api/reportService';
 import Layout from '../components/Layout';
 import {
   Save,
@@ -124,14 +124,7 @@ export default function ReportFormPage() {
   async function fetchReport(targetDate) {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('weekly_reports')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('report_date', targetDate)
-        .maybeSingle();
-
-      if (error) throw error;
+      const data = await getReportByDate(user.id, targetDate);
 
       if (data) {
         setReportId(data.id);
@@ -232,14 +225,8 @@ export default function ReportFormPage() {
         payload.submitted_at = new Date().toISOString();
       }
 
-      if (reportId) {
-        // Update existing
-        const { error } = await supabase.from('weekly_reports').update(payload).eq('id', reportId);
-        if (error) throw error;
-      } else {
-        // Insert new
-        const { data, error } = await supabase.from('weekly_reports').insert(payload).select('id').single();
-        if (error) throw error;
+      const data = await saveReport(payload, reportId);
+      if (!reportId) {
         setReportId(data.id);
       }
 

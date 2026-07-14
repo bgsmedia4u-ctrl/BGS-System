@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../api/supabase';
+import { getRecentReports } from '../api/reportService';
+import { getRecentAnnouncements } from '../api/announcementService';
 import Layout from '../components/Layout';
 import {
   FileText,
@@ -39,23 +40,13 @@ export default function DashboardPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      // Fetch all reports for the user
-      const { data: reportsData, error: reportsErr } = await supabase
-        .from('weekly_reports')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('report_date', { ascending: false });
-
-      if (reportsErr) throw reportsErr;
-      setReports(reportsData || []);
+      // Fetch all reports for the user (limited to recent 10 for performance)
+      const reportsData = await getRecentReports(user.id, 10);
+      setReports(reportsData);
 
       // Fetch announcements
-      const { data: annData } = await supabase
-        .from('announcements')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(5);
-      setAnnouncements(annData || []);
+      const annData = await getRecentAnnouncements(5);
+      setAnnouncements(annData);
 
     } catch (err) {
       console.error('Dashboard fetch error:', err);

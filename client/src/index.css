@@ -7,68 +7,73 @@
 
 /* ─── CSS Custom Properties ─── */
 :root {
-  /* Maroon palette (Primary) */
-  --navy-950: #2D0A0A;
-  --navy-900: #3E0C0C;
-  --navy-800: #571313;
-  --navy-700: #7A1A1A;
-  --navy-600: #931F1F;
-  --navy-500: #A82424;
-  --navy-400: #C23838;
-  --navy-300: #D65A5A;
-  --navy-200: #E68A8A;
-  --navy-100: #F2BBBB;
-  --navy-50: #FDF2F2;
+  /* Navy (Primary/Institutional) */
+  --navy-900: #1A2238; /* Deepest background accents */
+  --navy-800: #202D48; /* Headers, strong accents */
+  --navy-700: #2C3E50; /* Primary brand color */
+  --navy-600: #34495E; /* Hover states */
+  --navy-500: #4B6584; /* Borders, secondary text */
+  --navy-50:  #F4F6F8; /* Lightest tint for backgrounds */
 
-  /* Cream palette (Background) */
-  --cream-500: #EBE5D0;
-  --cream-400: #F0EAD6;
-  --cream-300: #F5EFE0;
-  --cream-200: #Faf5E6;
-  --cream-100: #FFFDF5;
-  --cream-50:  #FFFFFF;
+  /* Gold (Accent) */
+  --gold-600: #B8860B; /* Dark gold for text/borders */
+  --gold-500: #DAA520; /* Primary accent */
+  --gold-400: #F4D03F; /* Light accent / hover */
+  --gold-50:  #FEF9E7; /* Light gold background */
 
-  /* Neutral palette (Text/Borders) */
-  --neutral-900: #1A1515;
-  --neutral-800: #332B2B;
-  --neutral-700: #4C4141;
-  --neutral-600: #665858;
-  --neutral-500: #807171;
-  --neutral-400: #998C8C;
-  --neutral-300: #B3A8A8;
-  --neutral-200: #CCC4C4;
-  --neutral-100: #E6E1E1;
+  /* Cream/Surface (Backgrounds) */
+  --bg-app: #F8F9FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-hover: #F1F3F5;
+  --border-color: #E2E8F0;
 
-  /* Semantic */
-  --bg-primary: var(--cream-100);
-  --bg-secondary: var(--cream-200);
-  --bg-card: var(--cream-50);
-  --bg-card-hover: var(--cream-300);
-  --bg-input: var(--cream-50);
-  --bg-input-focus: var(--cream-100);
-
-  --text-primary: var(--neutral-900);
-  --text-secondary: var(--neutral-700);
-  --text-muted: var(--neutral-500);
+  /* Text Colors */
+  --text-main: #1E293B;
+  --text-muted: #64748B;
   --text-inverse: #FFFFFF;
+
+  /* Status Colors */
+  --status-success: #10B981;
+  --status-success-bg: #D1FAE5;
+  --status-success-text: #065F46;
+
+  --status-error: #EF4444;
+  --status-error-bg: #FEE2E2;
+  --status-error-text: #991B1B;
+
+  --status-warning: #F59E0B;
+  --status-warning-bg: #FEF3C7;
+  --status-warning-text: #92400E;
+
+  --status-info: #3B82F6;
+  --status-info-bg: #DBEAFE;
+  --status-info-text: #1E40AF;
+
+  /* Legacy Aliases (to prevent breaking other parts before we fix them) */
+  --bg-primary: var(--bg-app);
+  --bg-secondary: var(--bg-surface-hover);
+  --bg-card: var(--bg-surface);
+  --bg-card-hover: var(--bg-surface-hover);
+  --bg-input: var(--bg-surface);
+  --bg-input-focus: var(--bg-surface);
+
+  --text-primary: var(--text-main);
+  --text-secondary: var(--text-muted);
 
   --accent: var(--navy-700);
   --accent-hover: var(--navy-600);
-  --accent-glow: rgba(122, 26, 26, 0.2);
+  --accent-glow: rgba(44, 62, 80, 0.2);
 
-  --gold-500: #C9A84C;
-  --gold-300: #E0C782;
+  --success: var(--status-success);
+  --success-bg: var(--status-success-bg);
+  --warning: var(--status-warning);
+  --warning-bg: var(--status-warning-bg);
+  --error: var(--status-error);
+  --error-bg: var(--status-error-bg);
+  --info: var(--status-info);
+  --info-bg: var(--status-info-bg);
 
-  --success: #059669;
-  --success-bg: #D1FAE5;
-  --warning: #D97706;
-  --warning-bg: #FEF3C7;
-  --error: #DC2626;
-  --error-bg: #FEE2E2;
-  --info: #2563EB;
-  --info-bg: #DBEAFE;
-
-  --border: var(--neutral-200);
+  --border: var(--border-color);
   --border-active: var(--navy-500);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -106,6 +111,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 body {
@@ -113,6 +119,7 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.6;
+  overflow-x: hidden;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -226,7 +233,8 @@ img {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 12px 14px;
+  min-height: 44px; /* Touch target */
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   font-size: 14px;
@@ -484,6 +492,7 @@ img {
   justify-content: center;
   gap: 8px;
   padding: 10px 20px;
+  min-height: 44px; /* Touch target */
   border-radius: var(--radius-md);
   font-size: 14px;
   font-weight: 600;
@@ -601,6 +610,7 @@ img {
 .form-textarea {
   width: 100%;
   padding: 10px 14px;
+  min-height: 44px; /* Touch target */
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -756,7 +766,7 @@ img {
 .badge-admin {
   background: rgba(201, 168, 76, 0.12);
   color: var(--gold-500);
-  border: 1px solid rgba(201, 168, 76, 0.2);
+  border: 1px solid var(--gold-500);
 }
 
 /* ─── Tabs ─── */
@@ -1094,15 +1104,19 @@ img {
 .mobile-menu-btn {
   display: none;
   position: fixed;
-  top: 14px;
-  left: 14px;
+  top: 12px;
+  left: 12px;
   z-index: 101;
   background: var(--navy-800);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 8px;
-  color: var(--text-primary);
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-inverse);
   cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 /* ─── Responsive ─── */
@@ -1458,21 +1472,21 @@ img {
 }
 
 .attendance-stat.present {
-  background: rgba(5, 150, 105, 0.1);
+  background: var(--status-success-bg);
   color: var(--success);
-  border: 1px solid rgba(5, 150, 105, 0.2);
+  border: 1px solid var(--status-success);
 }
 
 .attendance-stat.absent {
-  background: rgba(220, 38, 38, 0.1);
+  background: var(--status-error-bg);
   color: var(--error);
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  border: 1px solid var(--status-error);
 }
 
 .attendance-stat.total {
-  background: rgba(201, 168, 76, 0.1);
+  background: var(--bg-secondary);
   color: var(--gold-500);
-  border: 1px solid rgba(201, 168, 76, 0.2);
+  border: 1px solid var(--gold-500);
 }
 
 .attendance-toolbar {
@@ -1522,14 +1536,14 @@ img {
 }
 
 .attendance-tile.present {
-  background: rgba(5, 150, 105, 0.06);
-  border-color: rgba(5, 150, 105, 0.15);
+  background: var(--status-success-bg);
+  border-color: var(--status-success);
   color: var(--text-primary);
 }
 
 .attendance-tile.present:hover {
-  background: rgba(5, 150, 105, 0.12);
-  border-color: rgba(5, 150, 105, 0.3);
+  background: var(--status-success-bg);
+  border-color: var(--status-success);
 }
 
 .attendance-tile.present .attendance-tile-status {
@@ -1537,14 +1551,14 @@ img {
 }
 
 .attendance-tile.absent {
-  background: rgba(220, 38, 38, 0.08);
-  border-color: rgba(220, 38, 38, 0.25);
+  background: var(--status-error-bg);
+  border-color: var(--status-error);
   color: var(--text-primary);
 }
 
 .attendance-tile.absent:hover {
-  background: rgba(220, 38, 38, 0.14);
-  border-color: rgba(220, 38, 38, 0.4);
+  background: var(--status-error-bg);
+  border-color: var(--status-error);
 }
 
 .attendance-tile.absent .attendance-tile-status {
@@ -1607,5 +1621,97 @@ img {
   
   .attendance-bottom-bar {
     padding: 12px 0;
+  }
+}
+
+/* ─── Mobile Responsiveness Enhancements ─── */
+
+/* Horizontally scrollable table container */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Modal adjustments for mobile viewports */
+.modal-content {
+  width: calc(100% - 32px) !important;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: 5vh auto !important;
+}
+
+/* ── Small screens (phones, ≤640px) ── */
+@media (max-width: 640px) {
+  /* Reduce page padding on mobile */
+  .page-body {
+    padding: 16px !important;
+  }
+  .page-header {
+    padding: 14px 16px 14px 56px !important;
+  }
+  .page-title {
+    font-size: 18px !important;
+  }
+
+  /* Cards tighter on mobile */
+  .card {
+    padding: 16px !important;
+  }
+
+  /* All form grids collapse to 1-column */
+  .form-row,
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Attendance grid: ensure single-column on very small screens */
+  .attendance-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+  }
+  .attendance-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .attendance-search {
+    width: 100%;
+    min-width: unset;
+  }
+  .attendance-quick-actions {
+    flex-wrap: wrap;
+  }
+
+  /* Login page: no side margins */
+  .login-container {
+    padding: 16px !important;
+  }
+  .login-card {
+    padding: 28px 20px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Report form: ensure action bar doesn't clip */
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Admin portal: name text hidden on very small bars */
+  .admin-nav-name {
+    display: none;
+  }
+  .admin-nav-sub {
+    display: none !important;
+  }
+
+  /* Dynamic rows (report form tasks/rows) */
+  .dynamic-row {
+    padding: 12px !important;
   }
 }

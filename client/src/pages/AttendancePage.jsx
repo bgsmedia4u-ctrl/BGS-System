@@ -305,7 +305,7 @@ function PrintAttendanceView({ stream, year, cls, date, students, attendanceData
           </p>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: 32, padding: 16, background: '#f8fafc', borderRadius: 8 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: 32, padding: 16, background: 'var(--bg-secondary)', borderRadius: 8 }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total</div>
             <div style={{ fontSize: 24, fontWeight: 700, color: 'var(--navy-900)' }}>{students.length}</div>
@@ -324,23 +324,25 @@ function PrintAttendanceView({ stream, year, cls, date, students, attendanceData
         {absentStudents.length === 0 ? (
           <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Everyone was present! 🎉</p>
         ) : (
-          <table className="table print-table">
-            <thead>
-              <tr>
-                <th style={{ width: 60 }}>Roll</th>
-                <th>Student Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {absentStudents.map(st => (
-                <tr key={st.id}>
-                  <td>{st.roll_number}</td>
-                  <td style={{ fontWeight: 500, color: 'var(--error)' }}>{st.name}</td>
+          <div className="table-responsive">
+            <table className="table print-table">
+              <thead>
+                <tr>
+                  <th style={{ width: 60 }}>Roll</th>
+                  <th>Student Name</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+              </thead>
+              <tbody>
+                {absentStudents.map(st => (
+                  <tr key={st.id}>
+                    <td>{st.roll_number}</td>
+                    <td style={{ fontWeight: 500, color: 'var(--error)' }}>{st.name}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
 
         <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
           <button className="btn btn-primary" onClick={() => window.print()}>
@@ -351,3 +353,4 @@ function PrintAttendanceView({ stream, year, cls, date, students, attendanceData
     </div>
   );
 }
+

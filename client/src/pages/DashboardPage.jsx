@@ -178,7 +178,7 @@ export default function DashboardPage() {
                     style={{ 
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
                       padding: '16px', borderRadius: '8px', border: '1px solid var(--border)',
-                      textDecoration: 'none', background: 'rgba(255,255,255,0.02)'
+                      textDecoration: 'none', background: 'var(--bg-secondary)'
                     }}
                   >
                     <div className="report-item-info">
@@ -219,7 +219,7 @@ export default function DashboardPage() {
 
       {/* Phone Number Modal */}
       {showPhoneModal && (
-        <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+        <div className="modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="modal-content card" style={{ maxWidth: 400, width: '90%' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
               <Phone size={24} style={{ color: 'var(--gold-500)' }} />
@@ -259,3 +259,4 @@ export default function DashboardPage() {
     </Layout>
   );
 }
+

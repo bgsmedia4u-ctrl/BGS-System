@@ -79,7 +79,7 @@ export default function TeacherMeetingsPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
               <h3 style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>{m.title}</h3>
               {isCancelled && (
-                <span className="badge badge-draft" style={{ background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)' }}>
+                <span className="badge badge-draft" style={{ background: 'var(--bg-secondary)', color: 'var(--text-muted)' }}>
                   <XCircle size={12} /> Cancelled
                 </span>
               )}
@@ -104,7 +104,7 @@ export default function TeacherMeetingsPage() {
 
             {m.description && (
               <div style={{ 
-                background: 'rgba(0,0,0,0.2)', 
+                background: 'var(--bg-card)', 
                 padding: 12, 
                 borderRadius: 8, 
                 fontSize: 14, 
@@ -119,8 +119,8 @@ export default function TeacherMeetingsPage() {
           
           <div style={{ textAlign: 'right' }}>
             <span className="badge badge-submitted" style={{ 
-              background: m.audience_type === 'all_staff' ? 'rgba(5, 150, 105, 0.1)' : 'rgba(37, 99, 235, 0.1)', 
-              color: m.audience_type === 'all_staff' ? '#10B981' : '#60A5FA',
+              background: m.audience_type === 'all_staff' ? 'var(--status-success-bg)' : 'var(--status-info-bg)', 
+              color: m.audience_type === 'all_staff' ? 'var(--status-success)' : 'var(--status-info)',
               border: 'none'
             }}>
               {m.audience_type === 'all_staff' ? 'All Staff' : m.audience_type === 'department' ? 'Department' : 'Individual'}
@@ -146,7 +146,7 @@ export default function TeacherMeetingsPage() {
           {upcomingMeetings.length > 0 ? (
             upcomingMeetings.map(m => renderMeetingCard(m, false))
           ) : (
-            <div className="empty-state" style={{ padding: '40px', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: 12, border: '1px solid var(--border)' }}>
+            <div className="empty-state" style={{ padding: '40px', textAlign: 'center', background: 'var(--bg-secondary)', borderRadius: 12, border: '1px solid var(--border)' }}>
               <Calendar className="empty-state-icon" style={{ margin: '0 auto 16px', display: 'block', color: 'var(--text-muted)' }} size={32} />
               <p className="empty-state-title" style={{ fontWeight: 600, fontSize: 16 }}>No upcoming meetings</p>
               <p className="empty-state-text" style={{ color: 'var(--text-muted)', fontSize: 14 }}>
@@ -166,3 +166,4 @@ export default function TeacherMeetingsPage() {
     </Layout>
   );
 }
+

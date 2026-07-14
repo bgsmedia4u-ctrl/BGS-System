@@ -287,7 +287,7 @@ export default function ReportFormPage() {
 
       <div className="page-body fade-in">
         {isReadOnly && (
-          <div style={{ padding: 16, background: 'var(--warning-bg)', border: '1px solid rgba(251, 191, 36, 0.3)', borderRadius: 8, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12, color: 'var(--warning)' }}>
+          <div style={{ padding: 16, background: 'var(--status-warning-bg)', border: '1px solid rgba(251, 191, 36, 0.3)', borderRadius: 8, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12, color: 'var(--status-warning-text)' }}>
             <AlertCircle size={20} />
             <span style={{ fontSize: 14 }}>This report has been submitted and cannot be edited.</span>
           </div>
@@ -485,3 +485,4 @@ export default function ReportFormPage() {
     </Layout>
   );
 }
+

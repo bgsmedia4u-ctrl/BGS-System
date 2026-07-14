@@ -7,108 +7,90 @@ import toast from 'react-hot-toast';
 import { Shield, BarChart2, ClipboardList, Users, Megaphone, CheckCircle, FileEdit, XCircle, TrendingUp, Phone, Calendar, BookOpen, AlertTriangle, Trash2, Download, Send, Loader, Video, Plus, X, ClipboardCheck, PenLine } from 'lucide-react';
 import { getWeekStart, formatDateISO, formatWeekLabel } from '../utils/week';
 
-/* ── Cream & Maroon Design Tokens ── */
-const C = {
-  maroon900: '#2D0A0A',
-  maroon800: '#4A1010',
-  maroon700: '#7A1A1A',
-  maroon600: '#931F1F',
-  maroon500: '#A82424',
-  maroon400: '#C23838',
-  maroon300: '#D65A5A',
-  cream100: '#FDF8F0',
-  cream200: '#F7EEDC',
-  cream300: '#EDD9B8',
-  cream400: '#DFC49A',
-  creamText: '#3D1A1A',
-  mutedText: '#7A5050',
-  border: '#E8D5C0',
-};
-
 /* ── Shared style helpers ── */
 const s = {
   page: {
     minHeight: '100vh',
-    background: C.cream100,
+    background: 'var(--bg-primary)',
     fontFamily: "'Inter', sans-serif",
-    color: C.creamText,
+    color: 'var(--text-primary)',
   },
   navbar: {
-    background: `linear-gradient(135deg, ${C.maroon900}, ${C.maroon700})`,
+    background: 'linear-gradient(135deg, var(--navy-900), var(--navy-700))',
     padding: '0 28px',
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     height: 66,
     position: 'sticky', top: 0, zIndex: 200,
-    boxShadow: '0 4px 20px rgba(45,10,10,0.4)',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
   },
   brand: { display: 'flex', alignItems: 'center', gap: 14 },
   brandIcon: {
     width: 40, height: 40, borderRadius: 10,
-    background: 'rgba(253,248,240,0.12)',
-    border: '1px solid rgba(253,248,240,0.2)',
+    background: 'rgba(255,255,255,0.1)',
+    border: '1px solid rgba(255,255,255,0.15)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
     fontSize: 20,
   },
-  brandText: { fontSize: 17, fontWeight: 700, color: C.cream100 },
-  brandSub: { fontSize: 11, color: 'rgba(253,248,240,0.55)', marginTop: 1 },
+  brandText: { fontSize: 17, fontWeight: 700, color: '#fff' },
+  brandSub: { fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 1 },
   logoutBtn: {
     padding: '8px 18px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600,
-    background: 'rgba(253,248,240,0.1)', border: '1px solid rgba(253,248,240,0.2)',
-    color: C.cream100, transition: 'all 0.2s',
+    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
+    color: '#fff', transition: 'all 0.2s',
   },
   body: { padding: '32px 28px', maxWidth: 1280, margin: '0 auto' },
-  pageTitle: { fontSize: 26, fontWeight: 800, color: C.maroon700, marginBottom: 4 },
-  pageSubtitle: { fontSize: 14, color: C.mutedText },
+  pageTitle: { fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 4 },
+  pageSubtitle: { fontSize: 14, color: 'var(--text-muted)' },
   tabBar: {
     display: 'flex', gap: 0, marginBottom: 28,
-    background: C.cream200, borderRadius: 12, padding: 4,
-    border: `1px solid ${C.border}`, width: 'fit-content',
+    background: 'var(--bg-secondary)', borderRadius: 12, padding: 4,
+    border: '1px solid var(--border)', width: 'fit-content',
   },
   tab: (active) => ({
     padding: '9px 22px', borderRadius: 9, border: 'none', cursor: 'pointer',
     fontSize: 14, fontWeight: 600, transition: 'all 0.2s',
-    background: active ? `linear-gradient(135deg, ${C.maroon700}, ${C.maroon500})` : 'transparent',
-    color: active ? C.cream100 : C.mutedText,
-    boxShadow: active ? '0 2px 12px rgba(122,26,26,0.35)' : 'none',
+    background: active ? 'var(--navy-700)' : 'transparent',
+    color: active ? '#fff' : 'var(--text-muted)',
+    boxShadow: active ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
   }),
   card: {
-    background: '#fff',
-    border: `1px solid ${C.border}`,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
     borderRadius: 14,
     padding: 22,
     marginBottom: 20,
-    boxShadow: '0 2px 8px rgba(122,26,26,0.06)',
+    boxShadow: 'var(--shadow-sm)',
   },
   sectionCard: (borderColor) => ({
-    background: '#fff',
-    border: `1px solid ${borderColor || C.border}`,
+    background: 'var(--bg-card)',
+    border: `1px solid ${borderColor || 'var(--border)'}`,
     borderRadius: 12,
     padding: 18,
     marginBottom: 12,
   }),
   statCard: (color) => ({
-    background: '#fff',
-    border: `1px solid ${C.border}`,
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
     borderLeft: `4px solid ${color}`,
     borderRadius: 12,
     padding: '18px 20px',
     flex: 1,
     minWidth: 130,
-    boxShadow: '0 2px 8px rgba(122,26,26,0.05)',
+    boxShadow: 'var(--shadow-sm)',
   }),
-  label: { fontSize: 12, fontWeight: 600, color: C.mutedText, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' },
+  label: { fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' },
   input: {
     width: '100%', padding: '10px 14px', borderRadius: 9, fontSize: 14,
-    background: C.cream100, border: `1px solid ${C.border}`,
-    color: C.creamText, outline: 'none', boxSizing: 'border-box',
+    background: 'var(--bg-input)', border: '1px solid var(--border)',
+    color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box',
     transition: 'border-color 0.2s',
   },
   badge: (type) => {
     const styles = {
-      submitted: { background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0' },
-      draft: { background: '#FFFBEB', color: '#92400E', border: '1px solid #FDE68A' },
-      missing: { background: '#FEF2F2', color: '#991B1B', border: '1px solid #FECACA' },
-      admin: { background: `${C.maroon700}18`, color: C.maroon700, border: `1px solid ${C.maroon300}` },
+      submitted: { background: 'var(--status-success-bg)', color: 'var(--status-success-text)', border: '1px solid var(--status-success)' },
+      draft: { background: 'var(--status-warning-bg)', color: 'var(--status-warning-text)', border: '1px solid var(--status-warning)' },
+      missing: { background: 'var(--status-error-bg)', color: 'var(--status-error-text)', border: '1px solid var(--status-error)' },
+      admin: { background: 'var(--bg-secondary)', color: 'var(--navy-700)', border: '1px solid var(--border)' },
     };
     return {
       ...(styles[type] || styles.admin),
@@ -118,36 +100,37 @@ const s = {
   },
   th: {
     textAlign: 'left', padding: '11px 16px', fontSize: 11,
-    fontWeight: 700, color: C.mutedText, textTransform: 'uppercase',
-    letterSpacing: '0.05em', background: C.cream200,
-    borderBottom: `1px solid ${C.border}`,
+    fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase',
+    letterSpacing: '0.05em', background: 'var(--bg-secondary)',
+    borderBottom: '1px solid var(--border)',
   },
   td: {
     padding: '14px 16px',
-    borderBottom: `1px solid ${C.cream200}`,
+    borderBottom: '1px solid var(--bg-secondary)',
     verticalAlign: 'middle',
     fontSize: 14,
   },
   primaryBtn: {
     padding: '9px 20px', borderRadius: 9, border: 'none', cursor: 'pointer',
     fontSize: 13, fontWeight: 700,
-    background: `linear-gradient(135deg, ${C.maroon700}, ${C.maroon500})`,
-    color: '#fff', boxShadow: '0 2px 10px rgba(122,26,26,0.35)',
+    background: 'var(--navy-700)',
+    color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
     display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'all 0.2s',
   },
   ghostBtn: {
     padding: '7px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600,
-    background: C.cream200, border: `1px solid ${C.border}`,
-    color: C.mutedText, transition: 'all 0.2s',
+    background: 'var(--bg-secondary)', border: '1px solid var(--border)',
+    color: 'var(--text-muted)', transition: 'all 0.2s',
   },
   detailBox: (accent) => ({
-    background: `${accent}08`,
+    background: `${accent}08`, // Hex + alpha opacity
     border: `1px solid ${accent}25`,
     borderLeft: `3px solid ${accent}`,
     borderRadius: 10, padding: 16, marginTop: 10,
   }),
-  divider: { borderTop: `1px solid ${C.cream200}`, margin: '12px 0' },
+  divider: { borderTop: '1px solid var(--bg-secondary)', margin: '12px 0' },
 };
+
 
 export default function AdminPortalPage() {
   const { user, profile, logout } = useAuth();
@@ -492,38 +475,38 @@ export default function AdminPortalPage() {
           <div style={s.brandIcon}><Shield size={20} /></div>
           <div>
             <div style={s.brandText}>BGS Admin Portal</div>
-            <div style={s.brandSub}>Shidlaghatta · Management Access</div>
+            <div style={{ ...s.brandSub, display: 'none' }} className="admin-nav-sub">Shidlaghatta · Management Access</div>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 14, fontWeight: 600, color: C.cream100 }}>{profile?.name || 'Admin'}</div>
-            <div style={{ fontSize: 11, color: 'rgba(253,248,240,0.5)' }}>Administrator</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ textAlign: 'right' }} className="admin-nav-name">
+            <div style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>{profile?.name || 'Admin'}</div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Administrator</div>
           </div>
           {avatarImg
-            ? <img src={avatarImg} alt="" style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid rgba(253,248,240,0.3)' }} referrerPolicy="no-referrer" />
-            : <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(253,248,240,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.cream100, fontWeight: 700 }}>{initials}</div>
+            ? <img src={avatarImg} alt="" style={{ width: 36, height: 36, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.3)', flexShrink: 0 }} referrerPolicy="no-referrer" />
+            : <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, flexShrink: 0 }}>{initials}</div>
           }
           <button style={s.logoutBtn} onClick={handleLogout}>Sign Out</button>
         </div>
       </nav>
 
       {/* ── BODY ── */}
-      <div style={s.body}>
+      <div style={{ ...s.body, padding: 'clamp(16px, 3vw, 28px)' }}>
         <div style={{ marginBottom: 26 }}>
           <h1 style={s.pageTitle}>Teacher Monitoring Center</h1>
           <p style={s.pageSubtitle}>Monitor all teachers' weekly submissions, view full reports and download PDFs</p>
         </div>
 
-        {/* TABS */}
-        <div style={{ ...s.tabBar, flexWrap: 'wrap' }}>
-          <button style={s.tab(activeTab === 'monitor')} onClick={() => setActiveTab('monitor')}><BarChart2 size={16} style={{marginRight: 6}} /> Weekly Monitor</button>
-          <button style={s.tab(activeTab === 'reports')} onClick={() => setActiveTab('reports')}><ClipboardList size={16} style={{marginRight: 6}} /> All Reports</button>
-          <button style={s.tab(activeTab === 'teachers')} onClick={() => setActiveTab('teachers')}><Users size={16} style={{marginRight: 6}} /> Teacher Profiles</button>
-          <button style={s.tab(activeTab === 'announcements')} onClick={() => setActiveTab('announcements')}><Megaphone size={16} style={{marginRight: 6}} /> Announcements</button>
-          <button style={s.tab(activeTab === 'meetings')} onClick={() => setActiveTab('meetings')}><Calendar size={16} style={{marginRight: 6}} /> Meetings</button>
-          <button style={s.tab(activeTab === 'attendance')} onClick={() => setActiveTab('attendance')}><ClipboardCheck size={16} style={{marginRight: 6}} /> Attendance</button>
-          <button style={s.tab(activeTab === 'tests')} onClick={() => setActiveTab('tests')}><PenLine size={16} style={{marginRight: 6}} /> Tests</button>
+        {/* TABS — horizontally scrollable on mobile */}
+        <div style={{ ...s.tabBar, overflowX: 'auto', WebkitOverflowScrolling: 'touch', flexWrap: 'nowrap', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
+          <button style={{ ...s.tab(activeTab === 'monitor'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('monitor')}><BarChart2 size={16} style={{marginRight: 6}} /> Weekly Monitor</button>
+          <button style={{ ...s.tab(activeTab === 'reports'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('reports')}><ClipboardList size={16} style={{marginRight: 6}} /> All Reports</button>
+          <button style={{ ...s.tab(activeTab === 'teachers'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('teachers')}><Users size={16} style={{marginRight: 6}} /> Teacher Profiles</button>
+          <button style={{ ...s.tab(activeTab === 'announcements'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('announcements')}><Megaphone size={16} style={{marginRight: 6}} /> Announcements</button>
+          <button style={{ ...s.tab(activeTab === 'meetings'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('meetings')}><Calendar size={16} style={{marginRight: 6}} /> Meetings</button>
+          <button style={{ ...s.tab(activeTab === 'attendance'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('attendance')}><ClipboardCheck size={16} style={{marginRight: 6}} /> Attendance</button>
+          <button style={{ ...s.tab(activeTab === 'tests'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('tests')}><PenLine size={16} style={{marginRight: 6}} /> Tests</button>
         </div>
 
         {/* ══ TAB 1: WEEKLY MONITOR ══ */}
@@ -543,7 +526,7 @@ export default function AdminPortalPage() {
                     }
                   }} 
                 />
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 500 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, fontWeight: 500 }}>
                   Week: {formatWeekLabel(selectedDate)}
                 </div>
               </div>
@@ -555,24 +538,24 @@ export default function AdminPortalPage() {
 
             {/* Stats */}
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 20 }}>
-              <div style={s.statCard(C.maroon600)}>
-                <div style={{ fontSize: 30, fontWeight: 800, color: C.maroon700 }}>{teachers.length}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><span style={{display:"flex", alignItems:"center", gap:4}}><Users size={14} /> Total Teachers</span></div>
+              <div style={s.statCard('var(--navy-600)')}>
+                <div style={{ fontSize: 30, fontWeight: 800, color: 'var(--navy-700)' }}>{teachers.length}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, fontWeight: 600 }}><span style={{display:"flex", alignItems:"center", gap:4}}><Users size={14} /> Total Teachers</span></div>
               </div>
-              <div style={s.statCard('#059669')}>
-                <div style={{ fontSize: 30, fontWeight: 800, color: '#065F46' }}>{submitted}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><><CheckCircle size={14} /> Submitted</></div>
+              <div style={s.statCard('var(--status-success)')}>
+                <div style={{ fontSize: 30, fontWeight: 800, color: 'var(--status-success-text)' }}>{submitted}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, fontWeight: 600 }}><><CheckCircle size={14} /> Submitted</></div>
               </div>
-              <div style={s.statCard('#D97706')}>
-                <div style={{ fontSize: 30, fontWeight: 800, color: '#92400E' }}>{draft}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><><FileEdit size={14} /> Draft</></div>
+              <div style={s.statCard('var(--status-warning)')}>
+                <div style={{ fontSize: 30, fontWeight: 800, color: 'var(--status-warning-text)' }}>{draft}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, fontWeight: 600 }}><><FileEdit size={14} /> Draft</></div>
               </div>
-              <div style={s.statCard('#DC2626')}>
-                <div style={{ fontSize: 30, fontWeight: 800, color: '#991B1B' }}>{missing}</div>
-                <div style={{ fontSize: 12, color: C.mutedText, marginTop: 4, fontWeight: 600 }}><><XCircle size={14} /> Not Started</></div>
+              <div style={s.statCard('var(--status-error)')}>
+                <div style={{ fontSize: 30, fontWeight: 800, color: 'var(--status-error-text)' }}>{missing}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, fontWeight: 600 }}><><XCircle size={14} /> Not Started</></div>
               </div>
-              <div style={{ ...s.statCard(C.maroon400), background: `linear-gradient(135deg, ${C.maroon900}, ${C.maroon700})` }}>
-                <div style={{ fontSize: 30, fontWeight: 800, color: C.cream100 }}>
+              <div style={{ ...s.statCard('var(--navy-400)'), background: `linear-gradient(135deg, ${'var(--navy-900)'}, ${'var(--navy-700)'})` }}>
+                <div style={{ fontSize: 30, fontWeight: 800, color: 'var(--bg-primary)' }}>
                   {teachers.length > 0 ? Math.round((submitted / teachers.length) * 100) : 0}%
                 </div>
                 <div style={{ fontSize: 12, color: 'rgba(253,248,240,0.6)', marginTop: 4, fontWeight: 600 }}><TrendingUp size={14} style={{marginRight:4}} /> Completion Rate</div>
@@ -582,7 +565,7 @@ export default function AdminPortalPage() {
             {/* Table */}
             <div style={s.card}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, color: C.maroon700 }}>Submission Status for Week ({formatWeekLabel(selectedDate)})</div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--navy-700)' }}>Submission Status for Week ({formatWeekLabel(selectedDate)})</div>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <span style={s.badge('submitted')}><CheckCircle size={14} /> {submitted}</span>
                   <span style={s.badge('draft')}><FileEdit size={14} /> {draft}</span>
@@ -590,7 +573,7 @@ export default function AdminPortalPage() {
                 </div>
               </div>
               {monitorLoading ? (
-                <div style={{ padding: 40, textAlign: 'center', color: C.mutedText }}>Loading...</div>
+                <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>
               ) : (
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', borderRadius: 10, overflow: 'hidden' }}>
@@ -604,34 +587,34 @@ export default function AdminPortalPage() {
                     <tbody>
                       {filteredMonitor.map((t, i) => (
                         <tr key={t.id}
-                          style={{ background: i % 2 === 0 ? '#fff' : C.cream100, transition: 'background 0.15s', cursor: 'default' }}
-                          onMouseEnter={e => e.currentTarget.style.background = C.cream200}
-                          onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? '#fff' : C.cream100}>
-                          <td style={{ ...s.td, color: C.mutedText, fontSize: 12 }}>{i + 1}</td>
+                          style={{ background: i % 2 === 0 ? '#fff' : 'var(--bg-primary)', transition: 'background 0.15s', cursor: 'default' }}
+                          onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-secondary)'}
+                          onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? '#fff' : 'var(--bg-primary)'}>
+                          <td style={{ ...s.td, color: 'var(--text-muted)', fontSize: 12 }}>{i + 1}</td>
                           <td style={s.td}>
-                            <div style={{ fontWeight: 600, color: C.creamText }}>{t.name}</div>
-                            <div style={{ fontSize: 12, color: C.mutedText, marginTop: 2 }}>{t.email}</div>
+                            <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t.name}</div>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{t.email}</div>
                           </td>
                           <td style={s.td}>
                             {t.phone
-                              ? <span style={{ fontSize: 13, color: C.mutedText }}><Phone size={14} style={{marginRight:4}} /> {t.phone}</span>
-                              : <span style={{ fontSize: 12, color: C.cream300 }}>—</span>}
+                              ? <span style={{ fontSize: 13, color: 'var(--text-muted)' }}><Phone size={14} style={{marginRight:4}} /> {t.phone}</span>
+                              : <span style={{ fontSize: 12, color: 'var(--bg-card-hover)' }}>—</span>}
                           </td>
                           <td style={s.td}>
-                            <span style={{ color: C.maroon600, fontWeight: 600, fontSize: 13 }}>{t.report?.subject || '—'}</span>
+                            <span style={{ color: 'var(--navy-600)', fontWeight: 600, fontSize: 13 }}>{t.report?.subject || '—'}</span>
                           </td>
                           <td style={s.td}>
                             {!t.report && <span style={s.badge('missing')}><><XCircle size={14} /> Not Started</></span>}
                             {t.report?.status === 'draft' && <span style={s.badge('draft')}><><FileEdit size={14} /> Draft</></span>}
                             {t.report?.status === 'submitted' && <span style={s.badge('submitted')}><><CheckCircle size={14} /> Submitted</></span>}
                           </td>
-                          <td style={{ ...s.td, maxWidth: 240, color: C.mutedText, fontSize: 13 }}>
+                          <td style={{ ...s.td, maxWidth: 240, color: 'var(--text-muted)', fontSize: 13 }}>
                             {t.report?.topics_covered ? t.report.topics_covered.substring(0, 55) + '...' : '—'}
                           </td>
                         </tr>
                       ))}
                       {filteredMonitor.length === 0 && (
-                        <tr><td colSpan="6" style={{ padding: 40, textAlign: 'center', color: C.mutedText }}>No teachers found.</td></tr>
+                        <tr><td colSpan="6" style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No teachers found.</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -650,15 +633,15 @@ export default function AdminPortalPage() {
             </div>
 
             {allLoading ? (
-              <div style={{ padding: 60, textAlign: 'center', color: C.mutedText }}>Loading all reports...</div>
+              <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>Loading all reports...</div>
             ) : Object.keys(reportsByDate).length === 0 ? (
-              <div style={{ padding: 60, textAlign: 'center', color: C.mutedText }}>No reports found.</div>
+              <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>No reports found.</div>
             ) : Object.entries(reportsByDate).map(([date, reps]) => (
               <div key={date} style={s.card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
                   <div>
-                    <div style={{ fontWeight: 800, fontSize: 16, color: C.maroon700 }}><Calendar size={16} style={{marginRight:6}} /> {date}</div>
-                    <div style={{ fontSize: 12, color: C.mutedText, marginTop: 3 }}>
+                    <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--navy-700)' }}><Calendar size={16} style={{marginRight:6}} /> {date}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
                       {reps.filter(r => r.status === 'submitted').length} submitted · {reps.filter(r => r.status === 'draft').length} draft
                     </div>
                   </div>
@@ -666,12 +649,12 @@ export default function AdminPortalPage() {
                 </div>
 
                 {reps.map(r => (
-                  <div key={r.id} style={{ background: C.cream100, borderRadius: 10, border: `1px solid ${C.border}`, marginBottom: 10 }}>
+                  <div key={r.id} style={{ background: 'var(--bg-primary)', borderRadius: 10, border: `1px solid ${'var(--border)'}`, marginBottom: 10 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 18px', flexWrap: 'wrap', gap: 10 }}>
                       <div>
-                        <span style={{ fontWeight: 700, color: C.creamText }}>{r.profiles?.name || 'Unknown'}</span>
-                        {r.subject && <span style={{ marginLeft: 10, color: C.maroon500, fontSize: 13, fontWeight: 600 }}>· {r.subject}</span>}
-                        <div style={{ fontSize: 12, color: C.mutedText, marginTop: 3 }}>{r.profiles?.email}</div>
+                        <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{r.profiles?.name || 'Unknown'}</span>
+                        {r.subject && <span style={{ marginLeft: 10, color: 'var(--navy-500)', fontSize: 13, fontWeight: 600 }}>· {r.subject}</span>}
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>{r.profiles?.email}</div>
                       </div>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                         {r.status === 'submitted' ? <span style={s.badge('submitted')}><><CheckCircle size={14} /> Submitted</></span> : <span style={s.badge('draft')}><><FileEdit size={14} /> Draft</></span>}
@@ -683,13 +666,13 @@ export default function AdminPortalPage() {
 
                     {expandedId === r.id && (
                       <div style={{ padding: '0 18px 18px' }}>
-                        <div style={s.detailBox(C.maroon500)}>
-                          <div style={{ fontWeight: 700, color: C.maroon700, marginBottom: 10, fontSize: 13 }}><BookOpen size={16} style={{marginRight:6}} /> Last Week Overview</div>
-                          <div style={{ fontSize: 13, color: C.creamText, marginBottom: 6 }}><strong>Topics:</strong> {r.topics_covered || 'Not specified'}</div>
-                          <div style={{ fontSize: 13, marginBottom: 6, color: r.is_on_schedule ? '#065F46' : '#991B1B', fontWeight: 600 }}>
+                        <div style={s.detailBox('var(--navy-500)')}>
+                          <div style={{ fontWeight: 700, color: 'var(--navy-700)', marginBottom: 10, fontSize: 13 }}><BookOpen size={16} style={{marginRight:6}} /> Last Week Overview</div>
+                          <div style={{ fontSize: 13, color: 'var(--text-primary)', marginBottom: 6 }}><strong>Topics:</strong> {r.topics_covered || 'Not specified'}</div>
+                          <div style={{ fontSize: 13, marginBottom: 6, color: r.is_on_schedule ? 'var(--status-success-text)' : 'var(--status-error-text)', fontWeight: 600 }}>
                             {r.is_on_schedule ? '<CheckCircle size={14} /> On schedule' : '<AlertTriangle size={14} /> Behind schedule'}
                           </div>
-                          {r.challenges && <div style={{ fontSize: 13, color: C.mutedText }}><strong>Challenges:</strong> {r.challenges}</div>}
+                          {r.challenges && <div style={{ fontSize: 13, color: 'var(--text-muted)' }}><strong>Challenges:</strong> {r.challenges}</div>}
                         </div>
 
                         {['cet', 'neet', 'jee'].map(sec => {
@@ -701,18 +684,18 @@ export default function AdminPortalPage() {
                           const qs = r[`${sec}_questions`] || [];
                           const ts = r[`${sec}_tests`] || [];
                           const ds = r[`${sec}_doubt`] || [];
-                          const accent = sec === 'cet' ? '#2563EB' : sec === 'neet' ? '#7C3AED' : '#D97706';
+                          const accent = sec === 'cet' ? '#2563EB' : sec === 'neet' ? '#7C3AED' : 'var(--status-warning)';
                           return (
                             <div key={sec} style={{ ...s.detailBox(accent), marginTop: 10 }}>
                               <div style={{ fontWeight: 700, fontSize: 13, color: accent, marginBottom: 10 }}>{sec.toUpperCase()} Section</div>
-                              {r[`${sec}_book`] && <div style={{ fontSize: 13, color: C.mutedText, marginBottom: 10 }}><BookOpen size={14} style={{marginRight:4}} /> <strong>Book:</strong> {r[`${sec}_book`]}</div>}
+                              {r[`${sec}_book`] && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 10 }}><BookOpen size={14} style={{marginRight:4}} /> <strong>Book:</strong> {r[`${sec}_book`]}</div>}
                               {[['Questions Done', qs, 'questions'], ['Tests Conducted', ts, 'tests'], ['Doubt Classes', ds, 'classes']].map(([label, rows, unit]) =>
                                 rows.length > 0 ? (
                                   <div key={label} style={{ marginBottom: 8 }}>
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: C.mutedText, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
+                                    <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</div>
                                     {rows.map((row, i) => (
-                                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: `1px solid ${C.cream200}`, fontSize: 13 }}>
-                                        <span style={{ color: C.creamText }}>{row.class_name}</span>
+                                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: `1px solid ${'var(--bg-secondary)'}`, fontSize: 13 }}>
+                                        <span style={{ color: 'var(--text-primary)' }}>{row.class_name}</span>
                                         <span style={{ color: accent, fontWeight: 700 }}>{row.count} {unit}</span>
                                       </div>
                                     ))}
@@ -740,7 +723,7 @@ export default function AdminPortalPage() {
             </div>
 
             {profilesLoading ? (
-              <div style={{ padding: 40, textAlign: 'center', color: C.mutedText }}>Loading teacher profiles...</div>
+              <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading teacher profiles...</div>
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
                 {filteredProfiles.map((t, i) => {
@@ -752,36 +735,36 @@ export default function AdminPortalPage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
                         <div style={{
                           width: 48, height: 48, borderRadius: 12,
-                          background: `linear-gradient(135deg, ${C.maroon800}, ${C.maroon600})`,
+                          background: `linear-gradient(135deg, ${'var(--navy-800)'}, ${'var(--navy-600)'})`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          color: C.cream100, fontWeight: 800, fontSize: 18, flexShrink: 0,
+                          color: 'var(--bg-primary)', fontWeight: 800, fontSize: 18, flexShrink: 0,
                         }}>{initials}</div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, fontSize: 15, color: C.creamText, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.name}</div>
-                          <div style={{ fontSize: 12, color: C.mutedText, marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.email}</div>
+                          <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.name}</div>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.email}</div>
                         </div>
                       </div>
                       <div style={s.divider} />
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginTop: 14 }}>
                         {[
-                          { label: 'Total', value: totalReports, color: C.maroon600 },
-                          { label: 'Submitted', value: submittedReports, color: '#059669' },
-                          { label: 'Drafts', value: totalReports - submittedReports, color: '#D97706' },
+                          { label: 'Total', value: totalReports, color: 'var(--navy-600)' },
+                          { label: 'Submitted', value: submittedReports, color: 'var(--status-success)' },
+                          { label: 'Drafts', value: totalReports - submittedReports, color: 'var(--status-warning)' },
                         ].map(stat => (
-                          <div key={stat.label} style={{ textAlign: 'center', background: C.cream100, borderRadius: 8, padding: '10px 4px', border: `1px solid ${C.border}` }}>
+                          <div key={stat.label} style={{ textAlign: 'center', background: 'var(--bg-primary)', borderRadius: 8, padding: '10px 4px', border: `1px solid ${'var(--border)'}` }}>
                             <div style={{ fontSize: 20, fontWeight: 800, color: stat.color }}>{stat.value}</div>
-                            <div style={{ fontSize: 11, color: C.mutedText, marginTop: 2, fontWeight: 600 }}>{stat.label}</div>
+                            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2, fontWeight: 600 }}>{stat.label}</div>
                           </div>
                         ))}
                       </div>
                       {t.phone && (
-                        <div style={{ marginTop: 14, fontSize: 13, color: C.mutedText }}><Phone size={14} style={{marginRight:4}} /> {t.phone}</div>
+                        <div style={{ marginTop: 14, fontSize: 13, color: 'var(--text-muted)' }}><Phone size={14} style={{marginRight:4}} /> {t.phone}</div>
                       )}
                     </div>
                   );
                 })}
                 {filteredProfiles.length === 0 && (
-                  <div style={{ gridColumn: '1 / -1', padding: 40, textAlign: 'center', color: C.mutedText }}>No teachers found.</div>
+                  <div style={{ gridColumn: '1 / -1', padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>No teachers found.</div>
                 )}
               </div>
             )}
@@ -793,7 +776,7 @@ export default function AdminPortalPage() {
           <>
             {/* Compose */}
             <div style={s.card}>
-              <div style={{ fontWeight: 700, fontSize: 15, color: C.maroon700, marginBottom: 16 }}><Megaphone size={16} style={{marginRight: 6}} /> Post New Announcement</div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--navy-700)', marginBottom: 16 }}><Megaphone size={16} style={{marginRight: 6}} /> Post New Announcement</div>
               <div style={{ marginBottom: 14 }}>
                 <div style={s.label}>Title</div>
                 <input type="text" style={s.input} placeholder="e.g. Staff meeting tomorrow" value={newAnnTitle} onChange={e => setNewAnnTitle(e.target.value)} />
@@ -809,24 +792,24 @@ export default function AdminPortalPage() {
 
             {/* List */}
             {annLoading ? (
-              <div style={{ padding: 40, textAlign: 'center', color: C.mutedText }}>Loading announcements...</div>
+              <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading announcements...</div>
             ) : announcements.length === 0 ? (
-              <div style={{ ...s.card, textAlign: 'center', padding: 48, color: C.mutedText }}>
+              <div style={{ ...s.card, textAlign: 'center', padding: 48, color: 'var(--text-muted)' }}>
                 No announcements yet. Post one above and all teachers will see it on their dashboard!
               </div>
             ) : (
               announcements.map(a => (
-                <div key={a.id} style={{ ...s.card, borderLeft: `4px solid ${C.maroon500}` }}>
+                <div key={a.id} style={{ ...s.card, borderLeft: `4px solid ${'var(--navy-500)'}` }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15, color: C.creamText, marginBottom: 4 }}>{a.title}</div>
-                      {a.body && <div style={{ fontSize: 14, color: C.mutedText, lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{a.body}</div>}
-                      <div style={{ fontSize: 12, color: C.cream400, marginTop: 10 }}>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginBottom: 4 }}>{a.title}</div>
+                      {a.body && <div style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{a.body}</div>}
+                      <div style={{ fontSize: 12, color: 'var(--border)', marginTop: 10 }}>
                         Posted by {a.posted_by} · {new Date(a.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
                     <button
-                      style={{ ...s.ghostBtn, color: '#991B1B', borderColor: '#FECACA', background: '#FEF2F2', fontSize: 11 }}
+                      style={{ ...s.ghostBtn, color: 'var(--status-error-text)', borderColor: '#FECACA', background: '#FEF2F2', fontSize: 11 }}
                       onClick={() => deleteAnnouncement(a.id)}
                     >
                       <><Trash2 size={14} style={{marginRight:4}} /> Delete</>
@@ -842,39 +825,39 @@ export default function AdminPortalPage() {
         {activeTab === 'meetings' && (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 700, color: C.maroon700 }}>Scheduled Meetings</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--navy-700)' }}>Scheduled Meetings</h2>
               <button style={s.primaryBtn} onClick={openNewMeetingModal}><Plus size={16} /> New Meeting</button>
             </div>
             
             {meetingsLoading ? (
-              <div style={{ padding: 40, textAlign: 'center', color: C.mutedText }}>Loading meetings...</div>
+              <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading meetings...</div>
             ) : meetings.length === 0 ? (
-              <div style={{ ...s.card, textAlign: 'center', padding: 48, color: C.mutedText }}>
+              <div style={{ ...s.card, textAlign: 'center', padding: 48, color: 'var(--text-muted)' }}>
                 No meetings scheduled.
               </div>
             ) : (
               <div style={{ display: 'grid', gap: 16 }}>
                 {meetings.map(m => (
-                  <div key={m.id} style={{ ...s.card, opacity: m.status === 'cancelled' ? 0.6 : 1, borderLeft: `4px solid ${m.status === 'cancelled' ? '#9CA3AF' : C.maroon500}`, marginBottom: 0 }}>
+                  <div key={m.id} style={{ ...s.card, opacity: m.status === 'cancelled' ? 0.6 : 1, borderLeft: `4px solid ${m.status === 'cancelled' ? '#9CA3AF' : 'var(--navy-500)'}`, marginBottom: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                          <span style={{ fontWeight: 700, fontSize: 16, color: C.creamText }}>{m.title}</span>
+                          <span style={{ fontWeight: 700, fontSize: 16, color: 'var(--text-primary)' }}>{m.title}</span>
                           {m.status === 'cancelled' && <span style={s.badge('missing')}>Cancelled</span>}
                         </div>
-                        <div style={{ fontSize: 13, color: C.mutedText, marginBottom: 8 }}>
+                        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 8 }}>
                           <Calendar size={14} style={{ display: 'inline', verticalAlign: 'text-bottom' }} /> {m.meeting_date} · {m.start_time.substring(0,5)} - {m.end_time.substring(0,5)}
                         </div>
-                        <div style={{ fontSize: 13, color: C.mutedText, marginBottom: 8 }}>
+                        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 8 }}>
                           <Video size={14} style={{ display: 'inline', verticalAlign: 'text-bottom' }} /> {m.location || 'No location set'}
                         </div>
-                        <div style={{ fontSize: 12, color: C.cream400 }}>
+                        <div style={{ fontSize: 12, color: 'var(--border)' }}>
                           Target: {m.audience_type === 'all_staff' ? 'All Staff' : m.audience_type === 'department' ? `Dept: ${m.department}` : 'Individuals'}
                         </div>
                       </div>
                       <div style={{ display: 'flex', gap: 8 }}>
                         <button style={s.ghostBtn} onClick={() => openEditMeetingModal(m)}><FileEdit size={14} /> Edit</button>
-                        <button style={{...s.ghostBtn, color: m.status === 'scheduled' ? '#991B1B' : '#065F46'}} onClick={() => toggleCancelMeeting(m)}>
+                        <button style={{...s.ghostBtn, color: m.status === 'scheduled' ? 'var(--status-error-text)' : 'var(--status-success-text)'}} onClick={() => toggleCancelMeeting(m)}>
                           {m.status === 'scheduled' ? <><XCircle size={14} /> Cancel</> : <><CheckCircle size={14} /> Restore</>}
                         </button>
                       </div>
@@ -889,10 +872,10 @@ export default function AdminPortalPage() {
 
       {showMeetingModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: C.cream100, padding: 24, borderRadius: 16, width: '100%', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto' }}>
+          <div style={{ background: 'var(--bg-primary)', padding: 24, borderRadius: 16, width: '100%', maxWidth: 500, maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 18, color: C.maroon700 }}>{editingMeeting ? 'Edit Meeting' : 'New Meeting'}</h3>
-              <button onClick={() => setShowMeetingModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: C.mutedText }}><X size={20}/></button>
+              <h3 style={{ margin: 0, fontSize: 18, color: 'var(--navy-700)' }}>{editingMeeting ? 'Edit Meeting' : 'New Meeting'}</h3>
+              <button onClick={() => setShowMeetingModal(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X size={20}/></button>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -935,7 +918,7 @@ export default function AdminPortalPage() {
               {meetAudience === 'individual' && (
                 <div>
                   <label style={s.label}>Select Teachers</label>
-                  <div style={{ maxHeight: 150, overflowY: 'auto', border: `1px solid ${C.border}`, borderRadius: 8, padding: 8, background: '#fff' }}>
+                  <div style={{ maxHeight: 150, overflowY: 'auto', border: `1px solid ${'var(--border)'}`, borderRadius: 8, padding: 8, background: '#fff' }}>
                     {profilesData.map(t => (
                       <label key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: 4, cursor: 'pointer' }}>
                         <input type="checkbox" checked={meetAttendees.includes(t.id)} onChange={e => {
@@ -984,7 +967,7 @@ export default function AdminPortalPage() {
             </div>
 
             {attLoading ? (
-              <div style={{padding: 40, textAlign: 'center', color: C.mutedText}}>Loading attendance...</div>
+              <div style={{padding: 40, textAlign: 'center', color: 'var(--text-muted)'}}>Loading attendance...</div>
             ) : (() => {
               const filtered = attSessions.filter(ses => {
                 if (attDateFilter && ses.date !== attDateFilter) return false;
@@ -992,12 +975,12 @@ export default function AdminPortalPage() {
                 return true;
               });
               return filtered.length === 0 ? (
-                <div style={{...s.card, textAlign: 'center', padding: 40, color: C.mutedText}}>
+                <div style={{...s.card, textAlign: 'center', padding: 40, color: 'var(--text-muted)'}}>
                   No attendance records found for the selected filters.
                 </div>
               ) : (
                 <div style={{overflowX: 'auto'}}>
-                  <table style={{width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 12, overflow: 'hidden', border: `1px solid ${C.border}`}}>
+                  <table style={{width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 12, overflow: 'hidden', border: `1px solid ${'var(--border)'}`}}>
                     <thead>
                       <tr>
                         <th style={s.th}>Date</th>
@@ -1024,8 +1007,8 @@ export default function AdminPortalPage() {
                             <td style={s.td}>{ses.year}</td>
                             <td style={s.td}><strong>{ses.class}</strong></td>
                             <td style={s.td}>{totalStudents}</td>
-                            <td style={{...s.td, color: '#059669', fontWeight: 600}}>{presentCount}</td>
-                            <td style={{...s.td, color: '#DC2626', fontWeight: 600}}>{absentCount}</td>
+                            <td style={{...s.td, color: 'var(--status-success)', fontWeight: 600}}>{presentCount}</td>
+                            <td style={{...s.td, color: 'var(--status-error)', fontWeight: 600}}>{absentCount}</td>
                             <td style={s.td}>
                               <span style={{
                                 ...s.badge(pct >= 75 ? 'submitted' : pct >= 50 ? 'draft' : 'missing'),
@@ -1058,19 +1041,19 @@ export default function AdminPortalPage() {
             </div>
 
             {testsLoading ? (
-              <div style={{padding: 40, textAlign: 'center', color: C.mutedText}}>Loading tests...</div>
+              <div style={{padding: 40, textAlign: 'center', color: 'var(--text-muted)'}}>Loading tests...</div>
             ) : (() => {
               const filtered = adminTests.filter(t => {
                 if (testsStreamFilter && t.stream !== testsStreamFilter) return false;
                 return true;
               });
               return filtered.length === 0 ? (
-                <div style={{...s.card, textAlign: 'center', padding: 40, color: C.mutedText}}>
+                <div style={{...s.card, textAlign: 'center', padding: 40, color: 'var(--text-muted)'}}>
                   No tests created yet.
                 </div>
               ) : (
                 <div style={{overflowX: 'auto'}}>
-                  <table style={{width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 12, overflow: 'hidden', border: `1px solid ${C.border}`}}>
+                  <table style={{width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 12, overflow: 'hidden', border: `1px solid ${'var(--border)'}`}}>
                     <thead>
                       <tr>
                         <th style={s.th}>Test Name</th>
@@ -1092,15 +1075,15 @@ export default function AdminPortalPage() {
                             {(t.subjects || []).map((sub, i) => (
                               <span key={i} style={{
                                 display: 'inline-block', padding: '2px 8px', borderRadius: 6,
-                                background: `${C.maroon700}10`, color: C.maroon700,
+                                background: `${'var(--navy-700)'}10`, color: 'var(--navy-700)',
                                 fontSize: 12, fontWeight: 500, marginRight: 6, marginBottom: 4,
-                                border: `1px solid ${C.maroon300}30`,
+                                border: `1px solid ${'var(--navy-300)'}30`,
                               }}>
                                 {sub.name} ({sub.maxMarks})
                               </span>
                             ))}
                           </td>
-                          <td style={{...s.td, color: C.mutedText, fontSize: 13}}>
+                          <td style={{...s.td, color: 'var(--text-muted)', fontSize: 13}}>
                             {new Date(t.created_at).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'})}
                           </td>
                         </tr>
@@ -1124,3 +1107,4 @@ export default function AdminPortalPage() {
     </div>
   );
 }
+

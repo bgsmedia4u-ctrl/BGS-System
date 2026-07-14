@@ -443,56 +443,58 @@ function EnterMarksView({ tests, students }) {
 
       {selectedTestId && !loading && students.length > 0 && (
         <div className="card table-container marks-entry-container">
-          <table className="table marks-table">
-            <thead>
-              <tr>
-                <th style={{ width: 40 }}>Roll</th>
-                <th style={{ minWidth: 200 }}>Name</th>
-                <th style={{ width: 80, textAlign: 'center' }}>Absent</th>
-                {selectedTest.subjects.map(sub => (
-                  <th key={sub.name} style={{ textAlign: 'center' }}>
-                    {sub.name} <br/> <span style={{ fontSize: 10, opacity: 0.7 }}>({sub.maxMarks})</span>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {students.map(st => {
-                const rowData = markData[st.id] || { marks: {}, is_absent: false };
-                const isAbsent = rowData.is_absent;
-                return (
-                  <tr key={st.id} className={isAbsent ? 'row-absent' : ''}>
-                    <td style={{ color: 'var(--text-muted)' }}>{st.roll_number || '-'}</td>
-                    <td style={{ fontWeight: 500 }}>{st.name}</td>
-                    <td style={{ textAlign: 'center' }}>
-                      <input 
-                        type="checkbox" 
-                        className="form-checkbox"
-                        checked={isAbsent}
-                        onChange={e => handleAbsentChange(st.id, e.target.checked)}
-                      />
-                    </td>
-                    {selectedTest.subjects.map(sub => {
-                      const val = rowData.marks[sub.name] || '';
-                      const isOver = Number(val) > sub.maxMarks;
-                      return (
-                        <td key={sub.name} style={{ textAlign: 'center' }}>
-                          <input 
-                            type="number"
-                            className={`form-input mark-input ${isOver ? 'mark-error' : ''}`}
-                            value={val}
-                            onChange={e => handleMarkChange(st.id, sub.name, e.target.value)}
-                            disabled={isAbsent}
-                            placeholder="-"
-                          />
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className="table-responsive">
+            <table className="table marks-table">
+              <thead>
+                <tr>
+                  <th style={{ width: 40 }}>Roll</th>
+                  <th style={{ minWidth: 200 }}>Name</th>
+                  <th style={{ width: 80, textAlign: 'center' }}>Absent</th>
+                  {selectedTest.subjects.map(sub => (
+                    <th key={sub.name} style={{ textAlign: 'center' }}>
+                      {sub.name} <br/> <span style={{ fontSize: 10, opacity: 0.7 }}>({sub.maxMarks})</span>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {students.map(st => {
+                  const rowData = markData[st.id] || { marks: {}, is_absent: false };
+                  const isAbsent = rowData.is_absent;
+                  return (
+                    <tr key={st.id} className={isAbsent ? 'row-absent' : ''}>
+                      <td style={{ color: 'var(--text-muted)' }}>{st.roll_number || '-'}</td>
+                      <td style={{ fontWeight: 500 }}>{st.name}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        <input 
+                          type="checkbox" 
+                          className="form-checkbox"
+                          checked={isAbsent}
+                          onChange={e => handleAbsentChange(st.id, e.target.checked)}
+                        />
+                      </td>
+                      {selectedTest.subjects.map(sub => {
+                        const val = rowData.marks[sub.name] || '';
+                        const isOver = Number(val) > sub.maxMarks;
+                        return (
+                          <td key={sub.name} style={{ textAlign: 'center' }}>
+                            <input 
+                              type="number"
+                              className={`form-input mark-input ${isOver ? 'mark-error' : ''}`}
+                              value={val}
+                              onChange={e => handleMarkChange(st.id, sub.name, e.target.value)}
+                              disabled={isAbsent}
+                              placeholder="-"
+                            />
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
           
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
             <button className="btn btn-primary" onClick={handleSave} disabled={saving}>
@@ -590,54 +592,60 @@ function PrintResultsView({ tests, students, stream, year, cls }) {
       {selectedTestId && !loading && (
         <div className="card print-container table-container" style={{ padding: 32 }}>
           <div className="print-header" style={{ textAlign: 'center', marginBottom: 24 }}>
-            <h2 style={{ color: 'var(--navy-900)', marginBottom: 8 }}>BGS Public School & PU College</h2>
+            <h2 style={{ color: 'var(--text-primary)', marginBottom: 8 }}>BGS Public School & PU College</h2>
             <h3 style={{ color: 'var(--navy-700)', marginBottom: 4 }}>Test Results: {selectedTest.name}</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
               {stream} | {year} | {cls}
             </p>
           </div>
 
-          <table className="table marks-table print-table">
-            <thead>
-              <tr>
-                <th style={{ width: 60, textAlign: 'center' }}>Rank</th>
-                <th style={{ width: 60 }}>Roll</th>
-                <th style={{ minWidth: 200 }}>Student Name</th>
-                {selectedTest.subjects.map(sub => (
-                  <th key={sub.name} style={{ textAlign: 'center' }}>
-                    {sub.name} <br/> <span style={{ fontSize: 10, opacity: 0.8 }}>({sub.maxMarks})</span>
+          <div className="table-responsive">
+            <table className="table marks-table print-table">
+              <thead>
+                <tr>
+                  <th style={{ width: 60, textAlign: 'center' }}>Rank</th>
+                  <th style={{ width: 60 }}>Roll</th>
+                  <th style={{ minWidth: 200 }}>Student Name</th>
+                  {selectedTest.subjects.map(sub => (
+                    <th key={sub.name} style={{ textAlign: 'center' }}>
+                      {sub.name} <br/> <span style={{ fontSize: 10, opacity: 0.8 }}>({sub.maxMarks})</span>
+                    </th>
+                  ))}
+                  <th style={{ textAlign: 'center', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
+                    Total <br/> <span style={{ fontSize: 10, opacity: 0.8 }}>({totalMaxMarks})</span>
                   </th>
-                ))}
-                <th style={{ textAlign: 'center', background: 'rgba(201, 168, 76, 0.1)', color: 'var(--navy-900)' }}>
-                  Total <br/> <span style={{ fontSize: 10, opacity: 0.8 }}>({totalMaxMarks})</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rankedResults.map((st, idx) => {
-                const rank = st.is_absent ? '-' : idx + 1;
-                return (
-                  <tr key={st.id}>
-                    <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--gold-500)' }}>{rank}</td>
-                    <td style={{ color: 'var(--text-muted)' }}>{st.roll_number || '-'}</td>
-                    <td style={{ fontWeight: 500 }}>{st.name}</td>
-                    
-                    {selectedTest.subjects.map(sub => {
-                      let cellContent = '-';
-                      if (st.is_absent) cellContent = 'AB';
-                      else if (st.has_entry) cellContent = st.marks[sub.name] ?? '-';
-
-                      return (
-                        <td key={sub.name} style={{ textAlign: 'center', color: st.is_absent ? 'var(--error)' : 'inherit' }}>
-                          {cellContent}
-                        </td>
-                      );
-                    })}
-                    
-                    <td style={{ textAlign: 'center', fontWeight: 700, background: 'rgba(201, 168, 76, 0.05)' }}>
-                      {st.is_absent ? 'AB' : st.total_marks}
-                    </td>
-                  </tr>
+                </tr>
+              </thead>
+              <tbody>
+                {rankedResults.map((st, idx) => {
+                  const rank = st.is_absent ? '-' : idx + 1;
+                  return (
+                    <tr key={st.id}>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--gold-500)' }}>{rank}</td>
+                      <td style={{ color: 'var(--text-muted)' }}>{st.roll_number || '-'}</td>
+                      <td style={{ fontWeight: 500 }}>{st.name}</td>
+                      
+                      {selectedTest.subjects.map(sub => {
+                        let cellContent = '-';
+                        if (st.is_absent) cellContent = 'AB';
+                        else if (st.has_entry) cellContent = st.marks[sub.name] ?? '-';
+  
+                        return (
+                          <td key={sub.name} style={{ textAlign: 'center', color: st.is_absent ? 'var(--error)' : 'inherit' }}>
+                            {cellContent}
+                          </td>
+                        );
+                      })}
+                      
+                      <td style={{ textAlign: 'center', fontWeight: 700, background: 'var(--bg-secondary)' }}>
+                        {st.is_absent ? 'AB' : st.total_marks}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
                 );
               })}
             </tbody>
@@ -656,3 +664,4 @@ function PrintResultsView({ tests, students, stream, year, cls }) {
     </div>
   );
 }
+

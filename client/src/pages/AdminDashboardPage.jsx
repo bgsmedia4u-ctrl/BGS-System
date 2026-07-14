@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
                <div className="spinner" style={{ margin: '0 auto' }} />
              </div>
           ) : (
-            <div className="table-container">
+            <div className="table-container table-responsive">
               <table className="table">
                 <thead>
                   <tr>

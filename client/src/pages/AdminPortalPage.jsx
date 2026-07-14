@@ -290,7 +290,10 @@ export default function AdminPortalPage() {
       if (profilesData.length === 0) {
         fetchProfiles();
       }
-    } catch (e) { toast.error('Failed to load meetings'); }
+    } catch (e) {
+      console.error('Meetings fetch error:', e);
+      toast.error('Failed to load meetings'); 
+    }
     finally { setMeetingsLoading(false); }
   }
 

@@ -60,12 +60,7 @@ CREATE POLICY "Teachers can view targeted meetings" ON public.meetings
 
 CREATE POLICY "Teachers can view meeting attendees" ON public.meeting_attendees
     FOR SELECT USING (
-        meeting_id IN (
-            SELECT m.id FROM public.meetings m WHERE 
-            m.audience_type = 'all_staff' OR 
-            (m.audience_type = 'department' AND m.department = (SELECT p.department FROM public.profiles p WHERE p.id = auth.uid())) OR
-            (m.audience_type = 'individual' AND m.id IN (SELECT ma2.meeting_id FROM public.meeting_attendees ma2 WHERE ma2.teacher_id = auth.uid()))
-        )
+        TRUE
     );
 
 -- 6. Trigger for updated_at

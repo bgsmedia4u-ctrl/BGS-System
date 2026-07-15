@@ -1,5 +1,6 @@
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { formatTopics } from '../utils/formatters';
 
 const pdfMakeObj = pdfMake.default || pdfMake;
 const pdfFontsObj = pdfFonts.default || pdfFonts;
@@ -28,7 +29,7 @@ export const pdfService = {
       content.push({ text: '1. Last Week Overview', style: 'sectionHeader' });
       content.push({
         ul: [
-          `Topics Covered: ${report.topics_covered || 'None'}`,
+          `Topics Covered: ${formatTopics(report.topics_covered)}`,
           `On Schedule: ${report.is_on_schedule ? 'Yes' : 'No'}`,
           `Challenges: ${report.challenges || 'None'}`,
         ],

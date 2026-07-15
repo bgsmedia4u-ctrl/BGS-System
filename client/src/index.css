@@ -8,20 +8,25 @@
 /* ─── CSS Custom Properties ─── */
 :root {
   /* Navy (Primary/Institutional) */
+  --navy-950: #0F172A; /* Sidebar and ultra dark */
   --navy-900: #1A2238; /* Deepest background accents */
   --navy-800: #202D48; /* Headers, strong accents */
   --navy-700: #2C3E50; /* Primary brand color */
   --navy-600: #34495E; /* Hover states */
   --navy-500: #4B6584; /* Borders, secondary text */
+  --navy-400: #71889D; /* Lighter accents */
+  --navy-300: #8DA2B3; /* Even lighter accents */
   --navy-50:  #F4F6F8; /* Lightest tint for backgrounds */
 
   /* Gold (Accent) */
   --gold-600: #B8860B; /* Dark gold for text/borders */
   --gold-500: #DAA520; /* Primary accent */
   --gold-400: #F4D03F; /* Light accent / hover */
+  --gold-300: #F7DC6F; /* Lighter gold */
   --gold-50:  #FEF9E7; /* Light gold background */
 
   /* Cream/Surface (Backgrounds) */
+  --cream-100: #FDFBF7; /* Sidebar logo background */
   --bg-app: #F8F9FA;
   --bg-surface: #FFFFFF;
   --bg-surface-hover: #F1F3F5;

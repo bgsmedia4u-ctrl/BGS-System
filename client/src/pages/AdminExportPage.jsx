@@ -5,6 +5,7 @@ import { pdfService } from '../api/pdfService';
 import Layout from '../components/Layout';
 import { Download, Calendar, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { formatTopics } from '../utils/formatters';
 
 export default function AdminExportPage() {
   const { user } = useAuth();
@@ -108,7 +109,7 @@ export default function AdminExportPage() {
                       <td style={{ fontWeight: 600 }}>{r.profiles?.name}</td>
                       <td>{r.profiles?.email}</td>
                       <td style={{ color: 'var(--gold-500)', fontWeight: 500 }}>{r.subject || '-'}</td>
-                      <td style={{ color: 'var(--text-secondary)' }}>{r.topics_covered ? r.topics_covered.substring(0, 50) + '...' : 'None'}</td>
+                      <td style={{ color: 'var(--text-secondary)' }}>{r.topics_covered ? formatTopics(r.topics_covered).substring(0, 50) + '...' : 'None'}</td>
                     </tr>
                   ))}
                 </tbody>

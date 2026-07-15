@@ -76,6 +76,106 @@ function DynamicList({ title, data, onChange, disabled, placeholderCount }) {
   );
 }
 
+function TopicsList({ title, data, onChange, disabled }) {
+  const addRow = () => {
+    if (data.length >= 10) {
+      toast.error('Maximum 10 classes allowed');
+      return;
+    }
+    onChange([...data, { class_name: '', topics: '' }]);
+  };
+
+  const updateRow = (idx, field, val) => {
+    const updated = [...data];
+    updated[idx][field] = val;
+    onChange(updated);
+  };
+
+  const removeRow = (idx) => {
+    onChange(data.filter((_, i) => i !== idx));
+  };
+
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <div className="card-title" style={{ marginBottom: 12 }}>{title}</div>
+      {data.length === 0 && (
+        <div style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 12 }}>No entries yet.</div>
+      )}
+      {data.map((item, idx) => (
+        <div key={idx} style={{ display: 'flex', gap: 12, marginBottom: 12, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1 1 120px' }}>
+            <input 
+              type="text" 
+              className="form-input"
+              placeholder="Class (e.g. 10A)"
+              value={item.class_name}
+              onChange={(e) => updateRow(idx, 'class_name', e.target.value)}
+              disabled={disabled}
+            />
+          </div>
+          <div style={{ flex: '3 1 200px' }}>
+            <textarea 
+              className="form-textarea"
+              style={{ minHeight: '44px', padding: '10px 14px' }}
+              placeholder="Topics covered..."
+              value={item.topics}
+              onChange={(e) => updateRow(idx, 'topics', e.target.value)}
+              disabled={disabled}
+            />
+          </div>
+          {!disabled && (
+            <button 
+              type="button" 
+              className="btn btn-ghost" 
+              style={{ color: 'var(--error)', padding: 10 }}
+              onClick={() => removeRow(idx)}
+              title="Remove"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+        </div>
+      ))}
+      {!disabled && data.length < 10 && (
+        <button type="button" className="btn btn-secondary btn-sm" onClick={addRow} style={{ marginTop: 8 }}>
+          <Plus size={14} /> Add Class
+        </button>
+      )}
+    </div>
+  );
+}
+
+function NonTeachingList({ data, onChange, disabled }) {
+  const updateRow = (idx, val) => {
+    const updated = [...data];
+    updated[idx].task = val;
+    onChange(updated);
+  };
+
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      {data.map((item, idx) => (
+        <div key={idx} style={{ display: 'flex', gap: 12, marginBottom: 12, alignItems: 'flex-start' }}>
+          <div style={{ width: 100, paddingTop: 10, fontWeight: 500 }}>
+            {item.day}
+          </div>
+          <div style={{ flex: 1 }}>
+            <textarea 
+              className="form-textarea"
+              style={{ minHeight: '44px', padding: '10px 14px' }}
+              placeholder={`Tasks for ${item.day}...`}
+              value={item.task}
+              onChange={(e) => updateRow(idx, e.target.value)}
+              disabled={disabled}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
 export default function ReportFormPage() {
   const { dateParam } = useParams(); // changed from weekStart
   const navigate = useNavigate();
@@ -90,7 +190,16 @@ export default function ReportFormPage() {
   const [subject, setSubject] = useState('');
 
   // Last Week
-  const [topicsCovered, setTopicsCovered] = useState('');
+  const [topicsCovered, setTopicsCovered] = useState([]);
+  const [isNonTeaching, setIsNonTeaching] = useState(false);
+  const [nonTeachingTasks, setNonTeachingTasks] = useState([
+    { day: 'Monday', task: '' },
+    { day: 'Tuesday', task: '' },
+    { day: 'Wednesday', task: '' },
+    { day: 'Thursday', task: '' },
+    { day: 'Friday', task: '' },
+    { day: 'Saturday', task: '' }
+  ]);
   const [isOnSchedule, setIsOnSchedule] = useState(true);
   const [challenges, setChallenges] = useState('');
 
@@ -131,7 +240,38 @@ export default function ReportFormPage() {
         setStatus(data.status);
         setSubject(data.subject || '');
         
-        setTopicsCovered(data.topics_covered || '');
+        let parsedTopics = [];
+        let parsedIsNonTeaching = false;
+        let parsedNonTeachingTasks = [
+          { day: 'Monday', task: '' },
+          { day: 'Tuesday', task: '' },
+          { day: 'Wednesday', task: '' },
+          { day: 'Thursday', task: '' },
+          { day: 'Friday', task: '' },
+          { day: 'Saturday', task: '' }
+        ];
+
+        try {
+          if (data.topics_covered) {
+            const parsed = JSON.parse(data.topics_covered);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.isNonTeaching !== undefined) {
+              parsedIsNonTeaching = parsed.isNonTeaching;
+              if (parsed.tasks && Array.isArray(parsed.tasks)) {
+                parsedNonTeachingTasks = parsed.tasks;
+              }
+            } else if (Array.isArray(parsed)) {
+              parsedTopics = parsed;
+            } else {
+              parsedTopics = [{ class_name: '', topics: data.topics_covered }];
+            }
+          }
+        } catch (e) {
+          parsedTopics = [{ class_name: '', topics: data.topics_covered }];
+        }
+        setTopicsCovered(parsedTopics);
+        setIsNonTeaching(parsedIsNonTeaching);
+        setNonTeachingTasks(parsedNonTeachingTasks);
+
         setIsOnSchedule(data.is_on_schedule ?? true);
         setChallenges(data.challenges || '');
 
@@ -158,7 +298,16 @@ export default function ReportFormPage() {
         setStatus('draft');
         setSubject('');
         
-        setTopicsCovered('');
+        setTopicsCovered([]);
+        setIsNonTeaching(false);
+        setNonTeachingTasks([
+          { day: 'Monday', task: '' },
+          { day: 'Tuesday', task: '' },
+          { day: 'Wednesday', task: '' },
+          { day: 'Thursday', task: '' },
+          { day: 'Friday', task: '' },
+          { day: 'Saturday', task: '' }
+        ]);
         setIsOnSchedule(true);
         setChallenges('');
 
@@ -193,12 +342,17 @@ export default function ReportFormPage() {
     
     setSaving(true);
     try {
+      let topicsToSave = JSON.stringify(topicsCovered);
+      if (isNonTeaching) {
+        topicsToSave = JSON.stringify({ isNonTeaching: true, tasks: nonTeachingTasks });
+      }
+
       const payload = {
         user_id: user.id,
         report_date: reportDate,
         subject: subject,
         status: newStatus,
-        topics_covered: topicsCovered,
+        topics_covered: topicsToSave,
         is_on_schedule: isOnSchedule,
         challenges: challenges,
         
@@ -333,19 +487,34 @@ export default function ReportFormPage() {
 
         {/* 1. Last Week Section */}
         <div className="card" style={{ marginBottom: 24 }}>
-          <h2 className="card-title" style={{ fontSize: 18, marginBottom: 16, color: 'var(--gold-500)' }}>Last Week Section</h2>
-          
-          <div className="form-group">
-            <label className="form-label">Chapters / Topics Covered</label>
-            <textarea 
-              className="form-textarea" 
-              value={topicsCovered} 
-              onChange={(e) => setTopicsCovered(e.target.value)}
-              disabled={isReadOnly}
-              placeholder="List the topics covered last week..."
-            />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
+            <h2 className="card-title" style={{ fontSize: 18, margin: 0, color: 'var(--gold-500)' }}>Last Week Section</h2>
+            <label className="form-checkbox-group" style={{ cursor: isReadOnly ? 'not-allowed' : 'pointer', background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: 6 }}>
+              <input 
+                type="checkbox" 
+                className="form-checkbox"
+                checked={isNonTeaching}
+                onChange={(e) => setIsNonTeaching(e.target.checked)}
+                disabled={isReadOnly}
+              />
+              <span style={{ fontSize: 14, color: 'var(--text-primary)' }}>Non-Teaching Staff? (Day-wise Entry)</span>
+            </label>
           </div>
           
+          {isNonTeaching ? (
+            <NonTeachingList 
+              data={nonTeachingTasks} 
+              onChange={setNonTeachingTasks} 
+              disabled={isReadOnly} 
+            />
+          ) : (
+            <TopicsList 
+              title="Chapters / Topics Covered (Class Wise)" 
+              data={topicsCovered} 
+              onChange={setTopicsCovered} 
+              disabled={isReadOnly} 
+            />
+          )}
           <div className="form-group" style={{ display: 'flex', alignItems: 'center' }}>
             <label className="form-checkbox-group" style={{ cursor: isReadOnly ? 'not-allowed' : 'pointer' }}>
               <input 

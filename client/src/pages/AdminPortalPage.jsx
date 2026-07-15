@@ -6,6 +6,7 @@ import { pdfService } from '../api/pdfService';
 import toast from 'react-hot-toast';
 import { Shield, BarChart2, ClipboardList, Users, Megaphone, CheckCircle, FileEdit, XCircle, TrendingUp, Phone, Calendar, BookOpen, AlertTriangle, Trash2, Download, Send, Loader, Video, Plus, X, ClipboardCheck, PenLine } from 'lucide-react';
 import { getWeekStart, formatDateISO, formatWeekLabel } from '../utils/week';
+import { formatTopics } from '../utils/formatters';
 
 /* ── Shared style helpers ── */
 const s = {
@@ -150,6 +151,7 @@ export default function AdminPortalPage() {
   const [allReports, setAllReports] = useState([]);
   const [allLoading, setAllLoading] = useState(false);
   const [filterTeacher, setFilterTeacher] = useState('');
+  const [filterDate, setFilterDate] = useState('');
   const [expandedId, setExpandedId] = useState(null);
 
   // ── Teacher Profiles state ──
@@ -609,7 +611,7 @@ export default function AdminPortalPage() {
                             {t.report?.status === 'submitted' && <span style={s.badge('submitted')}><><CheckCircle size={14} /> Submitted</></span>}
                           </td>
                           <td style={{ ...s.td, maxWidth: 240, color: 'var(--text-muted)', fontSize: 13 }}>
-                            {t.report?.topics_covered ? t.report.topics_covered.substring(0, 55) + '...' : '—'}
+                            {t.report?.topics_covered ? formatTopics(t.report.topics_covered).substring(0, 55) + '...' : '—'}
                           </td>
                         </tr>
                       ))}
@@ -627,16 +629,22 @@ export default function AdminPortalPage() {
         {/* ══ TAB 2: ALL REPORTS ══ */}
         {activeTab === 'reports' && (
           <>
-            <div style={{ ...s.card, marginBottom: 20 }}>
-              <div style={s.label}>Filter by Teacher Name</div>
-              <input type="text" style={s.input} placeholder="Search teacher..." value={filterTeacher} onChange={e => setFilterTeacher(e.target.value)} />
+            <div style={{ ...s.card, marginBottom: 20, display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 200px' }}>
+                <div style={s.label}>Filter by Teacher Name</div>
+                <input type="text" style={s.input} placeholder="Search teacher..." value={filterTeacher} onChange={e => setFilterTeacher(e.target.value)} />
+              </div>
+              <div style={{ flex: '1 1 200px' }}>
+                <div style={s.label}>Filter by Date</div>
+                <input type="date" style={s.input} value={filterDate} onChange={e => setFilterDate(e.target.value)} />
+              </div>
             </div>
 
             {allLoading ? (
               <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>Loading all reports...</div>
             ) : Object.keys(reportsByDate).length === 0 ? (
               <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>No reports found.</div>
-            ) : Object.entries(reportsByDate).map(([date, reps]) => (
+            ) : Object.entries(reportsByDate).filter(([date]) => !filterDate || date === filterDate).map(([date, reps]) => (
               <div key={date} style={s.card}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
                   <div>
@@ -668,7 +676,7 @@ export default function AdminPortalPage() {
                       <div style={{ padding: '0 18px 18px' }}>
                         <div style={s.detailBox('var(--navy-500)')}>
                           <div style={{ fontWeight: 700, color: 'var(--navy-700)', marginBottom: 10, fontSize: 13 }}><BookOpen size={16} style={{marginRight:6}} /> Last Week Overview</div>
-                          <div style={{ fontSize: 13, color: 'var(--text-primary)', marginBottom: 6 }}><strong>Topics:</strong> {r.topics_covered || 'Not specified'}</div>
+                          <div style={{ fontSize: 13, color: 'var(--text-primary)', marginBottom: 6 }}><strong>Topics:</strong> {formatTopics(r.topics_covered) || 'Not specified'}</div>
                           <div style={{ fontSize: 13, marginBottom: 6, color: r.is_on_schedule ? 'var(--status-success-text)' : 'var(--status-error-text)', fontWeight: 600 }}>
                             {r.is_on_schedule ? '<CheckCircle size={14} /> On schedule' : '<AlertTriangle size={14} /> Behind schedule'}
                           </div>

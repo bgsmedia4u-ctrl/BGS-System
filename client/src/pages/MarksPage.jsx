@@ -646,10 +646,6 @@ function PrintResultsView({ tests, students, stream, year, cls }) {
               </tbody>
             </table>
           </div>
-                );
-              })}
-            </tbody>
-          </table>
 
           <div className="no-print" style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 24 }}>
             <button className="btn btn-secondary" onClick={handlePdf}>

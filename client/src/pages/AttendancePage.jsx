@@ -342,7 +342,7 @@ function PrintAttendanceView({ stream, year, cls, date, students, attendanceData
               </tbody>
             </table>
           </div>
-
+        )}
 
         <div className="no-print" style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
           <button className="btn btn-primary" onClick={() => window.print()}>

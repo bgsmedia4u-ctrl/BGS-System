@@ -1,3 +1,8 @@
+BEGIN;
+
+-- Lock the table to prevent concurrent inserts from recreating duplicates
+LOCK TABLE public.students IN EXCLUSIVE MODE;
+
 -- 1. Remove duplicate students (keeps the oldest entry for each stream, year, class, and roll_number)
 DELETE FROM public.students
 WHERE id IN (
@@ -16,3 +21,5 @@ WHERE id IN (
 -- 2. Add a UNIQUE constraint to prevent this from happening again in the future
 ALTER TABLE public.students 
 ADD CONSTRAINT unique_student_batch UNIQUE (stream, year, class, roll_number);
+
+COMMIT;

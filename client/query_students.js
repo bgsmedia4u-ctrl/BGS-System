@@ -13,9 +13,14 @@ envContent.split('\n').forEach(line => {
 });
 
 const supabaseUrl = env.VITE_SUPABASE_URL;
-const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY;
+const supabaseServiceKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabaseServiceKey) {
+  console.error("Error: SUPABASE_SERVICE_ROLE_KEY is missing from .env");
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function run() {
   const tables = ['profiles', 'weekly_reports', 'attendance_sessions', 'attendance_records', 'tests', 'mark_entries', 'students'];

@@ -9,7 +9,7 @@ ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'pending'
 CHECK (status IN ('pending', 'approved', 'rejected'));
 
 -- Update existing profiles (admins to approved, teachers to approved for backward compatibility)
-UPDATE public.profiles SET status = 'approved';
+UPDATE public.profiles SET status = 'approved' WHERE status = 'pending';
 
 -- 2. Create the trigger function to handle new signups
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -45,8 +45,11 @@ DROP POLICY IF EXISTS "Allow authenticated users to update their own profile" ON
 -- New Policies:
 -- 3a. Everyone can read all profiles (useful for meetings, dropdowns, etc.) or at least their own and admins can read all.
 -- We will allow authenticated users to read all profiles (assuming they need to see other teachers).
-CREATE POLICY "Allow authenticated users to read profiles" 
-ON public.profiles FOR SELECT USING (auth.role() = 'authenticated');
+CREATE POLICY "Allow users to read own profile and approved users to read all" 
+ON public.profiles FOR SELECT USING (
+    auth.uid() = id OR 
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND status = 'approved')
+);
 
 -- 3b. Users can update their own profile, but CANNOT change role or status
 CREATE POLICY "Allow users to update own profile except role and status"

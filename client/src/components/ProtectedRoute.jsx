@@ -16,6 +16,14 @@ export function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
+  if (!profile) {
+    return (
+      <div className="loading-spinner" style={{ minHeight: '100vh' }}>
+        <div className="spinner" />
+      </div>
+    );
+  }
+
   // Admins should not access the teacher portal
   if (profile && isAdmin) {
     return <Navigate to="/admin-portal" replace />;

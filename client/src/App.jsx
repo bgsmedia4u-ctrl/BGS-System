@@ -7,13 +7,11 @@ import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import RegisterPage from './pages/RegisterPage';
-import PendingApprovalPage from './pages/PendingApprovalPage';
 import DashboardPage from './pages/DashboardPage';
 import ReportFormPage from './pages/ReportFormPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminExportPage from './pages/AdminExportPage';
 import AdminPortalPage from './pages/AdminPortalPage';
-import AdminTeacherApprovals from './pages/AdminTeacherApprovals';
 import AttendancePage from './pages/AttendancePage';
 import MarksPage from './pages/MarksPage';
 import TeacherMeetingsPage from './pages/TeacherMeetingsPage';
@@ -41,7 +39,6 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin-login" element={<AdminLoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/pending-approval" element={<PendingApprovalPage />} />
         
         {/* Protected Teacher Routes */}
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
@@ -58,7 +55,6 @@ function App() {
         {/* Protected Admin Routes (sidebar-based) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
         <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />
-        <Route path="/admin/approvals" element={<AdminRoute><AdminTeacherApprovals /></AdminRoute>} />
         <Route path="/admin/timetable" element={<AdminRoute><TimetablePage isAdmin={true} /></AdminRoute>} />
 
         {/* Separate Standalone Admin Portal */}

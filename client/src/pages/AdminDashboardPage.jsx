@@ -156,21 +156,7 @@ export default function AdminDashboardPage() {
 
         {/* New Modules Admin Widgets */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, marginBottom: 32 }}>
-          <Link to="/admin/approvals" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <div className="card" style={{ padding: '20px', cursor: 'pointer', transition: 'all var(--transition)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div className="stat-label">Leave Approvals</div>
-                  <div className="stat-value" style={{ fontSize: 28, color: pendingLeavesCount > 0 ? 'var(--warning)' : 'var(--success)' }}>
-                    {pendingLeavesCount} Pending
-                  </div>
-                </div>
-                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
-                  <Calendar size={20} />
-                </div>
-              </div>
-            </div>
-          </Link>
+
 
           <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="card" style={{ padding: '20px', cursor: 'pointer', transition: 'all var(--transition)' }}>

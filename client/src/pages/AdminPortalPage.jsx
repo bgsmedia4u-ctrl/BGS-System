@@ -504,24 +504,6 @@ export default function AdminPortalPage() {
             <h1 style={s.pageTitle}>Teacher Monitoring Center</h1>
             <p style={s.pageSubtitle}>Monitor all teachers' weekly submissions, view full reports and download PDFs</p>
           </div>
-          <button 
-            onClick={() => navigate('/admin/approvals')}
-            style={{ 
-              background: 'var(--navy-700)', 
-              color: '#fff', 
-              border: 'none', 
-              padding: '10px 20px', 
-              borderRadius: 8, 
-              cursor: 'pointer', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: 8, 
-              fontWeight: 600,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-            }}
-          >
-            <Shield size={18} /> Manage Approvals
-          </button>
         </div>
 
         {/* TABS — horizontally scrollable on mobile */}

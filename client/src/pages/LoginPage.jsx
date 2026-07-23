@@ -10,14 +10,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loggingIn, setLoggingIn] = useState(false);
 
-  // If we just loaded the profile and it's pending/rejected, log out
+  // We no longer require admin approval, so we don't need to log out pending users.
   useEffect(() => {
     if (user && profile) {
-      if (profile.role === 'teacher' && profile.status !== 'approved') {
-        const msg = profile.status === 'rejected' 
-          ? 'Your registration was rejected.' 
-          : 'Your account is pending admin approval.';
-        toast.error(msg, { duration: 5000 });
+      if (profile.role === 'teacher' && profile.status === 'rejected') {
+        toast.error('Your registration was rejected.', { duration: 5000 });
         logout();
       }
     }
@@ -31,8 +28,8 @@ export default function LoginPage() {
     );
   }
 
-  // If approved and logged in, redirect
-  if (user && profile && (profile.role !== 'teacher' || profile.status === 'approved')) {
+  // If logged in and not rejected, redirect
+  if (user && profile && (profile.role !== 'teacher' || profile.status !== 'rejected')) {
     return <Navigate to="/dashboard" replace />;
   }
 

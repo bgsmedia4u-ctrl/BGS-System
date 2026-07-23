@@ -29,9 +29,9 @@ export function ProtectedRoute({ children }) {
     return <Navigate to="/admin-portal" replace />;
   }
 
-  // Teachers must be approved
-  if (profile && profile.role === 'teacher' && profile.status !== 'approved') {
-    return <Navigate to="/pending-approval" replace />;
+  // Teachers must not be rejected
+  if (profile && profile.role === 'teacher' && profile.status === 'rejected') {
+    return <Navigate to="/login" replace />;
   }
 
   return children;

@@ -7,6 +7,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
+    subject: '',
     email: '',
     phone: '',
     password: '',
@@ -20,9 +21,9 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const { fullName, email, phone, password, confirmPassword } = formData;
+    const { fullName, subject, email, phone, password, confirmPassword } = formData;
 
-    if (!fullName || !email || !password || !confirmPassword) {
+    if (!fullName || !subject || !email || !password || !confirmPassword) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -45,6 +46,7 @@ export default function RegisterPage() {
         options: {
           data: {
             full_name: fullName,
+            subject: subject,
             phone: phone || null,
           }
         }
@@ -52,11 +54,9 @@ export default function RegisterPage() {
 
       if (error) throw error;
 
-      toast.success('Registration successful! Please wait for admin approval.');
-      // Since it's a new account, the user is automatically logged in but their profile is pending.
-      // They will be redirected to /pending-approval by ProtectedRoute or LoginPage, 
-      // but let's manually send them there.
-      navigate('/pending-approval', { replace: true });
+      toast.success('Registration successful! Redirecting to dashboard...');
+      // Since it's a new account and approval is no longer required, redirect directly to dashboard.
+      navigate('/dashboard', { replace: true });
     } catch (err) {
       toast.error(err.message || 'Registration failed');
     } finally {
@@ -81,6 +81,16 @@ export default function RegisterPage() {
             className="form-input"
             placeholder="Full Name"
             value={formData.fullName}
+            onChange={handleChange}
+            disabled={registering}
+            required
+          />
+          <input
+            type="text"
+            name="subject"
+            className="form-input"
+            placeholder="Subject Taught (e.g., Physics, Maths)"
+            value={formData.subject}
             onChange={handleChange}
             disabled={registering}
             required

@@ -702,7 +702,7 @@ export default function AdminPortalPage() {
                           <div style={{ fontWeight: 700, color: 'var(--navy-700)', marginBottom: 10, fontSize: 13 }}><BookOpen size={16} style={{marginRight:6}} /> Last Week Overview</div>
                           <div style={{ fontSize: 13, color: 'var(--text-primary)', marginBottom: 6 }}><strong>Topics:</strong> {formatTopics(r.topics_covered) || 'Not specified'}</div>
                           <div style={{ fontSize: 13, marginBottom: 6, color: r.is_on_schedule ? 'var(--status-success-text)' : 'var(--status-error-text)', fontWeight: 600 }}>
-                            {r.is_on_schedule ? '<CheckCircle size={14} /> On schedule' : '<AlertTriangle size={14} /> Behind schedule'}
+                            {r.is_on_schedule ? <><CheckCircle size={14} style={{ display: 'inline', verticalAlign: 'text-bottom' }} /> On schedule</> : <><AlertTriangle size={14} style={{ display: 'inline', verticalAlign: 'text-bottom' }} /> Behind schedule</>}
                           </div>
                           {r.challenges && <div style={{ fontSize: 13, color: 'var(--text-muted)' }}><strong>Challenges:</strong> {r.challenges}</div>}
                         </div>
@@ -818,7 +818,7 @@ export default function AdminPortalPage() {
                 <textarea style={{ ...s.input, minHeight: 90, resize: 'vertical' }} placeholder="Type your announcement here..." value={newAnnBody} onChange={e => setNewAnnBody(e.target.value)} />
               </div>
               <button style={{ ...s.primaryBtn, opacity: annPosting ? 0.6 : 1 }} disabled={annPosting} onClick={postAnnouncement}>
-                {annPosting ? '<Loader size={16} style={{marginRight:6}} /> Posting...' : '<Send size={16} style={{marginRight:6}} /> Broadcast to All Teachers'}
+                {annPosting ? <><Loader size={16} style={{marginRight:6}} /> Posting...</> : <><Send size={16} style={{marginRight:6}} /> Broadcast to All Teachers</>}
               </button>
             </div>
 

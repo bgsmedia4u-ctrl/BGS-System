@@ -1,8 +1,27 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
+import { supabase } from '../api/supabase';
+import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const { user, loading, loginWithGoogle } = useAuth();
+  const { user, profile, loading, loginWithGoogle, refreshProfile, logout } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loggingIn, setLoggingIn] = useState(false);
+
+  // If we just loaded the profile and it's pending/rejected, log out
+  useEffect(() => {
+    if (user && profile) {
+      if (profile.role === 'teacher' && profile.status !== 'approved') {
+        const msg = profile.status === 'rejected' 
+          ? 'Your registration was rejected.' 
+          : 'Your account is pending admin approval.';
+        toast.error(msg, { duration: 5000 });
+        logout();
+      }
+    }
+  }, [user, profile, logout]);
 
   if (loading) {
     return (
@@ -12,9 +31,31 @@ export default function LoginPage() {
     );
   }
 
-  if (user) {
+  // If approved and logged in, redirect
+  if (user && profile && (profile.role !== 'teacher' || profile.status === 'approved')) {
     return <Navigate to="/dashboard" replace />;
   }
+
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error('Please enter email and password');
+      return;
+    }
+    setLoggingIn(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      // After sign in, AuthContext automatically fetches the session
+    } catch (err) {
+      toast.error(err.message || 'Login failed');
+    } finally {
+      setLoggingIn(false);
+    }
+  };
 
   return (
     <div className="login-page">
@@ -22,10 +63,39 @@ export default function LoginPage() {
         <div className="login-logo">B</div>
         <h1 className="login-title">Teachers Portal</h1>
         <p className="login-school">BGS Public School & PU College</p>
-        <p className="login-desc">
-          Sign in with your Google account to submit your weekly teaching report.
+        <p className="login-desc" style={{ marginBottom: 20 }}>
+          Sign in to your account
         </p>
-        <button className="google-btn" onClick={loginWithGoogle} id="google-login-btn">
+        
+        <form onSubmit={handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
+          <input
+            type="email"
+            className="form-input"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={loggingIn}
+            required
+          />
+          <input
+            type="password"
+            className="form-input"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loggingIn}
+            required
+          />
+          <button type="submit" className="save-btn" disabled={loggingIn} style={{ width: '100%', padding: '12px', marginTop: '8px' }}>
+            {loggingIn ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+
+        <div style={{ margin: '16px 0', textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>
+          OR
+        </div>
+
+        <button className="google-btn" onClick={loginWithGoogle} disabled={loggingIn} id="google-login-btn">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -34,6 +104,13 @@ export default function LoginPage() {
           </svg>
           Sign in with Google
         </button>
+
+        <p style={{ marginTop: 24, textAlign: 'center', fontSize: 14 }}>
+          <Link to="/register" style={{ color: 'var(--navy-600)', textDecoration: 'none', fontWeight: 500 }}>
+            Don't have an account? Register
+          </Link>
+        </p>
+        
         <p style={{ marginTop: 24, fontSize: 12, color: 'var(--text-muted)' }}>
           Shidlaghatta · Weekly Report Submission System
         </p>

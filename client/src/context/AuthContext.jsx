@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
       const authUser = session?.user ?? null;
       setUser(authUser);
       if (authUser) {
-        fetchOrCreateProfile(authUser);
+        fetchProfile(authUser);
       } else {
         setLoading(false);
       }
@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
       setUser(authUser);
       
       if (authUser) {
-        await fetchOrCreateProfile(authUser);
+        await fetchProfile(authUser);
       } else {
         setProfile(null);
         setLoading(false);
@@ -38,15 +38,9 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  /**
-   * Fetch the profile from the database. If the DB trigger hasn't created it yet,
-   * we create it manually as a fallback. This prevents the "Failed to load report"
-   * error that happens when the user signs in for the first time.
-   */
-  async function fetchOrCreateProfile(authUser) {
+  async function fetchProfile(authUser) {
     try {
-      // Try to fetch the profile
-      let { data, error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', authUser.id)
@@ -54,45 +48,19 @@ export function AuthProvider({ children }) {
 
       if (error) {
         console.error('Error fetching profile:', error);
-        setLoading(false);
-        return;
+      } else {
+        setProfile(data);
       }
-
-      // If the profile doesn't exist yet (trigger may have been slow), create it manually
-      if (!data) {
-        const name = authUser.user_metadata?.full_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'User';
-        const email = authUser.email;
-
-        const { data: newProfile, error: insertError } = await supabase
-          .from('profiles')
-          .insert({
-            id: authUser.id,
-            name,
-            email,
-            role: 'teacher', // Default role; admin must be set manually or via trigger
-          })
-          .select('*')
-          .single();
-
-        if (insertError) {
-          // If insert also failed (e.g. conflict because trigger did create it), try fetching again
-          console.warn('Insert profile fallback failed, retrying fetch:', insertError.message);
-          const { data: retryData } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', authUser.id)
-            .maybeSingle();
-          data = retryData;
-        } else {
-          data = newProfile;
-        }
-      }
-
-      setProfile(data);
     } catch (err) {
       console.error('Unexpected error in profile fetch:', err);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function refreshProfile() {
+    if (user) {
+      await fetchProfile(user);
     }
   }
 
@@ -136,7 +104,8 @@ export function AuthProvider({ children }) {
         logout,
         updatePhone,
         isAdmin,
-        fetchProfile: () => user ? fetchOrCreateProfile(user) : null,
+        refreshProfile,
+        fetchProfile: () => user ? fetchProfile(user) : null,
       }}
     >
       {children}

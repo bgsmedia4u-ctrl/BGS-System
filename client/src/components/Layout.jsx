@@ -32,99 +32,41 @@ export default function Layout({ children }) {
 
   return (
     <div className="app-layout">
-      {/* Mobile menu button */}
-      <button
-        className="mobile-menu-btn"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        aria-label="Toggle menu"
-      >
-        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      {/* Sidebar overlay (mobile) */}
-      <div
-        className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`}
-        onClick={() => setSidebarOpen(false)}
-      />
-
-      {/* Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div className="sidebar-header">
-          <div className="sidebar-logo">
-            <img src="/logo.png" alt="BGS Logo" className="sidebar-logo-img" />
+      {/* Top Nav Pill */}
+      <header className="top-nav">
+        <div className="nav-links">
+          <div style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-main)', marginRight: 24, paddingLeft: 8 }}>
+            BGS
           </div>
-          <div>
-            <div className="sidebar-title">BGS Portal</div>
-            <div className="sidebar-subtitle">Teachers Portal</div>
-          </div>
+          
+          <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <LayoutDashboard className="nav-icon" /> Dashboard
+          </NavLink>
+          <NavLink to="/report" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <FileText className="nav-icon" /> Report
+          </NavLink>
+          <NavLink to="/attendance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <ClipboardCheck className="nav-icon" /> Attendance
+          </NavLink>
+          <NavLink to="/marks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <PenLine className="nav-icon" /> Marks
+          </NavLink>
+          <NavLink to="/meetings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <CalendarDays className="nav-icon" /> Meetings
+          </NavLink>
         </div>
 
-        <nav className="sidebar-nav">
-          <div className="nav-section-title">Main</div>
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => setSidebarOpen(false)}
-          >
-            <LayoutDashboard className="nav-icon" />
-            Dashboard
-          </NavLink>
-          <NavLink
-            to="/report"
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => setSidebarOpen(false)}
-          >
-            <FileText className="nav-icon" />
-            Weekly Report
-          </NavLink>
-
-          <div className="nav-section-title" style={{ marginTop: 16 }}>Academics</div>
-          <NavLink
-            to="/attendance"
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => setSidebarOpen(false)}
-          >
-            <ClipboardCheck className="nav-icon" />
-            Mark Attendance
-          </NavLink>
-          <NavLink
-            to="/marks"
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => setSidebarOpen(false)}
-          >
-            <PenLine className="nav-icon" />
-            Enter Marks
-          </NavLink>
-          <NavLink
-            to="/meetings"
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            onClick={() => setSidebarOpen(false)}
-          >
-            <CalendarDays className="nav-icon" />
-            Meetings
-          </NavLink>
-        </nav>
-
-        <div className="sidebar-footer">
-          <div className="user-card">
+        <div className="top-nav-right">
+          <div className="user-profile-pill" onClick={handleLogout} title="Sign Out">
             {avatarUrl ? (
               <img src={avatarUrl} alt="" className="user-avatar" referrerPolicy="no-referrer" />
             ) : (
               <div className="user-avatar-placeholder">{initials}</div>
             )}
-            <div className="user-info">
-              <div className="user-name">{name}</div>
-              <div className="user-role">
-                {profile?.role || 'teacher'}
-              </div>
-            </div>
+            <div className="user-name" style={{ marginRight: 4 }}>{name}</div>
           </div>
-          <button className="nav-item" onClick={handleLogout} style={{ marginTop: 8, color: 'var(--error)' }}>
-            <LogOut className="nav-icon" />
-            Sign Out
-          </button>
         </div>
-      </aside>
+      </header>
 
       {/* Main content */}
       <main className="main-content">

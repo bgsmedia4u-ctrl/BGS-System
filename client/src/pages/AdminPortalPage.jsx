@@ -12,124 +12,128 @@ import { formatTopics } from '../utils/formatters';
 const s = {
   page: {
     minHeight: '100vh',
-    background: 'var(--bg-primary)',
+    background: 'var(--bg-app)',
     fontFamily: "'Inter', sans-serif",
-    color: 'var(--text-primary)',
+    color: 'var(--text-main)',
   },
   navbar: {
-    background: 'linear-gradient(135deg, var(--navy-900), var(--navy-700))',
+    background: 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(12px)',
     padding: '0 28px',
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     height: 66,
     position: 'sticky', top: 0, zIndex: 200,
-    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+    borderBottom: '1px solid var(--border)',
   },
   brand: { display: 'flex', alignItems: 'center', gap: 14 },
   brandIcon: {
-    width: 40, height: 40, borderRadius: 10,
-    background: 'rgba(255,255,255,0.1)',
-    border: '1px solid rgba(255,255,255,0.15)',
+    width: 40, height: 40, borderRadius: 'var(--radius-md)',
+    background: 'var(--bg-surface-hover)',
+    border: '1px solid var(--border)',
     display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontSize: 20,
+    fontSize: 20, color: 'var(--accent)'
   },
-  brandText: { fontSize: 17, fontWeight: 700, color: '#fff' },
-  brandSub: { fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 1 },
+  brandText: { fontSize: 18, fontWeight: 800, color: 'var(--text-main)' },
+  brandSub: { fontSize: 11, color: 'var(--text-muted)', marginTop: 1 },
   logoutBtn: {
-    padding: '8px 18px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600,
-    background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)',
-    color: '#fff', transition: 'all 0.2s',
+    padding: '8px 18px', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+    background: 'var(--bg-surface-hover)', border: '1px solid var(--border)',
+    color: 'var(--text-main)', transition: 'all var(--transition)',
   },
   body: { padding: '32px 28px', maxWidth: 1280, margin: '0 auto' },
-  pageTitle: { fontSize: 26, fontWeight: 800, color: 'var(--navy-800)', marginBottom: 4 },
+  pageTitle: { fontSize: 26, fontWeight: 700, color: 'var(--text-main)', marginBottom: 4 },
   pageSubtitle: { fontSize: 14, color: 'var(--text-muted)' },
   tabBar: {
-    display: 'flex', gap: 0, marginBottom: 28,
-    background: 'var(--bg-secondary)', borderRadius: 12, padding: 4,
+    display: 'flex', gap: 4, marginBottom: 28,
+    background: 'var(--bg-surface)', borderRadius: 'var(--radius-full)', padding: 4,
     border: '1px solid var(--border)', width: 'fit-content',
   },
   tab: (active) => ({
-    padding: '9px 22px', borderRadius: 9, border: 'none', cursor: 'pointer',
-    fontSize: 14, fontWeight: 600, transition: 'all 0.2s',
-    background: active ? 'var(--navy-700)' : 'transparent',
-    color: active ? '#fff' : 'var(--text-muted)',
-    boxShadow: active ? '0 2px 8px rgba(0,0,0,0.1)' : 'none',
+    padding: '8px 20px', borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
+    fontSize: 14, fontWeight: 600, transition: 'all var(--transition)',
+    background: active ? 'var(--bg-surface-hover)' : 'transparent',
+    color: active ? 'var(--text-main)' : 'var(--text-muted)',
+    boxShadow: active ? 'var(--shadow-sm)' : 'none',
   }),
   card: {
     background: 'var(--bg-card)',
     border: '1px solid var(--border)',
-    borderRadius: 14,
-    padding: 22,
+    borderRadius: 'var(--radius-xl)',
+    padding: 24,
     marginBottom: 20,
-    boxShadow: 'var(--shadow-sm)',
+    boxShadow: 'var(--shadow-md)',
   },
   sectionCard: (borderColor) => ({
-    background: 'var(--bg-card)',
+    background: 'var(--bg-surface)',
     border: `1px solid ${borderColor || 'var(--border)'}`,
-    borderRadius: 12,
-    padding: 18,
-    marginBottom: 12,
+    borderRadius: 'var(--radius-lg)',
+    padding: 20,
+    marginBottom: 16,
+    transition: 'all var(--transition)'
   }),
   statCard: (color) => ({
     background: 'var(--bg-card)',
     border: '1px solid var(--border)',
-    borderLeft: `4px solid ${color}`,
-    borderRadius: 12,
-    padding: '18px 20px',
+    borderRadius: 'var(--radius-lg)',
+    padding: '24px 20px',
     flex: 1,
     minWidth: 130,
     boxShadow: 'var(--shadow-sm)',
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'relative',
+    overflow: 'hidden'
   }),
-  label: { fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' },
+  label: { fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 6 },
   input: {
-    width: '100%', padding: '10px 14px', borderRadius: 9, fontSize: 14,
-    background: 'var(--bg-input)', border: '1px solid var(--border)',
-    color: 'var(--text-primary)', outline: 'none', boxSizing: 'border-box',
-    transition: 'border-color 0.2s',
+    width: '100%', padding: '10px 16px', borderRadius: 'var(--radius-md)', fontSize: 14,
+    background: 'var(--bg-surface)', border: '1px solid var(--border)',
+    color: 'var(--text-main)', outline: 'none', boxSizing: 'border-box',
+    transition: 'all var(--transition)',
   },
   badge: (type) => {
     const styles = {
-      submitted: { background: 'var(--status-success-bg)', color: 'var(--status-success-text)', border: '1px solid var(--status-success)' },
-      draft: { background: 'var(--status-warning-bg)', color: 'var(--status-warning-text)', border: '1px solid var(--status-warning)' },
-      missing: { background: 'var(--status-error-bg)', color: 'var(--status-error-text)', border: '1px solid var(--status-error)' },
-      admin: { background: 'var(--bg-secondary)', color: 'var(--navy-700)', border: '1px solid var(--border)' },
+      submitted: { background: 'var(--success-bg)', color: 'var(--success)', boxShadow: '0 0 0 1px var(--success-bg)' },
+      draft: { background: 'var(--warning-bg)', color: 'var(--warning)', boxShadow: '0 0 0 1px var(--warning-bg)' },
+      missing: { background: 'var(--error-bg)', color: 'var(--error)', boxShadow: '0 0 0 1px var(--error-bg)' },
+      admin: { background: 'var(--bg-surface-hover)', color: 'var(--text-muted)', boxShadow: '0 0 0 1px var(--border)' },
     };
     return {
       ...(styles[type] || styles.admin),
-      padding: '3px 10px', borderRadius: 20, fontSize: 12,
-      fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 5,
+      padding: '4px 12px', borderRadius: 'var(--radius-full)', fontSize: 12,
+      fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6,
     };
   },
   th: {
-    textAlign: 'left', padding: '11px 16px', fontSize: 11,
-    fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase',
-    letterSpacing: '0.05em', background: 'var(--bg-secondary)',
+    textAlign: 'left', padding: '12px 16px', fontSize: 12,
+    fontWeight: 500, color: 'var(--text-muted)',
     borderBottom: '1px solid var(--border)',
   },
   td: {
-    padding: '14px 16px',
-    borderBottom: '1px solid var(--bg-secondary)',
+    padding: '16px 16px',
+    borderBottom: '1px solid var(--border)',
     verticalAlign: 'middle',
     fontSize: 14,
+    color: 'var(--text-main)',
   },
   primaryBtn: {
-    padding: '9px 20px', borderRadius: 9, border: 'none', cursor: 'pointer',
-    fontSize: 13, fontWeight: 700,
-    background: 'var(--navy-700)',
-    color: '#fff', boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-    display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'all 0.2s',
+    padding: '10px 20px', borderRadius: 'var(--radius-full)', border: 'none', cursor: 'pointer',
+    fontSize: 13, fontWeight: 600,
+    background: 'var(--accent)',
+    color: '#fff', boxShadow: 'var(--shadow-sm)',
+    display: 'inline-flex', alignItems: 'center', gap: 8, transition: 'all var(--transition)',
   },
   ghostBtn: {
-    padding: '7px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontWeight: 600,
-    background: 'var(--bg-secondary)', border: '1px solid var(--border)',
-    color: 'var(--text-muted)', transition: 'all 0.2s',
+    padding: '10px 20px', borderRadius: 'var(--radius-full)', cursor: 'pointer', fontSize: 13, fontWeight: 600,
+    background: 'var(--bg-surface-hover)', border: '1px solid var(--border)',
+    color: 'var(--text-main)', transition: 'all var(--transition)', display: 'inline-flex', alignItems: 'center', gap: 8,
   },
   detailBox: (accent) => ({
-    background: `${accent}08`, // Hex + alpha opacity
-    border: `1px solid ${accent}25`,
-    borderLeft: `3px solid ${accent}`,
-    borderRadius: 10, padding: 16, marginTop: 10,
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-md)', padding: 16, marginTop: 12,
   }),
-  divider: { borderTop: '1px solid var(--bg-secondary)', margin: '12px 0' },
+  divider: { borderTop: '1px solid var(--border)', margin: '16px 0' },
 };
 
 
@@ -495,9 +499,29 @@ export default function AdminPortalPage() {
 
       {/* ── BODY ── */}
       <div style={{ ...s.body, padding: 'clamp(16px, 3vw, 28px)' }}>
-        <div style={{ marginBottom: 26 }}>
-          <h1 style={s.pageTitle}>Teacher Monitoring Center</h1>
-          <p style={s.pageSubtitle}>Monitor all teachers' weekly submissions, view full reports and download PDFs</p>
+        <div style={{ marginBottom: 26, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+          <div>
+            <h1 style={s.pageTitle}>Teacher Monitoring Center</h1>
+            <p style={s.pageSubtitle}>Monitor all teachers' weekly submissions, view full reports and download PDFs</p>
+          </div>
+          <button 
+            onClick={() => navigate('/admin/approvals')}
+            style={{ 
+              background: 'var(--navy-700)', 
+              color: '#fff', 
+              border: 'none', 
+              padding: '10px 20px', 
+              borderRadius: 8, 
+              cursor: 'pointer', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 8, 
+              fontWeight: 600,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+            }}
+          >
+            <Shield size={18} /> Manage Approvals
+          </button>
         </div>
 
         {/* TABS — horizontally scrollable on mobile */}

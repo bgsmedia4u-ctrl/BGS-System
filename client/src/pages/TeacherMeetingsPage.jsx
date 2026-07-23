@@ -68,64 +68,73 @@ export default function TeacherMeetingsPage() {
 
   const renderMeetingCard = (m, isPast) => {
     const isCancelled = m.status === 'cancelled';
+    const statusColor = isCancelled ? 'var(--text-muted)' : isPast ? 'var(--text-muted)' : 'var(--success)';
+    const statusBg = isCancelled ? 'var(--bg-surface-hover)' : isPast ? 'var(--bg-surface-hover)' : 'var(--success-bg)';
+    
     return (
       <div key={m.id} className="card" style={{ 
         marginBottom: 16, 
         opacity: isCancelled ? 0.6 : 1,
-        borderLeft: `4px solid ${isCancelled ? 'var(--text-muted)' : 'var(--gold-500)'}`
+        border: '1px solid var(--border)',
+        padding: '24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        gap: 16
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ flex: 1, minWidth: 280 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-              <h3 style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>{m.title}</h3>
-              {isCancelled && (
-                <span className="badge badge-draft" style={{ background: 'var(--bg-secondary)', color: 'var(--text-muted)' }}>
-                  <XCircle size={12} /> Cancelled
-                </span>
-              )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flex: 1, minWidth: 280 }}>
+          {/* Organizer Avatar placeholder */}
+          <div className="user-avatar-placeholder" style={{ width: 44, height: 44, fontSize: 16 }}>
+            Admin
+          </div>
+          
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: 'var(--text-main)' }}>{m.title}</h3>
+              {/* Inline Dot Status */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 500, color: 'var(--text-muted)' }}>
+                <span style={{ 
+                  width: 8, height: 8, borderRadius: '50%', 
+                  background: statusColor,
+                  boxShadow: `0 0 0 2px ${statusBg}`
+                }} />
+                {isCancelled ? 'Cancelled' : isPast ? 'Completed' : 'Scheduled'}
+              </div>
             </div>
             
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 12 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--gold-500)', fontSize: 14, fontWeight: 600 }}>
-                <Calendar size={16} />
-                {new Date(m.meeting_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, color: 'var(--text-muted)', fontSize: 13 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Calendar size={14} />
+                {new Date(m.meeting_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-muted)', fontSize: 14 }}>
-                <Clock size={16} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                <Clock size={14} />
                 {m.start_time.substring(0,5)} - {m.end_time.substring(0,5)}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-muted)', fontSize: 14 }}>
-                {m.location?.toLowerCase().includes('http') ? <Video size={16} /> : <MapPin size={16} />}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                {m.location?.toLowerCase().includes('http') ? <Video size={14} /> : <MapPin size={14} />}
                 {m.location?.toLowerCase().includes('http') ? (
-                  <a href={m.location} target="_blank" rel="noreferrer" style={{ color: 'var(--gold-500)', textDecoration: 'none' }}>Join Link</a>
+                  <a href={m.location} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Join Link</a>
                 ) : (m.location || 'Location TBA')}
               </div>
             </div>
-
-            {m.description && (
-              <div style={{ 
-                background: 'var(--bg-card)', 
-                padding: 12, 
-                borderRadius: 8, 
-                fontSize: 14, 
-                color: 'var(--text-muted)',
-                whiteSpace: 'pre-wrap'
-              }}>
-                <div style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4, fontSize: 12, textTransform: 'uppercase' }}>Agenda</div>
-                {m.description}
-              </div>
-            )}
           </div>
-          
-          <div style={{ textAlign: 'right' }}>
-            <span className="badge badge-submitted" style={{ 
-              background: m.audience_type === 'all_staff' ? 'var(--status-success-bg)' : 'var(--status-info-bg)', 
-              color: m.audience_type === 'all_staff' ? 'var(--status-success)' : 'var(--status-info)',
-              border: 'none'
-            }}>
-              {m.audience_type === 'all_staff' ? 'All Staff' : m.audience_type === 'department' ? 'Department' : 'Individual'}
-            </span>
-          </div>
+        </div>
+        
+        <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+          <span style={{ 
+            fontSize: 12, fontWeight: 600, padding: '4px 10px', borderRadius: 'var(--radius-full)',
+            background: m.audience_type === 'all_staff' ? 'var(--info-bg)' : 'var(--bg-surface-hover)', 
+            color: m.audience_type === 'all_staff' ? 'var(--info)' : 'var(--text-muted)',
+          }}>
+            {m.audience_type === 'all_staff' ? 'All Staff' : m.audience_type === 'department' ? 'Department' : 'Individual'}
+          </span>
+          {m.description && (
+             <div style={{ fontSize: 12, color: 'var(--text-muted)', maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+               {m.description}
+             </div>
+          )}
         </div>
       </div>
     );
@@ -134,8 +143,8 @@ export default function TeacherMeetingsPage() {
   return (
     <Layout>
       <div className="page-header">
-        <h1 className="page-title">Meetings</h1>
-        <p className="page-subtitle">View your upcoming and past scheduled meetings</p>
+        <h1 className="page-title" style={{ fontSize: 28, fontWeight: 600, color: 'var(--text-main)', letterSpacing: '-0.02em' }}>Meetings</h1>
+        <p className="page-subtitle" style={{ fontSize: 15, color: 'var(--text-muted)' }}>View your upcoming and past scheduled meetings</p>
       </div>
 
       <div className="page-body fade-in">

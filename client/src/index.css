@@ -7,67 +7,64 @@
 
 /* ─── CSS Custom Properties ─── */
 :root {
-  /* Navy (Primary/Institutional) */
-  --navy-950: #0F172A; /* Sidebar and ultra dark */
-  --navy-900: #1A2238; /* Deepest background accents */
-  --navy-800: #202D48; /* Headers, strong accents */
-  --navy-700: #2C3E50; /* Primary brand color */
-  --navy-600: #34495E; /* Hover states */
-  --navy-500: #4B6584; /* Borders, secondary text */
-  --navy-400: #71889D; /* Lighter accents */
-  --navy-300: #8DA2B3; /* Even lighter accents */
-  --navy-50:  #F4F6F8; /* Lightest tint for backgrounds */
-
-  /* Gold (Accent) */
-  --gold-600: #B8860B; /* Dark gold for text/borders */
-  --gold-500: #DAA520; /* Primary accent */
-  --gold-400: #F4D03F; /* Light accent / hover */
-  --gold-300: #F7DC6F; /* Lighter gold */
-  --gold-50:  #FEF9E7; /* Light gold background */
-
-  /* Cream/Surface (Backgrounds) */
-  --cream-100: #FDFBF7; /* Sidebar logo background */
-  --bg-app: #F8F9FA;
+  /* Warm SaaS Base Colors */
+  --bg-gradient-top: #FDFBF7; /* Cream */
+  --bg-gradient-bottom: #FDEEDC; /* Peach */
+  
   --bg-surface: #FFFFFF;
-  --bg-surface-hover: #F1F3F5;
-  --border-color: #E2E8F0;
-
+  --bg-surface-hover: #FAFAFA;
+  --border-color: #F3F4F6;
+  
   /* Text Colors */
-  --text-main: #1E293B;
-  --text-muted: #64748B;
+  --text-main: #1A1A1A; /* Charcoal */
+  --text-muted: #6B7280; /* Medium Grey */
   --text-inverse: #FFFFFF;
-
+  
+  /* Accent Gradients (Amber to Orange) */
+  --accent-light: #FFB84D;
+  --accent-dark: #FF7A3D;
+  --accent: #F97316; /* Tailwind Orange 500 equivalent */
+  --accent-hover: #EA580C; 
+  --accent-glow: rgba(249, 115, 22, 0.25);
+  
   /* Status Colors */
   --status-success: #10B981;
-  --status-success-bg: #D1FAE5;
+  --status-success-bg: rgba(16, 185, 129, 0.1);
   --status-success-text: #065F46;
 
   --status-error: #EF4444;
-  --status-error-bg: #FEE2E2;
+  --status-error-bg: rgba(239, 68, 68, 0.1);
   --status-error-text: #991B1B;
 
   --status-warning: #F59E0B;
-  --status-warning-bg: #FEF3C7;
+  --status-warning-bg: rgba(245, 158, 11, 0.1);
   --status-warning-text: #92400E;
 
   --status-info: #3B82F6;
-  --status-info-bg: #DBEAFE;
+  --status-info-bg: rgba(59, 130, 246, 0.1);
   --status-info-text: #1E40AF;
 
-  /* Legacy Aliases (to prevent breaking other parts before we fix them) */
-  --bg-primary: var(--bg-app);
+  /* Legacy Aliases mapping to new system */
+  --bg-primary: var(--bg-gradient-top); 
   --bg-secondary: var(--bg-surface-hover);
   --bg-card: var(--bg-surface);
   --bg-card-hover: var(--bg-surface-hover);
   --bg-input: var(--bg-surface);
   --bg-input-focus: var(--bg-surface);
-
+  
+  --navy-950: #1A1A1A; /* Repurposed to dark grey for fallback */
+  --navy-900: #1F2937;
+  --navy-800: #374151;
+  --navy-700: #4B5563;
+  --navy-600: #6B7280;
+  --navy-500: #9CA3AF;
+  --navy-400: #D1D5DB;
+  --navy-300: #E5E7EB;
+  
+  --gold-500: #F97316;
+  
   --text-primary: var(--text-main);
   --text-secondary: var(--text-muted);
-
-  --accent: var(--navy-700);
-  --accent-hover: var(--navy-600);
-  --accent-glow: rgba(44, 62, 80, 0.2);
 
   --success: var(--status-success);
   --success-bg: var(--status-success-bg);
@@ -79,15 +76,17 @@
   --info-bg: var(--status-info-bg);
 
   --border: var(--border-color);
-  --border-active: var(--navy-500);
+  --border-active: var(--accent);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-glow: 0 0 15px var(--accent-glow);
+  /* New diffused shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.06); /* Soft diffused shadow */
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 20px var(--accent-glow);
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  /* New large border radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
@@ -101,7 +100,7 @@
   /* Layout */
   --sidebar-width: 260px;
   --sidebar-collapsed: 72px;
-  --header-height: 64px;
+  --header-height: 80px;
 }
 
 /* ─── Reset & Base ─── */
@@ -121,10 +120,10 @@ html {
 
 body {
   font-family: var(--font);
-  background: var(--bg-primary);
+  background: linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.6;
-  overflow-x: hidden;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -166,91 +165,51 @@ img {
 /* ─── Layout ─── */
 .app-layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-.sidebar {
-  width: var(--sidebar-width);
-  background: var(--navy-950);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
+.top-nav {
+  position: sticky;
+  top: 16px;
   z-index: 100;
-  transition: transform var(--transition);
-}
-
-.sidebar-header {
-  padding: 20px;
+  margin: 0 auto 24px auto;
+  max-width: 1200px;
+  width: calc(100% - 32px);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
   display: flex;
   align-items: center;
-  gap: 12px;
-  border-bottom: 1px solid var(--border);
+  justify-content: space-between;
+  padding: 8px 16px;
+  transition: all var(--transition);
 }
 
-.sidebar-logo {
-  width: 40px;
-  height: 40px;
-  background: var(--cream-100);
-  border-radius: var(--radius-md);
+.nav-links {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--navy-900);
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.sidebar-logo-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.sidebar-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.2;
-}
-
-.sidebar-subtitle {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 400;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
   gap: 4px;
-  overflow-y: auto;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  min-height: 44px; /* Touch target */
-  border-radius: var(--radius-md);
-  color: var(--text-secondary);
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
   font-size: 14px;
   font-weight: 500;
+  transition: all var(--transition);
   cursor: pointer;
-  transition: all var(--transition-fast);
-  text-decoration: none;
   border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
+  background: transparent;
+  outline: none;
+  text-decoration: none;
 }
 
 .nav-item:hover {
@@ -343,21 +302,18 @@ img {
 
 /* ─── Main Content ─── */
 .main-content {
-  margin-left: var(--sidebar-width);
   flex: 1;
-  min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 16px 40px 16px;
   display: flex;
   flex-direction: column;
 }
 
 .page-header {
-  padding: 24px 32px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255, 253, 245, 0.8);
-  backdrop-filter: blur(12px);
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  padding: 12px 0 24px 0;
+  background: transparent;
 }
 
 .page-title {
@@ -381,85 +337,70 @@ img {
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  backdrop-filter: blur(12px);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
   transition: all var(--transition);
 }
 
 .card:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-glass {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: var(--radius-lg);
-  padding: 24px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .card-description {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
 /* ─── Stat Cards ─── */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
 }
 
 .stat-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  backdrop-filter: blur(12px);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--gold-500), var(--gold-300));
-  opacity: 0;
-  transition: opacity var(--transition);
-}
-
-.stat-card:hover::before {
-  opacity: 1;
+  transition: all var(--transition);
 }
 
 .stat-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .stat-icon.gold {
-  background: rgba(201, 168, 76, 0.12);
-  color: var(--gold-500);
+  background: var(--warning-bg);
+  color: var(--accent);
 }
 
 .stat-icon.green {
@@ -478,11 +419,12 @@ img {
 }
 
 .stat-value {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
 }
 
 .stat-label {

@@ -4,6 +4,8 @@ import Layout from '../components/Layout';
 import { Users, CheckCircle, Clock, Calendar, Download, XCircle, Phone } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { getAllPendingLeaves } from '../api/leaveService';
+import { getOrgWideSyllabusStats } from '../api/syllabusService';
 
 export default function AdminDashboardPage() {
   const [teachers, setTeachers] = useState([]);
@@ -13,6 +15,10 @@ export default function AdminDashboardPage() {
   
   // Default to today
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+
+  // New modules stats
+  const [pendingLeavesCount, setPendingLeavesCount] = useState(0);
+  const [syllabusStats, setSyllabusStats] = useState({ total: 0, completed: 0, percentage: 0 });
 
   useEffect(() => {
     fetchDashboardData(selectedDate);
@@ -40,6 +46,17 @@ export default function AdminDashboardPage() {
       
       setTeachers(teachersData || []);
       setReports(reportsData || []);
+
+      // Fetch new module stats
+      try {
+        const leaves = await getAllPendingLeaves();
+        setPendingLeavesCount(leaves.length);
+        
+        const stats = await getOrgWideSyllabusStats();
+        setSyllabusStats(stats);
+      } catch (err) {
+        console.error('Failed to load new module stats', err);
+      }
       
     } catch (err) {
       console.error(err);
@@ -135,6 +152,53 @@ export default function AdminDashboardPage() {
             <div className="stat-value" style={{ fontSize: 24 }}>{missingCount}</div>
             <div className="stat-label">Missing / Not Started</div>
           </div>
+        </div>
+
+        {/* New Modules Admin Widgets */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, marginBottom: 32 }}>
+          <Link to="/admin/approvals" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="card" style={{ padding: '20px', cursor: 'pointer', transition: 'all var(--transition)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div className="stat-label">Leave Approvals</div>
+                  <div className="stat-value" style={{ fontSize: 28, color: pendingLeavesCount > 0 ? 'var(--warning)' : 'var(--success)' }}>
+                    {pendingLeavesCount} Pending
+                  </div>
+                </div>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
+                  <Calendar size={20} />
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="card" style={{ padding: '20px', cursor: 'pointer', transition: 'all var(--transition)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div className="stat-label">Org-Wide Syllabus</div>
+                  <div className="stat-value" style={{ fontSize: 28 }}>{syllabusStats.percentage}%</div>
+                </div>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
+                  <CheckCircle size={20} />
+                </div>
+              </div>
+            </div>
+          </Link>
+
+          <Link to="/admin/timetable" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="card" style={{ padding: '20px', cursor: 'pointer', transition: 'all var(--transition)', background: 'linear-gradient(135deg, var(--accent-light), var(--accent-dark))', color: '#fff', border: 'none' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div className="stat-label" style={{ color: 'rgba(255,255,255,0.9)' }}>Timetable</div>
+                  <div className="stat-value" style={{ fontSize: 24, color: '#fff' }}>Manage Schedules</div>
+                </div>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                  <Clock size={20} />
+                </div>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Teachers Table */}

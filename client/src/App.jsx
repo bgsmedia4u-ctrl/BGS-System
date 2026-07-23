@@ -17,6 +17,11 @@ import AdminTeacherApprovals from './pages/AdminTeacherApprovals';
 import AttendancePage from './pages/AttendancePage';
 import MarksPage from './pages/MarksPage';
 import TeacherMeetingsPage from './pages/TeacherMeetingsPage';
+import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
+import LeaveManagementPage from './pages/LeaveManagementPage';
+import SyllabusTrackerPage from './pages/SyllabusTrackerPage';
+import TimetablePage from './pages/TimetablePage';
+import TasksPage from './pages/TasksPage';
 
 function App() {
   return (
@@ -44,11 +49,17 @@ function App() {
         <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />
         <Route path="/marks" element={<ProtectedRoute><MarksPage /></ProtectedRoute>} />
         <Route path="/meetings" element={<ProtectedRoute><TeacherMeetingsPage /></ProtectedRoute>} />
+        <Route path="/analytics" element={<ProtectedRoute><AnalyticsDashboardPage /></ProtectedRoute>} />
+        <Route path="/leave" element={<ProtectedRoute><LeaveManagementPage /></ProtectedRoute>} />
+        <Route path="/syllabus" element={<ProtectedRoute><SyllabusTrackerPage /></ProtectedRoute>} />
+        <Route path="/timetable" element={<ProtectedRoute><TimetablePage /></ProtectedRoute>} />
+        <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
         
         {/* Protected Admin Routes (sidebar-based) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
         <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />
         <Route path="/admin/approvals" element={<AdminRoute><AdminTeacherApprovals /></AdminRoute>} />
+        <Route path="/admin/timetable" element={<AdminRoute><TimetablePage isAdmin={true} /></AdminRoute>} />
 
         {/* Separate Standalone Admin Portal */}
         <Route path="/admin-portal" element={<AdminRoute><AdminPortalPage /></AdminRoute>} />

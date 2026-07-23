@@ -18,7 +18,8 @@ import {
   BookOpen,
   Users,
   Target,
-  ArrowRight
+  ArrowRight,
+  PieChart
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -157,7 +158,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Teacher Tasks completion widget */}
-          <Link to="/report" style={{ textDecoration: 'none' }}>
+          <Link to="/tasks" style={{ textDecoration: 'none' }}>
             <div className="card" style={{ background: 'linear-gradient(135deg, var(--accent-light), var(--accent-dark))', color: '#fff', border: 'none', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'relative', zIndex: 2 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -183,15 +184,27 @@ export default function DashboardPage() {
 
           {/* Gauge Stat Tiles */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <GaugeCard title="Syllabus Completion" value={68} color="var(--accent)" />
-            <div className="stat-card" style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <div className="stat-label">Pending Leave</div>
-                <div className="stat-value">2</div>
+            <Link to="/analytics" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="card" style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'all var(--transition)' }}>
+                <div>
+                  <div className="stat-label" style={{ marginBottom: 4 }}>Student Analytics</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>View full performance & trends</div>
+                </div>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
+                  <PieChart size={20} />
+                </div>
               </div>
-              <div className="stat-icon" style={{ background: 'var(--navy-900)', color: '#fff', marginBottom: 0 }}>
-                <Clock size={20} />
-              </div>
+            </Link>
+            <div style={{ display: 'flex', gap: 16 }}>
+              <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                <GaugeCard title="Syllabus" value={68} color="var(--accent)" />
+              </Link>
+              <Link to="/leave" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                <div className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <div className="stat-label">Pending Leave</div>
+                  <div className="stat-value" style={{ fontSize: 24 }}>2</div>
+                </div>
+              </Link>
             </div>
           </div>
         </div>

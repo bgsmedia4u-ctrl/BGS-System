@@ -10,11 +10,18 @@ import {
   LogOut,
   Menu,
   X,
+  PieChart,
+  Clock,
+  MoreHorizontal,
+  CalendarOff,
+  BookOpenCheck,
+  CheckSquare
 } from 'lucide-react';
 
 export default function Layout({ children }) {
   const { user, profile, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -54,6 +61,30 @@ export default function Layout({ children }) {
           <NavLink to="/meetings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <CalendarDays className="nav-icon" /> Meetings
           </NavLink>
+          <NavLink to="/analytics" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <PieChart className="nav-icon" /> Analytics
+          </NavLink>
+          <NavLink to="/timetable" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Clock className="nav-icon" /> Timetable
+          </NavLink>
+
+          {/* More Dropdown */}
+          <div className="nav-item more-dropdown-container" onClick={() => setMoreOpen(!moreOpen)} style={{ position: 'relative', cursor: 'pointer' }}>
+            <MoreHorizontal className="nav-icon" /> More
+            {moreOpen && (
+              <div className="more-dropdown-menu" style={{ position: 'absolute', top: '100%', right: 0, marginTop: '12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-lg)', minWidth: '180px', zIndex: 300, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <NavLink to="/leave" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                  <CalendarOff className="nav-icon" /> Leave
+                </NavLink>
+                <NavLink to="/syllabus" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                  <BookOpenCheck className="nav-icon" /> Syllabus
+                </NavLink>
+                <NavLink to="/tasks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px' }}>
+                  <CheckSquare className="nav-icon" /> Tasks
+                </NavLink>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="top-nav-right">

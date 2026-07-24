@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { getStudentAnalytics } from '../api/analyticsService';
 import Layout from '../components/Layout';
 import { PieChart, TrendingDown, Users, AlertTriangle, Calendar } from 'lucide-react';

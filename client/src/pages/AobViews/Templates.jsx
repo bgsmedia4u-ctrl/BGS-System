@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { FileEdit, Save, ShieldAlert, Plus, Trash2, X } from 'lucide-react';
 
 export default function Templates({ user, triggerToast }) {

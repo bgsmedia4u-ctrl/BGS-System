@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import api from '../utils/api';
+import api from '../../utils/api';
 
 const cardConfig = [
   {
@@ -11,13 +11,13 @@ const cardConfig = [
   },
   {
     key: 'totalPaid',
-    label: 'Students — Paid',
+    label: 'Students â€” Paid',
     icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',
     color: 'green',
   },
   {
     key: 'totalDue',
-    label: 'Students — Fee Pending',
+    label: 'Students â€” Fee Pending',
     icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
     color: 'amber',
   },
@@ -26,7 +26,7 @@ const cardConfig = [
     label: 'Total Fee Due Amount',
     icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
     color: 'red',
-    prefix: '₹',
+    prefix: 'â‚¹',
   },
 ];
 

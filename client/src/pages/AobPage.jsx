@@ -18,8 +18,6 @@ import AuditLogs from './AobViews/AuditLogs';
 import Templates from './AobViews/Templates';
 import toast from 'react-hot-toast';
 
-import './AobViews/index.css'; // Assuming we need to import AOB's CSS
-
 export default function AobPage() {
   const { user, profile } = useAuth();
   const [currentView, setCurrentView] = useState('dashboard');

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import api from '../utils/api';
+﻿import { useState, useEffect, useCallback } from 'react';
+import api from '../../utils/api';
 
 export default function Fee() {
   const [feeData, setFeeData] = useState([]);
@@ -94,7 +94,7 @@ export default function Fee() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl font-bold text-navy-900">Fee Management</h1>
-          <p className="text-sm text-gray-500 mt-1">{feeData.length} records — Total due: ₹{totalDue.toLocaleString('en-IN')}</p>
+          <p className="text-sm text-gray-500 mt-1">{feeData.length} records â€” Total due: â‚¹{totalDue.toLocaleString('en-IN')}</p>
         </div>
         <button
           onClick={() => window.print()}
@@ -160,7 +160,7 @@ export default function Fee() {
                 <th className="px-4 py-3 text-left font-semibold">Class</th>
                 <th className="px-4 py-3 text-left font-semibold">Route</th>
                 <th className="px-4 py-3 text-left font-semibold">Place</th>
-                <th className="px-4 py-3 text-right font-semibold w-36">Fee Due (₹)</th>
+                <th className="px-4 py-3 text-right font-semibold w-36">Fee Due (â‚¹)</th>
                 <th className="px-4 py-3 text-center font-semibold w-24">Status</th>
                 <th className="px-4 py-3 text-center font-semibold w-20 no-print">Edit</th>
               </tr>
@@ -188,7 +188,7 @@ export default function Fee() {
                       />
                     ) : (
                       <span className={`font-medium ${f.feeDue > 0 ? 'text-red-600' : 'text-gray-700'}`}>
-                        {f.feeDue > 0 ? `₹${f.feeDue.toLocaleString('en-IN')}` : '—'}
+                        {f.feeDue > 0 ? `â‚¹${f.feeDue.toLocaleString('en-IN')}` : 'â€”'}
                       </span>
                     )}
                   </td>
@@ -248,7 +248,7 @@ export default function Fee() {
               <tfoot>
                 <tr className="bg-gray-50 font-semibold">
                   <td colSpan={5} className="px-4 py-3 text-right text-navy-900">Total</td>
-                  <td className="px-4 py-3 text-right text-navy-900">₹{totalDue.toLocaleString('en-IN')}</td>
+                  <td className="px-4 py-3 text-right text-navy-900">â‚¹{totalDue.toLocaleString('en-IN')}</td>
                   <td colSpan={2}></td>
                 </tr>
               </tfoot>

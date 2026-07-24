@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getTimetable, getTeacherTimetable, updateTimetableEntry } from '../api/timetableService';
 import { supabase } from '../api/supabase';

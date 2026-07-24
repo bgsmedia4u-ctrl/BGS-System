@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { BarChart3, Filter, Save, Trash2, FileSpreadsheet, Plus, X, Search } from 'lucide-react';
 
 export default function Dashboard({ user, triggerToast }) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { History, Search, ArrowLeft, ArrowRight } from 'lucide-react';
 
 export default function AuditLogs({ user }) {

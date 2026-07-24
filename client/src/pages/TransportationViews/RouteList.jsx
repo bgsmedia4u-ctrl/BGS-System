@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import api from '../utils/api';
+﻿import { useState, useEffect } from 'react';
+import api from '../../utils/api';
 
 export default function RouteList() {
   const [routes, setRoutes] = useState([]);
@@ -28,7 +28,7 @@ export default function RouteList() {
     const lines = ['*BGS Public School & PU College*', '*Bus Route List*', ''];
 
     routes.forEach((r) => {
-      lines.push(`*${r.routeNumber} — ${r.routeName}*`);
+      lines.push(`*${r.routeNumber} â€” ${r.routeName}*`);
       lines.push(`Stops: ${r.stops.join(', ')}`);
       lines.push('');
     });
@@ -87,7 +87,7 @@ export default function RouteList() {
             <div className="px-5 py-4 bg-navy-50 border-b border-navy-100 flex items-center justify-between">
               <div>
                 <span className="text-sm font-bold text-navy-900">{r.routeNumber}</span>
-                <span className="text-sm text-gray-500 ml-2">— {r.routeName}</span>
+                <span className="text-sm text-gray-500 ml-2">â€” {r.routeName}</span>
               </div>
               <span className="text-xs font-medium text-navy-600 bg-navy-100 px-2.5 py-1 rounded-full">
                 {r.stops.length} stops

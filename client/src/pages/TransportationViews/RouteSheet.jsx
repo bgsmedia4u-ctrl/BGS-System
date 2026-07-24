@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../utils/api';
+import api from '../../utils/api';
 
 export default function RouteSheet() {
   const { id } = useParams();
@@ -99,13 +99,13 @@ export default function RouteSheet() {
   };
 
   const handleShare = () => {
-    const lines = [`*${selectedRoute} — Fee Due Report*`, `*BGS Public School & PU College*`, ''];
+    const lines = [`*${selectedRoute} â€” Fee Due Report*`, `*BGS Public School & PU College*`, ''];
     let total = 0;
 
     students.forEach((s, i) => {
       const fee = parseFloat(fees[s.id]) || 0;
       if (fee > 0) {
-        lines.push(`${i + 1}. ${s.name} (${s.place}) — ₹${fee}`);
+        lines.push(`${i + 1}. ${s.name} (${s.place}) â€” â‚¹${fee}`);
         total += fee;
       }
     });
@@ -114,7 +114,7 @@ export default function RouteSheet() {
       lines.push('No pending fees for this route.');
     } else {
       lines.push('');
-      lines.push(`*Total Due: ₹${total}*`);
+      lines.push(`*Total Due: â‚¹${total}*`);
     }
 
     const text = encodeURIComponent(lines.join('\n'));
@@ -136,7 +136,7 @@ export default function RouteSheet() {
       {/* Print header (hidden on screen) */}
       <div className="print-header hidden">
         <h1>BGS Public School &amp; PU College</h1>
-        <p>{selectedRoute} — Fee Due Sheet</p>
+        <p>{selectedRoute} â€” Fee Due Sheet</p>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 no-print">
@@ -154,9 +154,9 @@ export default function RouteSheet() {
           onChange={(e) => setSelectedRoute(e.target.value)}
           className="w-full sm:w-64 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy-500 bg-white"
         >
-          <option value="">— Choose a route —</option>
+          <option value="">â€” Choose a route â€”</option>
           {routes.map(r => (
-            <option key={r.id} value={r.routeNumber}>{r.routeNumber} — {r.routeName}</option>
+            <option key={r.id} value={r.routeNumber}>{r.routeNumber} â€” {r.routeName}</option>
           ))}
         </select>
       </div>
@@ -169,7 +169,7 @@ export default function RouteSheet() {
               {students.length} Students
             </span>
             <span className={`px-3 py-1.5 rounded-lg font-medium ${totalDue > 0 ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'}`}>
-              Total Due: ₹{totalDue.toLocaleString('en-IN')}
+              Total Due: â‚¹{totalDue.toLocaleString('en-IN')}
             </span>
           </div>
 
@@ -182,7 +182,7 @@ export default function RouteSheet() {
                     <th className="px-4 py-3 text-left font-semibold w-12">#</th>
                     <th className="px-4 py-3 text-left font-semibold">Student Name</th>
                     <th className="px-4 py-3 text-left font-semibold">Place / Stop</th>
-                    <th className="px-4 py-3 text-right font-semibold w-40">Fee Due (₹)</th>
+                    <th className="px-4 py-3 text-right font-semibold w-40">Fee Due (â‚¹)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -208,7 +208,7 @@ export default function RouteSheet() {
                 <tfoot>
                   <tr className="bg-gray-50 font-semibold">
                     <td colSpan={3} className="px-4 py-3 text-right text-navy-900">Total</td>
-                    <td className="px-4 py-3 text-right text-navy-900">₹{totalDue.toLocaleString('en-IN')}</td>
+                    <td className="px-4 py-3 text-right text-navy-900">â‚¹{totalDue.toLocaleString('en-IN')}</td>
                   </tr>
                 </tfoot>
               </table>

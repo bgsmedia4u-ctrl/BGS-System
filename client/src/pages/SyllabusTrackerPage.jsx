@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getSyllabus, updateSyllabusProgress, createSyllabusModule } from '../api/syllabusService';
 import Layout from '../components/Layout';

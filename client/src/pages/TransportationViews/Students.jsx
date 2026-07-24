@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import api from '../utils/api';
+﻿import { useState, useEffect, useCallback } from 'react';
+import api from '../../utils/api';
 
 export default function Students() {
   const [students, setStudents] = useState([]);
@@ -154,7 +154,7 @@ export default function Students() {
             >
               <option value="">Select Route</option>
               {routes.map((r) => (
-                <option key={r.id} value={r.routeNumber}>{r.routeNumber} — {r.routeName}</option>
+                <option key={r.id} value={r.routeNumber}>{r.routeNumber} â€” {r.routeName}</option>
               ))}
             </select>
             <input
@@ -294,7 +294,7 @@ export default function Students() {
                         <span className="px-2 py-0.5 bg-navy-50 text-navy-700 text-xs font-medium rounded-full">{s.route}</span>
                       </td>
                       <td className="px-4 py-2.5 text-gray-700">{s.place}</td>
-                      <td className="px-4 py-2.5 text-gray-700">{s.phone || '—'}</td>
+                      <td className="px-4 py-2.5 text-gray-700">{s.phone || 'â€”'}</td>
                       <td className="px-4 py-2.5 no-print">
                         <div className="flex items-center justify-center gap-1">
                           <button onClick={() => startEdit(s)} className="p-1.5 text-navy-600 hover:bg-navy-50 rounded transition-colors" title="Edit">

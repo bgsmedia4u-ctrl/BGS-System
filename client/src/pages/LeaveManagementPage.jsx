@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getTeacherLeaves, submitLeaveRequest } from '../api/leaveService';
 import { supabase } from '../api/supabase';

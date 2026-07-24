@@ -10,7 +10,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 const PERIODS = ['1st Period', '2nd Period', '3rd Period', 'Lunch', '4th Period', '5th Period'];
 
 export default function TimetablePage({ isAdmin = false }) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [timetable, setTimetable] = useState([]);
   const [loading, setLoading] = useState(false);
   const [teachers, setTeachers] = useState([]);
@@ -24,6 +24,9 @@ export default function TimetablePage({ isAdmin = false }) {
   const [editingKey, setEditingKey] = useState(null); // format: "Day|Period"
   const [editSubject, setEditSubject] = useState('');
   const [editTeacherId, setEditTeacherId] = useState('');
+  const [editStream, setEditStream] = useState('');
+  const [editYear, setEditYear] = useState('');
+  const [editCls, setEditCls] = useState('');
 
   useEffect(() => {
     if (isAdmin) {
@@ -69,8 +72,11 @@ export default function TimetablePage({ isAdmin = false }) {
 
   const startEditing = (day, period, entry) => {
     setEditingKey(`${day}|${period}`);
-    setEditSubject(entry?.subject || '');
-    setEditTeacherId(entry?.teacher_id || '');
+    setEditSubject(entry?.subject || (!isAdmin ? profile?.subject : ''));
+    setEditTeacherId(entry?.teacher_id || (!isAdmin ? user.id : ''));
+    setEditStream(entry?.stream || 'Science');
+    setEditYear(entry?.year || '1st Year');
+    setEditCls(entry?.class || 'Class A');
   };
 
   const cancelEditing = () => {
@@ -79,9 +85,15 @@ export default function TimetablePage({ isAdmin = false }) {
 
   const saveEditing = async (day, period, entryId) => {
     try {
+      const targetStream = isAdmin ? stream : editStream;
+      const targetYear = isAdmin ? year : editYear;
+      const targetCls = isAdmin ? cls : editCls;
+
       const updated = await updateTimetableEntry({
         id: entryId,
-        stream, year, class: cls,
+        stream: targetStream,
+        year: targetYear,
+        class: targetCls,
         day_of_week: day,
         period,
         subject: editSubject,
@@ -175,12 +187,35 @@ export default function TimetablePage({ isAdmin = false }) {
                           return (
                             <td key={day} style={{ verticalAlign: 'top', height: 80, borderRight: '1px solid var(--border)' }}>
                               {isEditing ? (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                                  <input type="text" className="form-input" placeholder="Subject" value={editSubject} onChange={e => setEditSubject(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} />
-                                  <select className="form-input" value={editTeacherId} onChange={e => setEditTeacherId(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
-                                    <option value="">Unassigned</option>
-                                    {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-                                  </select>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, zIndex: 10, position: 'relative', background: 'var(--bg-surface)', padding: 8, borderRadius: 8, boxShadow: 'var(--shadow-md)', border: '1px solid var(--border)' }}>
+                                  {!isAdmin && (
+                                    <>
+                                      <select className="form-input" value={editStream} onChange={e => setEditStream(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
+                                        <option value="">Stream...</option>
+                                        <option value="Science">Science</option>
+                                        <option value="Commerce">Commerce</option>
+                                        <option value="Arts">Arts</option>
+                                      </select>
+                                      <select className="form-input" value={editYear} onChange={e => setEditYear(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
+                                        <option value="">Year...</option>
+                                        <option value="1st Year">1st Year</option>
+                                        <option value="2nd Year">2nd Year</option>
+                                      </select>
+                                      <select className="form-input" value={editCls} onChange={e => setEditCls(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
+                                        <option value="">Class...</option>
+                                        <option value="Class A">Class A</option>
+                                        <option value="Class B">Class B</option>
+                                        <option value="FTB-1">FTB-1</option>
+                                      </select>
+                                    </>
+                                  )}
+                                  <input type="text" className="form-input" placeholder="Subject" value={editSubject} onChange={e => setEditSubject(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} disabled={!isAdmin} />
+                                  {isAdmin && (
+                                    <select className="form-input" value={editTeacherId} onChange={e => setEditTeacherId(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
+                                      <option value="">Unassigned</option>
+                                      {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                    </select>
+                                  )}
                                   <div style={{ display: 'flex', gap: 4 }}>
                                     <button className="btn btn-primary" style={{ padding: '4px', flex: 1, justifyContent: 'center' }} onClick={() => saveEditing(day, period, entry?.id)}><Check size={14}/></button>
                                     <button className="btn btn-ghost" style={{ padding: '4px', flex: 1, justifyContent: 'center' }} onClick={cancelEditing}><X size={14}/></button>
@@ -189,29 +224,25 @@ export default function TimetablePage({ isAdmin = false }) {
                               ) : entry ? (
                                 <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }} className="group">
                                   <div style={{ fontWeight: 600, color: 'var(--accent)' }}>{entry.subject}</div>
-                                  {!isAdmin && <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{entry.class}</div>}
+                                  {!isAdmin && <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{entry.stream} • {entry.class}</div>}
                                   {isAdmin && <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{entry.teacher?.raw_user_meta_data?.full_name || 'Unassigned'}</div>}
                                   
-                                  {isAdmin && (
-                                    <button 
-                                      className="btn btn-ghost" 
-                                      style={{ position: 'absolute', top: 0, right: 0, padding: 4, opacity: 0 }}
-                                      onClick={() => startEditing(day, period, entry)}
-                                      onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
-                                      onMouseLeave={(e) => e.currentTarget.style.opacity = 0.5}
-                                    >
-                                      <Edit2 size={14} />
-                                    </button>
-                                  )}
+                                  <button 
+                                    className="btn btn-ghost" 
+                                    style={{ position: 'absolute', top: 0, right: 0, padding: 4, opacity: 0 }}
+                                    onClick={() => startEditing(day, period, entry)}
+                                    onMouseEnter={(e) => e.currentTarget.style.opacity = 1}
+                                    onMouseLeave={(e) => e.currentTarget.style.opacity = 0.5}
+                                  >
+                                    <Edit2 size={14} />
+                                  </button>
                                 </div>
-                              ) : isAdmin ? (
+                              ) : (
                                 <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                   <button className="btn btn-ghost" style={{ padding: '8px', borderStyle: 'dashed' }} onClick={() => startEditing(day, period, null)}>
                                     <Edit2 size={14} style={{ opacity: 0.5 }} />
                                   </button>
                                 </div>
-                              ) : (
-                                <div style={{ color: 'var(--border)' }}>-</div>
                               )}
                             </td>
                           );

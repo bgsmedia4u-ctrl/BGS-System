@@ -20,6 +20,15 @@ import LeaveManagementPage from './pages/LeaveManagementPage';
 import SyllabusTrackerPage from './pages/SyllabusTrackerPage';
 import TimetablePage from './pages/TimetablePage';
 import TasksPage from './pages/TasksPage';
+import TransportationPage from './pages/TransportationPage';
+import AobPage from './pages/AobPage';
+
+import TransportationDashboard from './pages/TransportationViews/Dashboard';
+import TransportationStudents from './pages/TransportationViews/Students';
+import TransportationRoutesPage from './pages/TransportationViews/RoutesPage';
+import TransportationRouteSheet from './pages/TransportationViews/RouteSheet';
+import TransportationRouteList from './pages/TransportationViews/RouteList';
+import TransportationFee from './pages/TransportationViews/Fee';
 
 function App() {
   return (
@@ -51,6 +60,15 @@ function App() {
         <Route path="/syllabus" element={<ProtectedRoute><SyllabusTrackerPage /></ProtectedRoute>} />
         <Route path="/timetable" element={<ProtectedRoute><TimetablePage /></ProtectedRoute>} />
         <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
+        <Route path="/transportation" element={<AdminRoute><TransportationPage /></AdminRoute>}>
+          <Route index element={<TransportationDashboard />} />
+          <Route path="students" element={<TransportationStudents />} />
+          <Route path="routes" element={<TransportationRoutesPage />} />
+          <Route path="routes/:id/sheet" element={<TransportationRouteSheet />} />
+          <Route path="routes/list" element={<TransportationRouteList />} />
+          <Route path="fee" element={<TransportationFee />} />
+        </Route>
+        <Route path="/aob" element={<ProtectedRoute><AobPage /></ProtectedRoute>} />
         
         {/* Protected Admin Routes (sidebar-based) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />

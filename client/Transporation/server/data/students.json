@@ -1,0 +1,533 @@
+[
+  {
+    "id": "s001",
+    "slNo": 1,
+    "name": "Haripriya. V.J",
+    "class": "1st PUC",
+    "place": "Varadanayakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s002",
+    "slNo": 2,
+    "name": "Nayana. H.N",
+    "class": "2nd PUC",
+    "place": "Haralahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s003",
+    "slNo": 3,
+    "name": "Inchara. G.S",
+    "class": "1st PUC",
+    "place": "Haralahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s004",
+    "slNo": 4,
+    "name": "Tejaswini. R.G",
+    "class": "1st PUC",
+    "place": "Ramachandrahosur",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s005",
+    "slNo": 5,
+    "name": "Varshini. R.K",
+    "class": "10th",
+    "place": "Ramachandrahosur",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s006",
+    "slNo": 6,
+    "name": "Lekana",
+    "class": "1st PUC",
+    "place": "Ramachandrahosur",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s007",
+    "slNo": 7,
+    "name": "Jayanth. R.K",
+    "class": "10th",
+    "place": "Ramachandrahosur",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s008",
+    "slNo": 8,
+    "name": "Navaneetha",
+    "class": "2nd PUC",
+    "place": "Parasdinne",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s009",
+    "slNo": 9,
+    "name": "Chinmayi",
+    "class": "1st PUC",
+    "place": "Parasdinne",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s010",
+    "slNo": 10,
+    "name": "Deekshith gowda. D",
+    "class": "10th",
+    "place": "Parasdinne",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s011",
+    "slNo": 11,
+    "name": "Spandana",
+    "class": "2nd PUC",
+    "place": "Gidnahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s012",
+    "slNo": 12,
+    "name": "Deekshitha. A",
+    "class": "2nd PUC",
+    "place": "L.Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s013",
+    "slNo": 13,
+    "name": "Brundha. D",
+    "class": "10th",
+    "place": "L.Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s014",
+    "slNo": 14,
+    "name": "Kruthiaka. S",
+    "class": "1st PUC",
+    "place": "L.Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s015",
+    "slNo": 15,
+    "name": "Madhu. V",
+    "class": "1st PUC",
+    "place": "L.Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s016",
+    "slNo": 16,
+    "name": "Sanjay. S",
+    "class": "10th",
+    "place": "Pylahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s017",
+    "slNo": 17,
+    "name": "Somanth gowda. S",
+    "class": "10th",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s018",
+    "slNo": 18,
+    "name": "Ravi teja",
+    "class": "10th",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s019",
+    "slNo": 19,
+    "name": "Manish. M",
+    "class": "1st PUC",
+    "place": "Pylahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s020",
+    "slNo": 20,
+    "name": "Vikas. J",
+    "class": "2nd PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s021",
+    "slNo": 21,
+    "name": "Kruthik. K.S",
+    "class": "2nd PUC",
+    "place": "Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s022",
+    "slNo": 22,
+    "name": "Pavan. L.M",
+    "class": "1st PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s023",
+    "slNo": 23,
+    "name": "Srujan. B",
+    "class": "1st PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s024",
+    "slNo": 24,
+    "name": "Shirisha. LM",
+    "class": "1st PUC",
+    "place": "Gidnahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s025",
+    "slNo": 25,
+    "name": "Gourav. M",
+    "class": "10th",
+    "place": "Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s026",
+    "slNo": 26,
+    "name": "Karthik",
+    "class": "10th",
+    "place": "Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s027",
+    "slNo": 27,
+    "name": "Varun BV",
+    "class": "1st PUC",
+    "place": "Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s029",
+    "slNo": 29,
+    "name": "Pruthvi. P",
+    "class": "1st PUC",
+    "place": "L.Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s030",
+    "slNo": 30,
+    "name": "Sumanth P",
+    "class": "2nd PUC",
+    "place": "L.Muthukadahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s031",
+    "slNo": 31,
+    "name": "Mohith. C",
+    "class": "1st PUC",
+    "place": "Keshvara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s032",
+    "slNo": 32,
+    "name": "Vinod kumar. N",
+    "class": "1st PUC",
+    "place": "Keshwara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s033",
+    "slNo": 33,
+    "name": "Vishwas. KA",
+    "class": "1st PUC",
+    "place": "Nelamakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s034",
+    "slNo": 34,
+    "name": "Chethan. K.M",
+    "class": "1st PUC",
+    "place": "Nelamakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s035",
+    "slNo": 35,
+    "name": "H.V Darshan",
+    "class": "1st PUC",
+    "place": "Nelamakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s036",
+    "slNo": 36,
+    "name": "Darshan. T",
+    "class": "2nd PUC",
+    "place": "Nelamakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s037",
+    "slNo": 37,
+    "name": "Praveen kumar. P",
+    "class": "1st PUC",
+    "place": "Nelamakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s038",
+    "slNo": 38,
+    "name": "Keerthan. D",
+    "class": "1st PUC",
+    "place": "Keshvara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s039",
+    "slNo": 39,
+    "name": "Charan. H.",
+    "class": "2nd PUC",
+    "place": "Keshvara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s040",
+    "slNo": 40,
+    "name": "Rohith. K.R",
+    "class": "1st PUC",
+    "place": "Keshvara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s041",
+    "slNo": 41,
+    "name": "Pallavi. L",
+    "class": "10th",
+    "place": "Nelamakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s042",
+    "slNo": 42,
+    "name": "Poorvika. M",
+    "class": "10th",
+    "place": "Nelamakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s043",
+    "slNo": 43,
+    "name": "Nandini. M",
+    "class": "1st PUC",
+    "place": "Pailahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s044",
+    "slNo": 44,
+    "name": "Jeevitha",
+    "class": "2nd PUC",
+    "place": "Keshwara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s045",
+    "slNo": 45,
+    "name": "Gangotri. L.G",
+    "class": "2nd PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s046",
+    "slNo": 46,
+    "name": "Revathi",
+    "class": "2nd PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s047",
+    "slNo": 47,
+    "name": "Yuktha shree",
+    "class": "2nd PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s048",
+    "slNo": 48,
+    "name": "Amrutha",
+    "class": "2nd PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s049",
+    "slNo": 49,
+    "name": "Varsha",
+    "class": "2nd PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s050",
+    "slNo": 50,
+    "name": "Sneha. M",
+    "class": "2nd PUC",
+    "place": "Pailahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s051",
+    "slNo": 51,
+    "name": "Krishnaveni",
+    "class": "2nd PUC",
+    "place": "Parasadinne",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s052",
+    "slNo": 52,
+    "name": "Thanushree P.V. C",
+    "class": "1st PUC",
+    "place": "Varadanayakanahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s053",
+    "slNo": 53,
+    "name": "Amulya L.V",
+    "class": "1st PUC",
+    "place": "Lakkahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s054",
+    "slNo": 54,
+    "name": "Poorvika G.V",
+    "class": "2nd PUC",
+    "place": "Gidnahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s055",
+    "slNo": 55,
+    "name": "Ankitha chandana",
+    "class": "1st PUC",
+    "place": "Lakkahalli Gate",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s056",
+    "slNo": 56,
+    "name": "Manoj. C",
+    "class": "2nd PUC",
+    "place": "Gidnahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s057",
+    "slNo": 57,
+    "name": "Chaithanya",
+    "class": "1st PUC",
+    "place": "Keshvara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s058",
+    "slNo": 58,
+    "name": "Manasa",
+    "class": "2nd PUC",
+    "place": "Nallamaknahalli",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s059",
+    "slNo": 59,
+    "name": "Nandu. K.M",
+    "class": "2nd PUC",
+    "place": "Keshwara",
+    "route": "Route 01",
+    "phone": ""
+  },
+  {
+    "id": "s060",
+    "slNo": 60,
+    "name": "Jeevitha. K.C",
+    "class": "2nd PUC",
+    "place": "Keshwara",
+    "route": "Route 01",
+    "phone": ""
+  }
+]

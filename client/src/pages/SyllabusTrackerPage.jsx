@@ -15,15 +15,21 @@ export default function SyllabusTrackerPage() {
   const [stream, setStream] = useState('Science');
   const [year, setYear] = useState('1st Year');
   const [cls, setCls] = useState('Class A');
-  const [subject, setSubject] = useState('Physics');
+  const [subject, setSubject] = useState(isAdmin ? 'Physics' : (profile?.subject || 'Physics'));
 
   // Admin Create Mode
   const [showCreate, setShowCreate] = useState(false);
   const [newChapter, setNewChapter] = useState('');
 
   useEffect(() => {
+    if (!isAdmin && profile?.subject) {
+      setSubject(profile.subject);
+    }
+  }, [profile, isAdmin]);
+
+  useEffect(() => {
     fetchData();
-  }, [stream, year, cls]);
+  }, [stream, year, cls, subject]);
 
   async function fetchData() {
     setLoading(true);
@@ -113,17 +119,19 @@ export default function SyllabusTrackerPage() {
               <option value="FTB-1">FTB-1</option>
             </select>
           </div>
-          <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
-            <label className="form-label">Subject</label>
-            <select className="form-input" value={subject} onChange={e => setSubject(e.target.value)}>
-              <option value="Physics">Physics</option>
-              <option value="Chemistry">Chemistry</option>
-              <option value="Maths">Maths</option>
-              <option value="Biology">Biology</option>
-              <option value="Accounts">Accounts</option>
-              <option value="Economics">Economics</option>
-            </select>
-          </div>
+          {isAdmin && (
+            <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
+              <label className="form-label">Subject</label>
+              <select className="form-input" value={subject} onChange={e => setSubject(e.target.value)}>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Maths">Maths</option>
+                <option value="Biology">Biology</option>
+                <option value="Accounts">Accounts</option>
+                <option value="Economics">Economics</option>
+              </select>
+            </div>
+          )}
         </div>
 
         {/* Admin Create Form */}

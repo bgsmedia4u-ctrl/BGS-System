@@ -11,7 +11,8 @@ export default function RegisterPage() {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    staffType: 'teaching'
   });
   const [registering, setRegistering] = useState(false);
 
@@ -21,10 +22,15 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const { fullName, subject, email, phone, password, confirmPassword } = formData;
+    const { fullName, subject, email, phone, password, confirmPassword, staffType } = formData;
 
-    if (!fullName || !subject || !email || !password || !confirmPassword) {
+    if (!fullName || !email || !password || !confirmPassword) {
       toast.error('Please fill in all required fields');
+      return;
+    }
+    
+    if (staffType === 'teaching' && !subject) {
+      toast.error('Subject is required for teaching staff');
       return;
     }
 
@@ -46,8 +52,9 @@ export default function RegisterPage() {
         options: {
           data: {
             full_name: fullName,
-            subject: subject,
+            subject: staffType === 'teaching' ? subject : null,
             phone: phone || null,
+            staff_type: staffType
           }
         }
       });
@@ -85,16 +92,44 @@ export default function RegisterPage() {
             disabled={registering}
             required
           />
-          <input
-            type="text"
-            name="subject"
-            className="form-input"
-            placeholder="Subject Taught (e.g., Physics, Maths)"
-            value={formData.subject}
-            onChange={handleChange}
-            disabled={registering}
-            required
-          />
+          
+          <div style={{ display: 'flex', gap: 16, marginBottom: 8 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: 'var(--text-main)', cursor: 'pointer' }}>
+              <input 
+                type="radio" 
+                name="staffType" 
+                value="teaching"
+                checked={formData.staffType === 'teaching'} 
+                onChange={handleChange} 
+                disabled={registering}
+              />
+              Teaching Staff
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: 'var(--text-main)', cursor: 'pointer' }}>
+              <input 
+                type="radio" 
+                name="staffType" 
+                value="non_teaching"
+                checked={formData.staffType === 'non_teaching'} 
+                onChange={handleChange} 
+                disabled={registering}
+              />
+              Non-Teaching Staff
+            </label>
+          </div>
+
+          {formData.staffType === 'teaching' && (
+            <input
+              type="text"
+              name="subject"
+              className="form-input"
+              placeholder="Subject Taught (e.g., Physics, Maths)"
+              value={formData.subject}
+              onChange={handleChange}
+              disabled={registering}
+              required
+            />
+          )}
           <input
             type="email"
             name="email"

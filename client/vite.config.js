@@ -7,11 +7,19 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-        secure: false,
-      },
+      // Transportation API Proxy
+      '/api/students': { target: 'http://localhost:5001', changeOrigin: true },
+      '/api/routes': { target: 'http://localhost:5001', changeOrigin: true },
+      '/api/fee': { target: 'http://localhost:5001', changeOrigin: true },
+      
+      // AOB API Proxy
+      '/api/alumni': { target: 'http://localhost:5002', changeOrigin: true },
+      '/api/milestones': { target: 'http://localhost:5002', changeOrigin: true },
+      '/api/meetings': { target: 'http://localhost:5002', changeOrigin: true },
+      '/api/communications': { target: 'http://localhost:5002', changeOrigin: true },
+      '/api/analytics': { target: 'http://localhost:5002', changeOrigin: true },
+      '/api/audit': { target: 'http://localhost:5002', changeOrigin: true },
+      '/api/gmail': { target: 'http://localhost:5002', changeOrigin: true },
     }
   }
 })

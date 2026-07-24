@@ -184,21 +184,27 @@ export default function DashboardPage() {
 
           {/* Gauge Stat Tiles */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <Link to="/analytics" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <div className="card" style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'all var(--transition)' }}>
-                <div>
-                  <div className="stat-label" style={{ marginBottom: 4 }}>Student Analytics</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>View full performance & trends</div>
-                </div>
-                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
-                  <PieChart size={20} />
-                </div>
-              </div>
-            </Link>
+            {profile?.staff_type === 'teaching' && (
+              <>
+                <Link to="/analytics" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div className="card" style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'all var(--transition)' }}>
+                    <div>
+                      <div className="stat-label" style={{ marginBottom: 4 }}>Student Analytics</div>
+                      <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>View full performance & trends</div>
+                    </div>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
+                      <PieChart size={20} />
+                    </div>
+                  </div>
+                </Link>
+              </>
+            )}
             <div style={{ display: 'flex', gap: 16 }}>
-              <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
-                <GaugeCard title="Syllabus" value={68} color="var(--accent)" />
-              </Link>
+              {profile?.staff_type === 'teaching' && (
+                <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                  <GaugeCard title="Syllabus" value={68} color="var(--accent)" />
+                </Link>
+              )}
               <Link to="/leave" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
                 <div className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <div className="stat-label">Pending Leave</div>

@@ -15,7 +15,9 @@ import {
   MoreHorizontal,
   CalendarOff,
   BookOpenCheck,
-  CheckSquare
+  CheckSquare,
+  Bus,
+  FolderOpen
 } from 'lucide-react';
 
 export default function Layout({ children }) {
@@ -55,18 +57,22 @@ export default function Layout({ children }) {
           <NavLink to="/attendance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <ClipboardCheck className="nav-icon" /> Attendance
           </NavLink>
-          <NavLink to="/marks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <PenLine className="nav-icon" /> Marks
-          </NavLink>
           <NavLink to="/meetings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <CalendarDays className="nav-icon" /> Meetings
           </NavLink>
-          <NavLink to="/analytics" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <PieChart className="nav-icon" /> Analytics
-          </NavLink>
-          <NavLink to="/timetable" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <Clock className="nav-icon" /> Timetable
-          </NavLink>
+          {profile?.staff_type === 'teaching' && (
+            <>
+              <NavLink to="/marks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                <PenLine className="nav-icon" /> Marks
+              </NavLink>
+              <NavLink to="/analytics" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                <PieChart className="nav-icon" /> Analytics
+              </NavLink>
+              <NavLink to="/timetable" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                <Clock className="nav-icon" /> Timetable
+              </NavLink>
+            </>
+          )}
 
           {/* More Dropdown */}
           <div className="nav-item more-dropdown-container" onClick={() => setMoreOpen(!moreOpen)} style={{ position: 'relative', cursor: 'pointer' }}>
@@ -76,11 +82,21 @@ export default function Layout({ children }) {
                 <NavLink to="/leave" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
                   <CalendarOff className="nav-icon" /> Leave
                 </NavLink>
-                <NavLink to="/syllabus" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
-                  <BookOpenCheck className="nav-icon" /> Syllabus
-                </NavLink>
-                <NavLink to="/tasks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px' }}>
+                {profile?.staff_type === 'teaching' && (
+                  <NavLink to="/syllabus" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                    <BookOpenCheck className="nav-icon" /> Syllabus
+                  </NavLink>
+                )}
+                <NavLink to="/tasks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
                   <CheckSquare className="nav-icon" /> Tasks
+                </NavLink>
+                {profile?.role === 'admin' && (
+                  <NavLink to="/transportation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                    <Bus className="nav-icon" /> Transportation
+                  </NavLink>
+                )}
+                <NavLink to="/aob" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px' }}>
+                  <FolderOpen className="nav-icon" /> AOB
                 </NavLink>
               </div>
             )}

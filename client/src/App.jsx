@@ -1,37 +1,38 @@
+import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
 
 // Pages
-import LoginPage from './pages/LoginPage';
-import AdminLoginPage from './pages/AdminLoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import ReportFormPage from './pages/ReportFormPage';
-import AdminDashboardPage from './pages/AdminDashboardPage';
-import AdminExportPage from './pages/AdminExportPage';
-import AdminPortalPage from './pages/AdminPortalPage';
-import AttendancePage from './pages/AttendancePage';
-import MarksPage from './pages/MarksPage';
-import TeacherMeetingsPage from './pages/TeacherMeetingsPage';
-import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
-import LeaveManagementPage from './pages/LeaveManagementPage';
-import SyllabusTrackerPage from './pages/SyllabusTrackerPage';
-import TimetablePage from './pages/TimetablePage';
-import TasksPage from './pages/TasksPage';
-import TransportationPage from './pages/TransportationPage';
-import AobPage from './pages/AobPage';
-import StudentManagementPage from './pages/StudentManagementPage';
-import StaffManagementPage from './pages/StaffManagementPage';
-import AcademicManagementPage from './pages/AcademicManagementPage';
+const LoginPage = React.lazy(() => import('./pages/LoginPage'));
+const AdminLoginPage = React.lazy(() => import('./pages/AdminLoginPage'));
+const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const ReportFormPage = React.lazy(() => import('./pages/ReportFormPage'));
+const AdminDashboardPage = React.lazy(() => import('./pages/AdminDashboardPage'));
+const AdminExportPage = React.lazy(() => import('./pages/AdminExportPage'));
+const AdminPortalPage = React.lazy(() => import('./pages/AdminPortalPage'));
+const AttendancePage = React.lazy(() => import('./pages/AttendancePage'));
+const MarksPage = React.lazy(() => import('./pages/MarksPage'));
+const TeacherMeetingsPage = React.lazy(() => import('./pages/TeacherMeetingsPage'));
+const AnalyticsDashboardPage = React.lazy(() => import('./pages/AnalyticsDashboardPage'));
+const LeaveManagementPage = React.lazy(() => import('./pages/LeaveManagementPage'));
+const SyllabusTrackerPage = React.lazy(() => import('./pages/SyllabusTrackerPage'));
+const TimetablePage = React.lazy(() => import('./pages/TimetablePage'));
+const TasksPage = React.lazy(() => import('./pages/TasksPage'));
+const TransportationPage = React.lazy(() => import('./pages/TransportationPage'));
+const AobPage = React.lazy(() => import('./pages/AobPage'));
+const StudentManagementPage = React.lazy(() => import('./pages/StudentManagementPage'));
+const StaffManagementPage = React.lazy(() => import('./pages/StaffManagementPage'));
+const AcademicManagementPage = React.lazy(() => import('./pages/AcademicManagementPage'));
 
-import TransportationDashboard from './pages/TransportationViews/Dashboard';
-import TransportationStudents from './pages/TransportationViews/Students';
-import TransportationRoutesPage from './pages/TransportationViews/RoutesPage';
-import TransportationRouteSheet from './pages/TransportationViews/RouteSheet';
-import TransportationRouteList from './pages/TransportationViews/RouteList';
-import TransportationFee from './pages/TransportationViews/Fee';
+const TransportationDashboard = React.lazy(() => import('./pages/TransportationViews/Dashboard'));
+const TransportationStudents = React.lazy(() => import('./pages/TransportationViews/Students'));
+const TransportationRoutesPage = React.lazy(() => import('./pages/TransportationViews/RoutesPage'));
+const TransportationRouteSheet = React.lazy(() => import('./pages/TransportationViews/RouteSheet'));
+const TransportationRouteList = React.lazy(() => import('./pages/TransportationViews/RouteList'));
+const TransportationFee = React.lazy(() => import('./pages/TransportationViews/Fee'));
 
 function App() {
   return (
@@ -46,47 +47,53 @@ function App() {
           }
         }}
       />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/admin-login" element={<AdminLoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        
-        {/* Protected Teacher Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-        <Route path="/report/:dateParam?" element={<ProtectedRoute><ReportFormPage /></ProtectedRoute>} />
-        <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />
-        <Route path="/marks" element={<ProtectedRoute><MarksPage /></ProtectedRoute>} />
-        <Route path="/meetings" element={<ProtectedRoute><TeacherMeetingsPage /></ProtectedRoute>} />
-        <Route path="/analytics" element={<ProtectedRoute><AnalyticsDashboardPage /></ProtectedRoute>} />
-        <Route path="/leave" element={<ProtectedRoute><LeaveManagementPage /></ProtectedRoute>} />
-        <Route path="/syllabus" element={<ProtectedRoute><SyllabusTrackerPage /></ProtectedRoute>} />
-        <Route path="/timetable" element={<ProtectedRoute><TimetablePage /></ProtectedRoute>} />
-        <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
-        <Route path="/transportation" element={<AdminRoute><TransportationPage /></AdminRoute>}>
-          <Route index element={<TransportationDashboard />} />
-          <Route path="students" element={<TransportationStudents />} />
-          <Route path="routes" element={<TransportationRoutesPage />} />
-          <Route path="routes/:id/sheet" element={<TransportationRouteSheet />} />
-          <Route path="routes/list" element={<TransportationRouteList />} />
-          <Route path="fee" element={<TransportationFee />} />
-        </Route>
-        <Route path="/aob" element={<ProtectedRoute allowAdmin={true}><AobPage /></ProtectedRoute>} />
-        
-        {/* Protected Admin Routes (sidebar-based) */}
-        <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
-        <Route path="/students" element={<AdminRoute><StudentManagementPage /></AdminRoute>} />
-        <Route path="/personnel" element={<AdminRoute><StaffManagementPage /></AdminRoute>} />
-        <Route path="/academic" element={<AdminRoute><AcademicManagementPage /></AdminRoute>} />
-        <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />
-        <Route path="/admin/timetable" element={<AdminRoute><TimetablePage isAdmin={true} /></AdminRoute>} />
+      <Suspense fallback={
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-main)' }}>
+          <div style={{ color: 'var(--text-secondary)' }}>Loading modules...</div>
+        </div>
+      }>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin-login" element={<AdminLoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          
+          {/* Protected Teacher Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/report/:dateParam?" element={<ProtectedRoute><ReportFormPage /></ProtectedRoute>} />
+          <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />
+          <Route path="/marks" element={<ProtectedRoute><MarksPage /></ProtectedRoute>} />
+          <Route path="/meetings" element={<ProtectedRoute><TeacherMeetingsPage /></ProtectedRoute>} />
+          <Route path="/analytics" element={<ProtectedRoute><AnalyticsDashboardPage /></ProtectedRoute>} />
+          <Route path="/leave" element={<ProtectedRoute><LeaveManagementPage /></ProtectedRoute>} />
+          <Route path="/syllabus" element={<ProtectedRoute><SyllabusTrackerPage /></ProtectedRoute>} />
+          <Route path="/timetable" element={<ProtectedRoute><TimetablePage /></ProtectedRoute>} />
+          <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
+          <Route path="/transportation" element={<AdminRoute><TransportationPage /></AdminRoute>}>
+            <Route index element={<TransportationDashboard />} />
+            <Route path="students" element={<TransportationStudents />} />
+            <Route path="routes" element={<TransportationRoutesPage />} />
+            <Route path="routes/:id/sheet" element={<TransportationRouteSheet />} />
+            <Route path="routes/list" element={<TransportationRouteList />} />
+            <Route path="fee" element={<TransportationFee />} />
+          </Route>
+          <Route path="/aob" element={<ProtectedRoute allowAdmin={true}><AobPage /></ProtectedRoute>} />
+          
+          {/* Protected Admin Routes (sidebar-based) */}
+          <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+          <Route path="/students" element={<AdminRoute><StudentManagementPage /></AdminRoute>} />
+          <Route path="/personnel" element={<AdminRoute><StaffManagementPage /></AdminRoute>} />
+          <Route path="/academic" element={<AdminRoute><AcademicManagementPage /></AdminRoute>} />
+          <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />
+          <Route path="/admin/timetable" element={<AdminRoute><TimetablePage isAdmin={true} /></AdminRoute>} />
 
-        {/* Separate Standalone Admin Portal */}
-        <Route path="/admin-portal" element={<AdminRoute><AdminPortalPage /></AdminRoute>} />
-        
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
+          {/* Separate Standalone Admin Portal */}
+          <Route path="/admin-portal" element={<AdminRoute><AdminPortalPage /></AdminRoute>} />
+          
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </Suspense>
     </AuthProvider>
   );
 }

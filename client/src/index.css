@@ -8,12 +8,12 @@
 /* ─── CSS Custom Properties ─── */
 :root {
   /* Warm SaaS Base Colors */
-  --bg-gradient-top: #FDFBF7; /* Cream */
-  --bg-gradient-bottom: #FDEEDC; /* Peach */
+  --bg-gradient-top: #FCFBE8; /* Light Cream */
+  --bg-gradient-bottom: #FCFBE8; 
   
   --bg-surface: #FFFFFF;
   --bg-surface-hover: #FAFAFA;
-  --border-color: #F3F4F6;
+  --border-color: #F0E6D2; /* Soft gold/tan border */
   
   /* Text Colors */
   --text-main: #1A1A1A; /* Charcoal */
@@ -52,12 +52,13 @@
   --bg-input: var(--bg-surface);
   --bg-input-focus: var(--bg-surface);
   
-  --navy-950: #1A1A1A; /* Repurposed to dark grey for fallback */
-  --navy-900: #1F2937;
-  --navy-800: #374151;
-  --navy-700: #4B5563;
-  --navy-600: #6B7280;
-  --navy-500: #9CA3AF;
+  /* Replace Navy with Maroon for global compatibility */
+  --navy-950: #3E0000;
+  --navy-900: #731313; /* Primary Sidebar Color */
+  --navy-800: #93001A;
+  --navy-700: #B71C1C;
+  --navy-600: #D32F2F;
+  --navy-500: #F44336;
   --navy-400: #D1D5DB;
   --navy-300: #E5E7EB;
   

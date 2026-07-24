@@ -338,6 +338,7 @@ Every entry here needs sign-off before the module it affects gets built (per `ai
 
 | Date | Decision | Rationale | Status |
 |---|---|---|---|
+| — | Update Global Theme to Maroon/Cream/Gold | The Institutional Design System was updated from Navy/Gold to a premium Maroon/Cream/Gold aesthetic globally across all admin and teacher portals to match new UI mockups. | Approved |
 | — | Modular monolith over microservices for new work | Avoids premature operational overhead; existing Transport/AOB services stay as-is until migrated per §6 | Proposed — needs sign-off |
 | — | Shared-schema multi-tenancy (not schema-per-tenant) | Cheapest fit for "one institution now, more later"; §4 documents the escape hatch | Proposed — needs sign-off |
 | — | Teacher Weekly Task Portal (MySQL) migrates before Phase 4 starts, not after | Prevents a second duplicate-person source once Academic System work begins | Proposed — needs sign-off |

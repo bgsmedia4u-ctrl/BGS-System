@@ -21,10 +21,10 @@ what a codebase looks like, the codebase is right and this file needs fixing, no
 | Item | Status | Notes |
 |---|---|---|
 | Authentication (Supabase Auth, JWT/SSO) | Done | Already live across all three current services |
-| Central `Person` entity | Not Started | Current system has users/roles but no unified Person→profile model |
-| Organizations / Institutions hierarchy | Not Started | Website has a School/PU College division switcher — a UI-level precedent, not a data-model one |
-| Full role set (Super Admin → Alumni) | Not Started | Current roles are coarse (admin/teacher) |
-| Roles/Permissions/Scopes (RBAC tables) | Not Started | This should land before Phase 2 admissions work per architecture.md |
+| Central `Person` entity | Done | Data model established via schema_updates_v5_foundation.sql |
+| Organizations / Institutions hierarchy | Done | Data model established via schema_updates_v5_foundation.sql |
+| Full role set (Super Admin → Alumni) | Done | Data model established via schema_updates_v5_foundation.sql |
+| Roles/Permissions/Scopes (RBAC tables) | Done | Data model established via schema_updates_v5_foundation.sql |
 
 ## Phase 2 — Student Management
 
@@ -98,7 +98,8 @@ what a codebase looks like, the codebase is right and this file needs fixing, no
 
 | Item | Status | Notes |
 |---|---|---|
-| Institutional design system (navy/gold, event posters, signage) | Done | Established via Canva work — should inform the platform's UI/UX (see `ui-ux-design-prompt.md`) |
+| Institutional design system (maroon/cream, unified UI) | Done | Established via Canva work and implemented globally across the platform. |
+| Admin Dashboard Redesign | Done | Rebuilt with rich metrics, recharts, and the new institutional aesthetic. |
 | School website (multi-page, School/PU College switcher) | Done | Existing HTML artifact — candidate for absorption into the public-facing side of the platform later |
 | Decentralized campus administration design | Done (design only) | PDF formalized for management — not yet implemented as software |
 

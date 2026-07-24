@@ -3,27 +3,22 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   LayoutDashboard,
-  FileText,
-  ClipboardCheck,
-  PenLine,
-  CalendarDays,
-  LogOut,
-  Menu,
-  X,
-  PieChart,
-  Clock,
-  MoreHorizontal,
-  CalendarOff,
-  BookOpenCheck,
-  CheckSquare,
+  GraduationCap,
+  Wallet,
   Bus,
-  FolderOpen
+  Users,
+  Settings,
+  HelpCircle,
+  LogOut,
+  Search,
+  Mic,
+  Bell,
+  ChevronDown
 } from 'lucide-react';
+import '../layout.css';
 
 export default function Layout({ children }) {
   const { user, profile, logout } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
   const navigate = useNavigate();
 
   async function handleLogout() {
@@ -31,94 +26,84 @@ export default function Layout({ children }) {
     navigate('/login');
   }
 
-  const name = profile?.name || user?.user_metadata?.full_name || 'Teacher';
-  const email = profile?.email || user?.email || '';
+  const name = profile?.name || user?.user_metadata?.full_name || 'Admin User';
+  const roleDisplay = profile?.role === 'admin' ? 'Administrator' : 'Teacher';
   const avatarUrl = user?.user_metadata?.avatar_url || null;
-
-  const initials = name
-    ? name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
-    : '?';
 
   return (
     <div className="app-layout">
-      {/* Top Nav Pill */}
-      <header className="top-nav">
-        <div className="nav-links">
-          <div style={{ fontWeight: 800, fontSize: 18, color: 'var(--text-main)', marginRight: 24, paddingLeft: 8 }}>
-            BGS
+      {/* Left Sidebar */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <div className="sidebar-logo">
+            <GraduationCap size={32} />
           </div>
-          
-          <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <LayoutDashboard className="nav-icon" /> Dashboard
-          </NavLink>
-          <NavLink to="/report" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <FileText className="nav-icon" /> Report
-          </NavLink>
-          <NavLink to="/attendance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <ClipboardCheck className="nav-icon" /> Attendance
-          </NavLink>
-          <NavLink to="/meetings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <CalendarDays className="nav-icon" /> Meetings
-          </NavLink>
-          {profile?.staff_type === 'teaching' && (
-            <>
-              <NavLink to="/marks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                <PenLine className="nav-icon" /> Marks
-              </NavLink>
-              <NavLink to="/analytics" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                <PieChart className="nav-icon" /> Analytics
-              </NavLink>
-              <NavLink to="/timetable" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                <Clock className="nav-icon" /> Timetable
-              </NavLink>
-            </>
-          )}
+          <div className="sidebar-title">BGS Institutional</div>
+          <div className="sidebar-subtitle">Admin Portal</div>
+        </div>
 
-          {/* More Dropdown */}
-          <div className="nav-item more-dropdown-container" onClick={() => setMoreOpen(!moreOpen)} style={{ position: 'relative', cursor: 'pointer' }}>
-            <MoreHorizontal className="nav-icon" /> More
-            {moreOpen && (
-              <div className="more-dropdown-menu" style={{ position: 'absolute', top: '100%', right: 0, marginTop: '12px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-lg)', minWidth: '180px', zIndex: 300, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                <NavLink to="/leave" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
-                  <CalendarOff className="nav-icon" /> Leave
-                </NavLink>
-                {profile?.staff_type === 'teaching' && (
-                  <NavLink to="/syllabus" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
-                    <BookOpenCheck className="nav-icon" /> Syllabus
-                  </NavLink>
-                )}
-                <NavLink to="/tasks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
-                  <CheckSquare className="nav-icon" /> Tasks
-                </NavLink>
-                {profile?.role === 'admin' && (
-                  <NavLink to="/transportation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
-                    <Bus className="nav-icon" /> Transportation
-                  </NavLink>
-                )}
-                <NavLink to="/aob" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ margin: 0, borderRadius: 0, padding: '12px 16px' }}>
-                  <FolderOpen className="nav-icon" /> AOB
-                </NavLink>
+        <nav className="sidebar-menu">
+          <div className="sidebar-menu-label">Menu</div>
+          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+            <LayoutDashboard size={20} /> Dashboard
+          </NavLink>
+          <NavLink to="/report" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+            <GraduationCap size={20} /> Academic
+          </NavLink>
+          <NavLink to="/fees" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+            <Wallet size={20} /> Finance
+          </NavLink>
+          <NavLink to="/transportation" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+            <Bus size={20} /> Transport
+          </NavLink>
+          <NavLink to="/personnel" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+            <Users size={20} /> Personnel
+          </NavLink>
+
+          <div className="sidebar-menu-label">System</div>
+          <NavLink to="/settings" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+            <Settings size={20} /> Settings
+          </NavLink>
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="sidebar-item" style={{ cursor: 'pointer' }}>
+            <HelpCircle size={20} /> Support
+          </div>
+          <div className="sidebar-item" onClick={handleLogout} style={{ cursor: 'pointer', marginTop: 4 }}>
+            <LogOut size={20} /> Logout
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="main-content">
+        {/* Top Header */}
+        <header className="top-header">
+          <div className="search-bar">
+            <Search size={18} className="header-icon" />
+            <input type="text" placeholder="Search anything..." className="search-input" />
+            <Mic size={18} className="header-icon" />
+          </div>
+
+          <div className="header-actions">
+            <Bell size={20} className="header-icon" />
+            <div className="user-profile">
+              <img src={avatarUrl || "https://ui-avatars.com/api/?name=" + name + "&background=1f2937&color=fff"} alt="" className="user-avatar" />
+              <div className="user-info">
+                <span className="user-name">{name}</span>
+                <span className="user-role">{roleDisplay}</span>
               </div>
-            )}
+              <ChevronDown size={16} className="header-icon" style={{ marginLeft: 4 }} />
+            </div>
           </div>
-        </div>
+        </header>
 
-        <div className="top-nav-right">
-          <div className="user-profile-pill" onClick={handleLogout} title="Sign Out">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="" className="user-avatar" referrerPolicy="no-referrer" />
-            ) : (
-              <div className="user-avatar-placeholder">{initials}</div>
-            )}
-            <div className="user-name" style={{ marginRight: 4 }}>{name}</div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main className="main-content">
-        {children}
-      </main>
+        {/* Page Content */}
+        <main className="page-content">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

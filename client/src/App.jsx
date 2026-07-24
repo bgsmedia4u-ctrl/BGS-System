@@ -22,6 +22,7 @@ import TimetablePage from './pages/TimetablePage';
 import TasksPage from './pages/TasksPage';
 import TransportationPage from './pages/TransportationPage';
 import AobPage from './pages/AobPage';
+import StudentManagementPage from './pages/StudentManagementPage';
 
 import TransportationDashboard from './pages/TransportationViews/Dashboard';
 import TransportationStudents from './pages/TransportationViews/Students';
@@ -72,6 +73,7 @@ function App() {
         
         {/* Protected Admin Routes (sidebar-based) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+        <Route path="/students" element={<AdminRoute><StudentManagementPage /></AdminRoute>} />
         <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />
         <Route path="/admin/timetable" element={<AdminRoute><TimetablePage isAdmin={true} /></AdminRoute>} />
 

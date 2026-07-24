@@ -30,10 +30,11 @@ what a codebase looks like, the codebase is right and this file needs fixing, no
 
 | Item | Status | Notes |
 |---|---|---|
-| Admissions | Not Started | |
-| Student profiles | Not Started | |
-| Classes / Sections | Partial | Class/section structure exists implicitly in Mark Entry module (Science/Commerce streams, Class A/B, FTB-1/2) but not as a standalone module |
-| Documents | Not Started | |
+| Admissions | Done | Established via schema_updates_v6_students.sql and StudentManagementPage.jsx |
+| Student profiles | Done | Data models and directory UI established |
+| Classes / Sections | Done | Normalized classes and sections mapped via SQL, integrated into UI |
+| Parents (profile + linkage) | Not Started | |
+| Documents | Done | Data model established in schema_updates_v6_students.sql |
 
 ## Phase 3 — Staff Management
 

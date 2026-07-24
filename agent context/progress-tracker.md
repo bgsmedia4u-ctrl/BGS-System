@@ -40,7 +40,7 @@ what a codebase looks like, the codebase is right and this file needs fixing, no
 
 | Item | Status | Notes |
 |---|---|---|
-| Employee management | Not Started | |
+| Employee management | Done | Directory and Onboarding UI established via StaffManagementPage.jsx |
 
 ## Phase 4 — Academic System
 

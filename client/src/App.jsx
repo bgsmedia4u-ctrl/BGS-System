@@ -24,6 +24,7 @@ import TransportationPage from './pages/TransportationPage';
 import AobPage from './pages/AobPage';
 import StudentManagementPage from './pages/StudentManagementPage';
 import StaffManagementPage from './pages/StaffManagementPage';
+import AcademicManagementPage from './pages/AcademicManagementPage';
 
 import TransportationDashboard from './pages/TransportationViews/Dashboard';
 import TransportationStudents from './pages/TransportationViews/Students';
@@ -70,12 +71,13 @@ function App() {
           <Route path="routes/list" element={<TransportationRouteList />} />
           <Route path="fee" element={<TransportationFee />} />
         </Route>
-        <Route path="/aob" element={<ProtectedRoute><AobPage /></ProtectedRoute>} />
+        <Route path="/aob" element={<ProtectedRoute allowAdmin={true}><AobPage /></ProtectedRoute>} />
         
         {/* Protected Admin Routes (sidebar-based) */}
         <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
         <Route path="/students" element={<AdminRoute><StudentManagementPage /></AdminRoute>} />
         <Route path="/personnel" element={<AdminRoute><StaffManagementPage /></AdminRoute>} />
+        <Route path="/academic" element={<AdminRoute><AcademicManagementPage /></AdminRoute>} />
         <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />
         <Route path="/admin/timetable" element={<AdminRoute><TimetablePage isAdmin={true} /></AdminRoute>} />
 

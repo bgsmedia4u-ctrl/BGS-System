@@ -249,7 +249,7 @@ export default function Communications({ user, triggerToast }) {
     const options = e.target.options;
     const selectedIds = [];
     for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) selectedIds.push(parseInt(options[i].value));
+      if (options[i].selected) selectedIds.push(options[i].value);
     }
     setLogForm({ ...logForm, alumni_ids: selectedIds });
   };

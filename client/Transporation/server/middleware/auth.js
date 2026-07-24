@@ -1,6 +1,9 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'bgs-transport-secret-2026';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('FATAL: JWT_SECRET environment variable is required');
+}
 
 export function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -11,7 +14,7 @@ export function authenticateToken(req, res, next) {
   }
 
   try {
-    const decoded = jwt.decode(token); // Or verify with process.env.SUPABASE_JWT_SECRET
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (!decoded) throw new Error('Invalid token');
     req.user = {
       id: decoded.sub,

@@ -437,7 +437,7 @@ export default function AlumniList({ user, triggerToast }) {
         // Combine and sort chronologically descending
         const combined = [
           ...meetings.map(m => ({ ...m, category: 'meeting' })),
-          ...communications.map(c => ({ ...m, ...c, category: 'communication' }))
+          ...communications.map(c => ({ ...c, category: 'communication' }))
         ];
         
         combined.sort((a, b) => {

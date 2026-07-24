@@ -2,532 +2,532 @@
   {
     "id": "s001",
     "slNo": 1,
-    "name": "Haripriya. V.J",
+    "name": "Student 1",
     "class": "1st PUC",
-    "place": "Varadanayakanahalli",
+    "place": "Stop 1",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s002",
     "slNo": 2,
-    "name": "Nayana. H.N",
+    "name": "Student 2",
     "class": "2nd PUC",
-    "place": "Haralahalli",
+    "place": "Stop 2",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s003",
     "slNo": 3,
-    "name": "Inchara. G.S",
+    "name": "Student 3",
     "class": "1st PUC",
-    "place": "Haralahalli",
+    "place": "Stop 3",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s004",
     "slNo": 4,
-    "name": "Tejaswini. R.G",
+    "name": "Student 4",
     "class": "1st PUC",
-    "place": "Ramachandrahosur",
+    "place": "Stop 4",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s005",
     "slNo": 5,
-    "name": "Varshini. R.K",
+    "name": "Student 5",
     "class": "10th",
-    "place": "Ramachandrahosur",
+    "place": "Stop 5",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s006",
     "slNo": 6,
-    "name": "Lekana",
+    "name": "Student 6",
     "class": "1st PUC",
-    "place": "Ramachandrahosur",
+    "place": "Stop 6",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s007",
     "slNo": 7,
-    "name": "Jayanth. R.K",
+    "name": "Student 7",
     "class": "10th",
-    "place": "Ramachandrahosur",
+    "place": "Stop 7",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s008",
     "slNo": 8,
-    "name": "Navaneetha",
+    "name": "Student 8",
     "class": "2nd PUC",
-    "place": "Parasdinne",
+    "place": "Stop 8",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s009",
     "slNo": 9,
-    "name": "Chinmayi",
+    "name": "Student 9",
     "class": "1st PUC",
-    "place": "Parasdinne",
+    "place": "Stop 9",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s010",
     "slNo": 10,
-    "name": "Deekshith gowda. D",
+    "name": "Student 10",
     "class": "10th",
-    "place": "Parasdinne",
+    "place": "Stop 0",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s011",
     "slNo": 11,
-    "name": "Spandana",
+    "name": "Student 11",
     "class": "2nd PUC",
-    "place": "Gidnahalli",
+    "place": "Stop 1",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s012",
     "slNo": 12,
-    "name": "Deekshitha. A",
+    "name": "Student 12",
     "class": "2nd PUC",
-    "place": "L.Muthukadahalli",
+    "place": "Stop 2",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s013",
     "slNo": 13,
-    "name": "Brundha. D",
+    "name": "Student 13",
     "class": "10th",
-    "place": "L.Muthukadahalli",
+    "place": "Stop 3",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s014",
     "slNo": 14,
-    "name": "Kruthiaka. S",
+    "name": "Student 14",
     "class": "1st PUC",
-    "place": "L.Muthukadahalli",
+    "place": "Stop 4",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s015",
     "slNo": 15,
-    "name": "Madhu. V",
+    "name": "Student 15",
     "class": "1st PUC",
-    "place": "L.Muthukadahalli",
+    "place": "Stop 5",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s016",
     "slNo": 16,
-    "name": "Sanjay. S",
+    "name": "Student 16",
     "class": "10th",
-    "place": "Pylahalli",
+    "place": "Stop 6",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s017",
     "slNo": 17,
-    "name": "Somanth gowda. S",
+    "name": "Student 17",
     "class": "10th",
-    "place": "Lakkahalli",
+    "place": "Stop 7",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s018",
     "slNo": 18,
-    "name": "Ravi teja",
+    "name": "Student 18",
     "class": "10th",
-    "place": "Lakkahalli",
+    "place": "Stop 8",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s019",
     "slNo": 19,
-    "name": "Manish. M",
+    "name": "Student 19",
     "class": "1st PUC",
-    "place": "Pylahalli",
+    "place": "Stop 9",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s020",
     "slNo": 20,
-    "name": "Vikas. J",
+    "name": "Student 20",
     "class": "2nd PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 0",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s021",
     "slNo": 21,
-    "name": "Kruthik. K.S",
+    "name": "Student 21",
     "class": "2nd PUC",
-    "place": "Muthukadahalli",
+    "place": "Stop 1",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s022",
     "slNo": 22,
-    "name": "Pavan. L.M",
+    "name": "Student 22",
     "class": "1st PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 2",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s023",
     "slNo": 23,
-    "name": "Srujan. B",
+    "name": "Student 23",
     "class": "1st PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 3",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s024",
     "slNo": 24,
-    "name": "Shirisha. LM",
+    "name": "Student 24",
     "class": "1st PUC",
-    "place": "Gidnahalli",
+    "place": "Stop 4",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s025",
     "slNo": 25,
-    "name": "Gourav. M",
+    "name": "Student 25",
     "class": "10th",
-    "place": "Muthukadahalli",
+    "place": "Stop 5",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s026",
     "slNo": 26,
-    "name": "Karthik",
+    "name": "Student 26",
     "class": "10th",
-    "place": "Muthukadahalli",
+    "place": "Stop 6",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s027",
     "slNo": 27,
-    "name": "Varun BV",
+    "name": "Student 27",
     "class": "1st PUC",
-    "place": "Muthukadahalli",
+    "place": "Stop 7",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s029",
     "slNo": 29,
-    "name": "Pruthvi. P",
+    "name": "Student 29",
     "class": "1st PUC",
-    "place": "L.Muthukadahalli",
+    "place": "Stop 9",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s030",
     "slNo": 30,
-    "name": "Sumanth P",
+    "name": "Student 30",
     "class": "2nd PUC",
-    "place": "L.Muthukadahalli",
+    "place": "Stop 0",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s031",
     "slNo": 31,
-    "name": "Mohith. C",
+    "name": "Student 31",
     "class": "1st PUC",
-    "place": "Keshvara",
+    "place": "Stop 1",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s032",
     "slNo": 32,
-    "name": "Vinod kumar. N",
+    "name": "Student 32",
     "class": "1st PUC",
-    "place": "Keshwara",
+    "place": "Stop 2",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s033",
     "slNo": 33,
-    "name": "Vishwas. KA",
+    "name": "Student 33",
     "class": "1st PUC",
-    "place": "Nelamakanahalli",
+    "place": "Stop 3",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s034",
     "slNo": 34,
-    "name": "Chethan. K.M",
+    "name": "Student 34",
     "class": "1st PUC",
-    "place": "Nelamakanahalli",
+    "place": "Stop 4",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s035",
     "slNo": 35,
-    "name": "H.V Darshan",
+    "name": "Student 35",
     "class": "1st PUC",
-    "place": "Nelamakanahalli",
+    "place": "Stop 5",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s036",
     "slNo": 36,
-    "name": "Darshan. T",
+    "name": "Student 36",
     "class": "2nd PUC",
-    "place": "Nelamakanahalli",
+    "place": "Stop 6",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s037",
     "slNo": 37,
-    "name": "Praveen kumar. P",
+    "name": "Student 37",
     "class": "1st PUC",
-    "place": "Nelamakanahalli",
+    "place": "Stop 7",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s038",
     "slNo": 38,
-    "name": "Keerthan. D",
+    "name": "Student 38",
     "class": "1st PUC",
-    "place": "Keshvara",
+    "place": "Stop 8",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s039",
     "slNo": 39,
-    "name": "Charan. H.",
+    "name": "Student 39",
     "class": "2nd PUC",
-    "place": "Keshvara",
+    "place": "Stop 9",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s040",
     "slNo": 40,
-    "name": "Rohith. K.R",
+    "name": "Student 40",
     "class": "1st PUC",
-    "place": "Keshvara",
+    "place": "Stop 0",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s041",
     "slNo": 41,
-    "name": "Pallavi. L",
+    "name": "Student 41",
     "class": "10th",
-    "place": "Nelamakanahalli",
+    "place": "Stop 1",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s042",
     "slNo": 42,
-    "name": "Poorvika. M",
+    "name": "Student 42",
     "class": "10th",
-    "place": "Nelamakanahalli",
+    "place": "Stop 2",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s043",
     "slNo": 43,
-    "name": "Nandini. M",
+    "name": "Student 43",
     "class": "1st PUC",
-    "place": "Pailahalli",
+    "place": "Stop 3",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s044",
     "slNo": 44,
-    "name": "Jeevitha",
+    "name": "Student 44",
     "class": "2nd PUC",
-    "place": "Keshwara",
+    "place": "Stop 4",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s045",
     "slNo": 45,
-    "name": "Gangotri. L.G",
+    "name": "Student 45",
     "class": "2nd PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 5",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s046",
     "slNo": 46,
-    "name": "Revathi",
+    "name": "Student 46",
     "class": "2nd PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 6",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s047",
     "slNo": 47,
-    "name": "Yuktha shree",
+    "name": "Student 47",
     "class": "2nd PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 7",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s048",
     "slNo": 48,
-    "name": "Amrutha",
+    "name": "Student 48",
     "class": "2nd PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 8",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s049",
     "slNo": 49,
-    "name": "Varsha",
+    "name": "Student 49",
     "class": "2nd PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 9",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s050",
     "slNo": 50,
-    "name": "Sneha. M",
+    "name": "Student 50",
     "class": "2nd PUC",
-    "place": "Pailahalli",
+    "place": "Stop 0",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s051",
     "slNo": 51,
-    "name": "Krishnaveni",
+    "name": "Student 51",
     "class": "2nd PUC",
-    "place": "Parasadinne",
+    "place": "Stop 1",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s052",
     "slNo": 52,
-    "name": "Thanushree P.V. C",
+    "name": "Student 52",
     "class": "1st PUC",
-    "place": "Varadanayakanahalli",
+    "place": "Stop 2",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s053",
     "slNo": 53,
-    "name": "Amulya L.V",
+    "name": "Student 53",
     "class": "1st PUC",
-    "place": "Lakkahalli",
+    "place": "Stop 3",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s054",
     "slNo": 54,
-    "name": "Poorvika G.V",
+    "name": "Student 54",
     "class": "2nd PUC",
-    "place": "Gidnahalli",
+    "place": "Stop 4",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s055",
     "slNo": 55,
-    "name": "Ankitha chandana",
+    "name": "Student 55",
     "class": "1st PUC",
-    "place": "Lakkahalli Gate",
+    "place": "Stop 5",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s056",
     "slNo": 56,
-    "name": "Manoj. C",
+    "name": "Student 56",
     "class": "2nd PUC",
-    "place": "Gidnahalli",
+    "place": "Stop 6",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s057",
     "slNo": 57,
-    "name": "Chaithanya",
+    "name": "Student 57",
     "class": "1st PUC",
-    "place": "Keshvara",
+    "place": "Stop 7",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s058",
     "slNo": 58,
-    "name": "Manasa",
+    "name": "Student 58",
     "class": "2nd PUC",
-    "place": "Nallamaknahalli",
+    "place": "Stop 8",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s059",
     "slNo": 59,
-    "name": "Nandu. K.M",
+    "name": "Student 59",
     "class": "2nd PUC",
-    "place": "Keshwara",
+    "place": "Stop 9",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   },
   {
     "id": "s060",
     "slNo": 60,
-    "name": "Jeevitha. K.C",
+    "name": "Student 60",
     "class": "2nd PUC",
-    "place": "Keshwara",
+    "place": "Stop 0",
     "route": "Route 01",
-    "phone": ""
+    "phone": "555-0000"
   }
 ]

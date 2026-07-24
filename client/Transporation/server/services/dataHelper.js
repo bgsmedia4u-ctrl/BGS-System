@@ -11,11 +11,16 @@ export function readJSON(filename) {
     const data = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(data);
   } catch (err) {
-    return [];
+    if (err.code === 'ENOENT') {
+      return [];
+    }
+    throw err;
   }
 }
 
 export function writeJSON(filename, data) {
   const filePath = path.join(DATA_DIR, filename);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  const tempPath = filePath + '.tmp';
+  fs.writeFileSync(tempPath, JSON.stringify(data, null, 2), 'utf-8');
+  fs.renameSync(tempPath, filePath);
 }

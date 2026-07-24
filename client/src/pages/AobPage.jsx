@@ -28,7 +28,7 @@ export default function AobPage() {
   const aobUser = {
     id: user?.id,
     username: profile?.name || user?.user_metadata?.full_name || 'Teacher',
-    role: profile?.role === 'admin' ? 'Super Admin' : 'Admin'
+    role: profile?.role === 'admin' ? 'Super Admin' : 'Viewer'
   };
 
   const triggerToast = (message, type = 'success') => {

@@ -46,9 +46,9 @@ what a codebase looks like, the codebase is right and this file needs fixing, no
 
 | Item | Status | Notes |
 |---|---|---|
-| Subjects / Departments / Courses | Partial | Exists implicitly per stream in Mark Entry module |
-| Teachers module | Partial | Teacher Weekly Task Portal exists as a separate build (React/Node/MySQL, Google OAuth) — not yet unified into this platform |
-| Timetable | Not Started | |
+| Subjects / Departments / Courses | Done | Implemented via schema_updates_v7_academic.sql and AcademicManagementPage.jsx |
+| Teachers module | Done | Teacher Portal unified in sidebar; Tasks migrated to Postgres |
+| Timetable | Done | Integrated with dynamic Subjects/Departments selection |
 | Student attendance | Done (core) | Live in current Supabase-backed core |
 | Marks / Results entry | Done | Mark Entry module: create test, enter marks per student, print results sorted by total, scoped by stream/year/class |
 | Reports | Done | Multi-test PDF performance reports (JEE/NEET/PCMB CET/PCMCs CET), navy/gold styling, tier segmentation |
@@ -88,7 +88,7 @@ what a codebase looks like, the codebase is right and this file needs fixing, no
 | Item | Status | Notes |
 |---|---|---|
 | Alumni registry (backend) | Done | Live Node/Express service, SQLite storage |
-| Audit logs | Done | Structured audit prompt produced for this service |
+| Audit logs | Not Started | Requires implementation and deployment evidence |
 | Alumni Data Management Dashboard | Partial | PRD created (RBAC, analytics, PDF export) — build status unconfirmed |
 | Events / Donations / Job opportunities | Not Started | |
 | Migration to Postgres / monolith | Not Started | Trigger: resumption of alumni work, per architecture.md §6 |

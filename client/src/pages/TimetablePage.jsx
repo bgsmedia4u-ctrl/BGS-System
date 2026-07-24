@@ -20,6 +20,11 @@ export default function TimetablePage({ isAdmin = false }) {
   const [year, setYear] = useState('1st Year');
   const [cls, setCls] = useState('Class A');
 
+  // Dynamic Options
+  const [departments, setDepartments] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [classes, setClasses] = useState([]);
+
   // Edit Mode (Admin only)
   const [editingKey, setEditingKey] = useState(null); // format: "Day|Period"
   const [editSubject, setEditSubject] = useState('');
@@ -57,6 +62,19 @@ export default function TimetablePage({ isAdmin = false }) {
       
       const { data: tData } = await supabase.from('profiles').select('id, name').eq('role', 'teacher');
       setTeachers(tData || []);
+      
+      if (profile?.institution_id) {
+        const [deptRes, subjRes, clsRes] = await Promise.all([
+          supabase.from('departments').select('name').eq('institution_id', profile.institution_id),
+          supabase.from('subjects').select('name').eq('institution_id', profile.institution_id),
+          supabase.from('classes').select('name').eq('institution_id', profile.institution_id)
+        ]);
+        setDepartments(deptRes.data || []);
+        setSubjects(subjRes.data || []);
+        setClasses(clsRes.data || []);
+        
+        // Auto-select first if available and current is invalid, or just let it fall back
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to load timetable');
@@ -121,6 +139,11 @@ export default function TimetablePage({ isAdmin = false }) {
     }
   };
 
+  const authorizedAssignments = isAdmin ? [] : [...new Map(
+    timetable.filter(t => t.teacher_id === user.id && t.stream && t.year && t.class && t.subject)
+      .map(t => [ `${t.stream}|${t.year}|${t.class}|${t.subject}`, { stream: t.stream, year: t.year, class: t.class, subject: t.subject } ])
+  ).values()];
+
   return (
     <Layout>
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
@@ -136,9 +159,15 @@ export default function TimetablePage({ isAdmin = false }) {
             <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
               <label className="form-label">Stream</label>
               <select className="form-input" value={stream} onChange={e => setStream(e.target.value)}>
-                <option value="Science">Science</option>
-                <option value="Commerce">Commerce</option>
-                <option value="Arts">Arts</option>
+                {departments.length > 0 ? (
+                  departments.map(d => <option key={d.name} value={d.name}>{d.name}</option>)
+                ) : (
+                  <>
+                    <option value="Science">Science</option>
+                    <option value="Commerce">Commerce</option>
+                    <option value="Arts">Arts</option>
+                  </>
+                )}
               </select>
             </div>
             <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
@@ -151,9 +180,15 @@ export default function TimetablePage({ isAdmin = false }) {
             <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
               <label className="form-label">Class</label>
               <select className="form-input" value={cls} onChange={e => setCls(e.target.value)}>
-                <option value="Class A">Class A</option>
-                <option value="Class B">Class B</option>
-                <option value="FTB-1">FTB-1</option>
+                {classes.length > 0 ? (
+                  classes.map(c => <option key={c.name} value={c.name}>{c.name}</option>)
+                ) : (
+                  <>
+                    <option value="Class A">Class A</option>
+                    <option value="Class B">Class B</option>
+                    <option value="FTB-1">FTB-1</option>
+                  </>
+                )}
               </select>
             </div>
           </div>
@@ -188,28 +223,35 @@ export default function TimetablePage({ isAdmin = false }) {
                             <td key={day} style={{ verticalAlign: 'top', height: 80, borderRight: '1px solid var(--border)' }}>
                               {isEditing ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8, zIndex: 10, position: 'relative', background: 'var(--bg-surface)', padding: 8, borderRadius: 8, boxShadow: 'var(--shadow-md)', border: '1px solid var(--border)' }}>
-                                  {!isAdmin && (
-                                    <>
-                                      <select className="form-input" value={editStream} onChange={e => setEditStream(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
-                                        <option value="">Stream...</option>
-                                        <option value="Science">Science</option>
-                                        <option value="Commerce">Commerce</option>
-                                        <option value="Arts">Arts</option>
+                                  {!isAdmin ? (
+                                    <select className="form-input" 
+                                      value={editStream && editYear && editCls && editSubject ? `${editStream}|${editYear}|${editCls}|${editSubject}` : ""}
+                                      onChange={e => {
+                                        const [s, y, c, sub] = e.target.value.split('|');
+                                        if(s && y && c && sub) {
+                                          setEditStream(s); setEditYear(y); setEditCls(c); setEditSubject(sub);
+                                        } else {
+                                          setEditStream(''); setEditYear(''); setEditCls(''); setEditSubject('');
+                                        }
+                                      }}
+                                      style={{ padding: '6px 8px', fontSize: 13 }}>
+                                      <option value="">Select assignment...</option>
+                                      {authorizedAssignments.map(a => (
+                                        <option key={`${a.stream}|${a.year}|${a.class}|${a.subject}`} value={`${a.stream}|${a.year}|${a.class}|${a.subject}`}>
+                                          {a.stream} - {a.year} - {a.class} ({a.subject})
+                                        </option>
+                                      ))}
+                                    </select>
+                                  ) : (
+                                    subjects.length > 0 ? (
+                                      <select className="form-input" value={editSubject} onChange={e => setEditSubject(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
+                                        <option value="">Select Subject...</option>
+                                        {subjects.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
                                       </select>
-                                      <select className="form-input" value={editYear} onChange={e => setEditYear(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
-                                        <option value="">Year...</option>
-                                        <option value="1st Year">1st Year</option>
-                                        <option value="2nd Year">2nd Year</option>
-                                      </select>
-                                      <select className="form-input" value={editCls} onChange={e => setEditCls(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
-                                        <option value="">Class...</option>
-                                        <option value="Class A">Class A</option>
-                                        <option value="Class B">Class B</option>
-                                        <option value="FTB-1">FTB-1</option>
-                                      </select>
-                                    </>
+                                    ) : (
+                                      <input type="text" className="form-input" placeholder="Subject" value={editSubject} onChange={e => setEditSubject(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} />
+                                    )
                                   )}
-                                  <input type="text" className="form-input" placeholder="Subject" value={editSubject} onChange={e => setEditSubject(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }} disabled={!isAdmin} />
                                   {isAdmin && (
                                     <select className="form-input" value={editTeacherId} onChange={e => setEditTeacherId(e.target.value)} style={{ padding: '6px 8px', fontSize: 13 }}>
                                       <option value="">Unassigned</option>

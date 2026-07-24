@@ -5,9 +5,9 @@ import { authenticateToken } from '../middleware/auth.js';
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'bgs-transport-secret-2026';
 
-// Hardcoded admin credentials
-const ADMIN_USERNAME = 'admin';
-const ADMIN_PASSWORD = 'BGS@2026#';
+// Admin credentials from environment
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'BGS@2026#';
 
 // POST /api/auth/login
 router.post('/login', (req, res) => {
@@ -24,7 +24,7 @@ router.post('/login', (req, res) => {
   const token = jwt.sign(
     { username: ADMIN_USERNAME, role: 'admin' },
     JWT_SECRET,
-    { expiresIn: '24h' }
+    { expiresIn: '1h' } // Short token lifetime due to localStorage XSS risk
   );
 
   res.json({ token, username: ADMIN_USERNAME });

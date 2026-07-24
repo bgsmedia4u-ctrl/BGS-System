@@ -105,7 +105,11 @@ router.put('/:studentId', authenticateToken, async (req, res) => {
     }
 
     const { feeDue } = req.body;
-    const amount = parseFloat(feeDue) || 0;
+    const amount = parseFloat(feeDue);
+    
+    if (isNaN(amount) || !isFinite(amount) || amount < 0) {
+      return res.status(400).json({ error: 'Invalid fee amount. Must be a non-negative number.' });
+    }
 
     fees[idx].feeDue = amount;
     fees[idx].status = amount > 0 ? 'due' : 'paid';
@@ -138,13 +142,27 @@ router.put('/bulk/update', authenticateToken, async (req, res) => {
     const fees = readJSON('fee.json');
     const now = new Date().toISOString();
 
+    // Validate all updates first
+    for (const update of updates) {
+      const idx = fees.findIndex(f => f.studentId === update.studentId);
+      if (idx === -1) {
+        return res.status(400).json({ error: `Student ID ${update.studentId} not found.` });
+      }
+      const amount = parseFloat(update.feeDue);
+      if (isNaN(amount) || !isFinite(amount) || amount < 0) {
+        return res.status(400).json({ error: `Invalid fee amount for student ${update.studentId}.` });
+      }
+    }
+
+    let updateCount = 0;
     updates.forEach(({ studentId, feeDue }) => {
       const idx = fees.findIndex(f => f.studentId === studentId);
       if (idx !== -1) {
-        const amount = parseFloat(feeDue) || 0;
+        const amount = parseFloat(feeDue);
         fees[idx].feeDue = amount;
         fees[idx].status = amount > 0 ? 'due' : 'paid';
         fees[idx].lastUpdated = now;
+        updateCount++;
       }
     });
 
@@ -158,7 +176,7 @@ router.put('/bulk/update', authenticateToken, async (req, res) => {
       console.warn('Google Sheets sync failed:', sheetErr.message);
     }
 
-    res.json({ message: 'Fee records updated.', count: updates.length });
+    res.json({ message: 'Fee records updated.', count: updateCount });
   } catch (err) {
     res.status(500).json({ error: 'Failed to bulk update fees.' });
   }

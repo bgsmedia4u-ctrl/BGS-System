@@ -28,10 +28,20 @@ export default function MarksPage() {
   // Views: 'BATCH_SELECT', 'ACTION_MENU', 'CREATE_TEST', 'ENTER_MARKS', 'PRINT_RESULTS'
   const [currentView, setCurrentView] = useState('BATCH_SELECT');
   
-  // Batch state
   const [stream, setStream] = useState('Science');
   const [year, setYear] = useState('1st Year');
   const [cls, setCls] = useState('');
+  const [departments, setDepartments] = useState([]);
+  const { profile } = useAuth();
+  
+  useEffect(() => {
+    if (profile?.institution_id) {
+      import('../api/supabase').then(({ supabase }) => {
+        supabase.from('departments').select('name').eq('institution_id', profile.institution_id)
+          .then(({ data }) => setDepartments(data || []));
+      });
+    }
+  }, [profile]);
   
   // Data state
   const [tests, setTests] = useState([]);
@@ -101,6 +111,7 @@ export default function MarksPage() {
             year={year} setYear={setYear}
             cls={cls} setCls={setCls}
             onContinue={handleBatchSelect}
+            departments={departments}
           />
         )}
         
@@ -136,7 +147,7 @@ export default function MarksPage() {
 
 // ─── VIEWS ───
 
-function BatchSelectView({ stream, setStream, year, setYear, cls, setCls, onContinue }) {
+function BatchSelectView({ stream, setStream, year, setYear, cls, setCls, onContinue, departments }) {
   const classOptions = getClassOptions(stream, year);
   
   // Auto-select first class if options change
@@ -153,8 +164,14 @@ function BatchSelectView({ stream, setStream, year, setYear, cls, setCls, onCont
       <div className="form-group">
         <label className="form-label">Stream</label>
         <select className="form-select" value={stream} onChange={e => setStream(e.target.value)}>
-          <option value="Science">Science</option>
-          <option value="Commerce">Commerce</option>
+          {departments && departments.length > 0 ? (
+            departments.map(d => <option key={d.name} value={d.name}>{d.name}</option>)
+          ) : (
+            <>
+              <option value="Science">Science</option>
+              <option value="Commerce">Commerce</option>
+            </>
+          )}
         </select>
       </div>
       

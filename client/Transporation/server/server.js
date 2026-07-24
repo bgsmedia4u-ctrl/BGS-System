@@ -32,7 +32,9 @@ app.use('/api/fee', feeRoutes);
 const clientDist = path.join(__dirname, '..', 'client', 'dist');
 app.use(express.static(clientDist));
 app.get('*', (req, res) => {
-  if (!req.path.startsWith('/api')) {
+  if (req.path.startsWith('/api')) {
+    res.status(404).json({ error: 'API endpoint not found' });
+  } else {
     res.sendFile(path.join(clientDist, 'index.html'));
   }
 });

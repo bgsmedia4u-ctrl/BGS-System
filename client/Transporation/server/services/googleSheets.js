@@ -51,17 +51,12 @@ export async function syncToSheet(students, fees) {
         student.class,
         student.route,
         student.place,
-        f.feeDue.toString(),
+        (f.feeDue || 0).toString(),
         f.lastUpdated || ''
       ];
     }).filter(Boolean);
 
-    // Clear and rewrite (simpler than row-by-row matching for flat-file data)
-    await sheets.spreadsheets.values.clear({
-      spreadsheetId: sheetId,
-      range: `${range}!A:G`,
-    });
-
+    // Write the new header and data first
     await sheets.spreadsheets.values.update({
       spreadsheetId: sheetId,
       range: `${range}!A1`,
@@ -69,6 +64,13 @@ export async function syncToSheet(students, fees) {
       requestBody: {
         values: [header, ...dataRows],
       },
+    });
+
+    // Clear only rows remaining beyond the newly written data
+    const writtenRowCount = 1 + dataRows.length;
+    await sheets.spreadsheets.values.clear({
+      spreadsheetId: sheetId,
+      range: `${range}!A${writtenRowCount + 1}:G`,
     });
 
     console.log(`Google Sheets synced: ${dataRows.length} rows.`);

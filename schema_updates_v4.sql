@@ -42,7 +42,14 @@ DROP POLICY IF EXISTS "Admins can delete timetable" ON public.timetable;
 CREATE POLICY "Admins and assigned teachers can insert timetable" ON public.timetable
     FOR INSERT WITH CHECK (
         EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.uid() = teacher_id
+        (auth.uid() = teacher_id AND EXISTS (
+            SELECT 1 FROM public.timetable t 
+            WHERE t.teacher_id = auth.uid() 
+              AND t.stream = timetable.stream 
+              AND t.year = timetable.year 
+              AND t.class = timetable.class 
+              AND t.subject = timetable.subject
+        ))
     );
 
 CREATE POLICY "Admins and assigned teachers can update timetable" ON public.timetable

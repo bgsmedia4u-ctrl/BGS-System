@@ -52,13 +52,24 @@ router.post('/', authenticateToken, (req, res) => {
       return res.status(400).json({ error: 'Name, class, route, and place are required.' });
     }
 
+    const routes = readJSON('routes.json');
+    const validRoute = routes.find(r => r.routeNumber === route || r.routeName === route);
+    if (!validRoute) {
+      return res.status(400).json({ error: 'Invalid route.' });
+    }
+    if (!validRoute.stops.includes(place)) {
+      return res.status(400).json({ error: 'Invalid place for the specified route.' });
+    }
+
+    const canonicalRoute = validRoute.routeNumber;
+
     const newStudent = {
       id: uuidv4(),
       slNo: students.length + 1,
       name,
       class: cls,
       place,
-      route,
+      route: canonicalRoute,
       phone: phone || ''
     };
 
@@ -92,10 +103,23 @@ router.put('/:id', authenticateToken, (req, res) => {
     }
 
     const { name, class: cls, route, place, phone } = req.body;
+    
+    let targetRoute = route !== undefined ? route : students[idx].route;
+    let targetPlace = place !== undefined ? place : students[idx].place;
+
+    const routes = readJSON('routes.json');
+    const validRoute = routes.find(r => r.routeNumber === targetRoute || r.routeName === targetRoute);
+    if (!validRoute) {
+      return res.status(400).json({ error: 'Invalid route.' });
+    }
+    if (!validRoute.stops.includes(targetPlace)) {
+      return res.status(400).json({ error: 'Invalid place for the specified route.' });
+    }
+
     if (name !== undefined) students[idx].name = name;
     if (cls !== undefined) students[idx].class = cls;
-    if (route !== undefined) students[idx].route = route;
-    if (place !== undefined) students[idx].place = place;
+    students[idx].route = validRoute.routeNumber;
+    students[idx].place = targetPlace;
     if (phone !== undefined) students[idx].phone = phone;
 
     writeJSON('students.json', students);

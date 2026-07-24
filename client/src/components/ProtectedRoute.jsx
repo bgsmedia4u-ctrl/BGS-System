@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-export function ProtectedRoute({ children }) {
+export function ProtectedRoute({ children, allowAdmin = false }) {
   const { user, profile, loading, isAdmin } = useAuth();
 
   if (loading) {
@@ -24,8 +24,8 @@ export function ProtectedRoute({ children }) {
     );
   }
 
-  // Admins should not access the teacher portal
-  if (profile && isAdmin) {
+  // Admins should not access the teacher portal unless explicitly allowed
+  if (profile && isAdmin && !allowAdmin) {
     return <Navigate to="/admin-portal" replace />;
   }
 

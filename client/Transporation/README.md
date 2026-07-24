@@ -29,7 +29,13 @@ npm install
 Copy the `.env` file in the project root and fill in your values:
 
 ```env
-JWT_SECRET=bgs-transport-secret-2026
+# REQUIRED: Generate a strong random string (e.g. openssl rand -base64 32)
+JWT_SECRET=your_secure_jwt_secret_here
+
+# REQUIRED: Administrator credentials
+ADMIN_USERNAME=your_admin_username
+ADMIN_PASSWORD=your_admin_password
+
 PORT=5000
 GOOGLE_SHEET_ID=your-sheet-id
 GOOGLE_SERVICE_ACCOUNT_EMAIL=your-service-account@project.iam.gserviceaccount.com

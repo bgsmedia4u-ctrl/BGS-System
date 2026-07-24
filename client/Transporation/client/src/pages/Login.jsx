@@ -16,6 +16,8 @@ export default function Login() {
 
     try {
       const res = await api.post('/auth/login', { username, password });
+      // NOTE: Storing JWT in localStorage exposes it to XSS.
+      // Accepted risk for now; backend enforces a short token lifetime.
       localStorage.setItem('bgs_token', res.data.token);
       navigate('/');
     } catch (err) {

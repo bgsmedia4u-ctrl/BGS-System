@@ -225,7 +225,10 @@ export default function Meetings({ user, triggerToast }) {
 
   // Match meeting to date (ignores hours)
   const getMeetingsForDate = (date) => {
-    const dateStr = date.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${y}-${m}-${d}`;
     return meetings.filter(m => m.datetime.slice(0, 10) === dateStr);
   };
 

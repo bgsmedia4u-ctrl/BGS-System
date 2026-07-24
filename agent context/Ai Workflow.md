@@ -33,10 +33,9 @@ pressure:
                ONE module (schema, API surface, UI, and how it plugs into RBAC/events).
 2. REVIEW    — You review the plan against architecture.md. Approve, or send back with corrections.
 3. IMPLEMENT — Agent builds against the approved plan only. No silent scope expansion.
-4. VERIFY    — Manual check: does it respect RLS/tenant scoping? Does it use the Role→Permission chain?
-               Does it emit/consume events correctly rather than reaching into another module directly?
+4. VERIFY    — Run reproducible automated tests or executable checks covering RLS, tenant isolation, RBAC, migrations, and event contracts, alongside manual review.
 5. DOCUMENT  — Any architectural delta gets added to architecture.md's Decision Log.
-6. TRACK     — progress-tracker.md status updated for that module (Not Started → In Progress → Done).
+6. TRACK     — Record verification evidence before changing a module's progress-tracker.md status to Done.
 ```
 
 Skipping step 1 (jumping straight to code) is the single most common way this kind of project drifts from
@@ -89,9 +88,9 @@ Task: design and scaffold the [MODULE NAME] module.
 Constraints:
 - Must fit the module map and data architecture already defined in architecture.md.
 - Must use the existing Role → Permission chain for all access control — no hardcoded role checks.
-- Must be tenant-scoped (institution_id) per the multi-tenant model.
-- If this module needs an architectural decision not already covered, STOP and state the trade-offs
-  before writing code.
+- Must use the shared tenant-scope mechanism, selecting institution_id or organization_id according to each resource's architecture-defined scope.
+- Must preserve the existing Role → Permission access-control chain.
+- If this module needs an architectural decision not already covered or if the resource scope is undefined, STOP and state the trade-offs before writing code.
 
 Deliverable: implementation plan first (schema, API surface, UI screens, events emitted/consumed).
 Wait for approval before implementing.

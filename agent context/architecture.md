@@ -1,8 +1,8 @@
 # Architecture — Unified Education Institution Management Platform
 
-**Status:** Draft for review — no module gets implemented until its slice of this document is signed off (Architecture-First principle, carried into `ai-workflow.md` §1).
-**Supersedes:** the previous `architecture.md` (BGS Teachers Portal microservices doc), preserved below as **§1 — Current State**.
-**Companion docs:** `ai-workflow.md` (how modules get built against this contract), `progress-tracker.md` (what's actually done).
+**Status:** Draft for review — no module gets implemented until its slice of this document is signed off (Architecture-First principle, carried into `agent context/Ai Workflow.md` §1).
+**Supersedes:** the previous `agent context/architecture.md` (BGS Teachers Portal microservices doc), preserved below as **§1 — Current State**.
+**Companion docs:** `agent context/Ai Workflow.md` (how modules get built against this contract), `agent context/progress-tracker.md` (what's actually done).
 
 ---
 
@@ -111,10 +111,10 @@ Person
 └── Management Profile
 ```
 
-Auth is layered on top, not merged into it:
+Auth is layered on top, not merged into it. A single `auth.users` record explicitly links to exactly one `persons` record via a 1:1 `user_id` mapping. Role assignment and deduplication consistently resolve through this mapping:
 
 ```text
-Auth User (Supabase) → User Profile → Person → Student/Parent / Employee / Teacher / Driver
+Auth User (Supabase) [1:1 users.id = persons.user_id] → Person → Student/Parent / Employee / Teacher / Driver
 ```
 
 ---
@@ -128,8 +128,8 @@ Organization
 └── Degree College (Departments / Courses)
 ```
 
-- **Model chosen:** shared schema, single database, every business table carries `institution_id` (org-level tables carry `organization_id`). Cheapest option, matches "one institution now, more later" — but the column has to be present on **every** table from day one, even while BGS is the only tenant, or retrofitting it later touches every table and every RLS policy at once.
-- **Isolation:** Postgres Row-Level Security policies scope every query to the `institution_id`/`organization_id` claim in the caller's JWT.
+- **Model chosen:** shared schema, single database. Organizations map 1:N to Institutions. Business-level tables carry `institution_id`, while organization-level configurations carry `organization_id`. Every org-scoped user, role, and permission strictly follows this boundary.
+- **Isolation:** Postgres Row-Level Security policies scope every query to the `institution_id`/`organization_id` claim in the caller's JWT using a shared RLS predicate that resolves the tenant through this ancestry.
 - **Future path:** if a future institution needs isolation beyond RLS, migrate that tenant to schema-per-tenant — the `institution_id` column makes this a data-partitioning exercise, not a rewrite.
 
 ---
@@ -169,7 +169,7 @@ The four existing stores in §1 are not thrown away — they're migrated module-
 | Teacher Weekly Task Portal | MySQL | Before Phase 4 (Academic System) begins, to avoid a second duplicate-person source | Postgres, folded into `teachers`/`teacher_assignments` |
 | Mark Entry / Academic Analytics | Ad hoc (Antigravity-built) | Alongside Phase 4 Marks/Results work | Postgres, `student_enrollments` + results tables, keeping the existing stream/year/class scoping logic |
 
-Until a row in this table is migrated, that service keeps running as-is and is called through the same event-bus contract the rest of the monolith uses — it's a hybrid state, not a dead end. See `ai-workflow.md` §5.2 for the migration prompt template used to execute each row.
+Until a row in this table is migrated, that service keeps running as-is and is called through an anti-corruption adapter contract. These adapters invoke the Transportation JSON, AOB/Alumni SQLite, Teacher Weekly Task Portal MySQL, and Mark Entry stores through the monolith event bus while preserving their existing behavior until migration. The adapter handles event/request schemas, ownership boundaries, retry/failure behavior, and idempotency to ensure zero-downtime hybrid operation. See `agent context/Ai Workflow.md` §5.2 for the migration template.
 
 ---
 
@@ -212,7 +212,9 @@ erDiagram
     PERSONS ||--o| EMPLOYEES : "is a"
     EMPLOYEES ||--o| TEACHERS : "is a"
     EMPLOYEES ||--o| DRIVERS : "is a"
-    STUDENTS }o--|| CLASSES : enrolled_in
+    STUDENTS ||--o{ STUDENT_ENROLLMENTS : "has_enrollment"
+    CLASSES ||--o{ STUDENT_ENROLLMENTS : "includes_enrollment"
+    STUDENT_ENROLLMENTS ||--|| ACADEMIC_YEARS : "history_by_year"
     TEACHERS ||--o{ TEACHER_ASSIGNMENTS : assigned
     CLASSES ||--o{ TIMETABLES : has
     STUDENTS ||--o{ ATTENDANCE_RECORDS : has
@@ -251,7 +253,7 @@ Rule: every table above except `organizations` itself carries `institution_id` (
 
 - Convention: `/api/<module>/<resource>` — one folder per module, mirroring §7.
 - Every route runs the same middleware chain: **authenticate** (verify Supabase JWT) → **authorize** (check the §5 matrix via a shared `can(user, action, resource)` helper — never an inline `if (role === 'admin')`) → **tenant-scope** (inject `institution_id`/`organization_id` filter) → handler.
-- **Cross-module calls go through the event bus, not direct imports.** Example: Attendance never calls Notification's code directly — it emits `student.absent`, and anything that cares subscribes. Start with an in-process emitter or Postgres `LISTEN/NOTIFY`; upgrade to Redis Streams or Supabase Queues once volume justifies it.
+- **Cross-module calls permit typed module service/query interfaces** for synchronous request-time reads, authorization, validation, and transaction work. Events are kept strictly for asynchronous side effects and integrations. Example: Attendance emits `student.absent` to the event-bus for decoupled notifications. Start with an in-process emitter or Postgres `LISTEN/NOTIFY`; upgrade to Redis Streams or Supabase Queues once volume justifies it.
 - Internal/service-only endpoints (biometric ingestion, GPS ingestion) require a service-role credential, never a user JWT.
 
 ---
@@ -260,8 +262,9 @@ Rule: every table above except `organizations` itself carries `institution_id` (
 
 - Supabase Auth is the identity provider.
 - On login, a Postgres trigger / Edge Function stamps custom JWT claims: `role`, `institution_id`, `organization_id`.
-- RLS policies on every table key off these claims.
-- The Supabase **service-role key** is used only in trusted backend jobs (biometric ingestion, GPS ingestion) — never shipped to a client, browser, or mobile app.
+- RLS policies on every table key off these claims, failing-closed when required claims are missing.
+- JWT Custom Claims refresh behavior: Sessions have a defined maximum lifetime. Tokens refresh periodically, and upon role or tenant changes, sessions/tokens are immediately revoked and forced to re-authenticate to propagate claims.
+- The Supabase **service-role key** is used only in trusted backend jobs — never shipped to a client.
 
 
 ---

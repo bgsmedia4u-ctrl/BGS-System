@@ -70,7 +70,22 @@ router.put('/:id', authenticateToken, (req, res) => {
     }
 
     const { routeNumber, routeName, stops } = req.body;
-    if (routeNumber !== undefined) routes[idx].routeNumber = routeNumber;
+    
+    // Check for duplicate route number if it's changing
+    if (routeNumber !== undefined && routeNumber !== routes[idx].routeNumber) {
+      if (routes.some(r => r.routeNumber === routeNumber)) {
+        return res.status(400).json({ error: 'Route number already exists.' });
+      }
+      
+      // Check if students are assigned to the old route
+      const students = readJSON('students.json');
+      const oldRouteNumber = routes[idx].routeNumber;
+      if (students.some(s => s.route === oldRouteNumber)) {
+        return res.status(400).json({ error: 'Cannot change route number while students are assigned to it.' });
+      }
+      routes[idx].routeNumber = routeNumber;
+    }
+    
     if (routeName !== undefined) routes[idx].routeName = routeName;
     if (stops !== undefined) routes[idx].stops = stops;
 
@@ -89,6 +104,12 @@ router.delete('/:id', authenticateToken, (req, res) => {
 
     if (idx === -1) {
       return res.status(404).json({ error: 'Route not found.' });
+    }
+
+    const students = readJSON('students.json');
+    const routeNumber = routes[idx].routeNumber;
+    if (students.some(s => s.route === routeNumber)) {
+      return res.status(400).json({ error: 'Cannot delete route while students are assigned to it.' });
     }
 
     routes.splice(idx, 1);

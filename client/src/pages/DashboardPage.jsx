@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getRecentReports } from '../api/reportService';
@@ -32,9 +32,7 @@ export default function DashboardPage() {
   const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      fetchData();
-    }
+    fetchData();
   }, [user]);
 
   useEffect(() => {
@@ -46,14 +44,27 @@ export default function DashboardPage() {
   async function fetchData() {
     setLoading(true);
     try {
-      const reportsData = await getRecentReports(user.id, 10);
-      setReports(reportsData);
+      if (user?.id) {
+        try {
+          const reportsData = await getRecentReports(user.id, 10);
+          setReports(reportsData || []);
+        } catch (e) {
+          console.warn('Could not fetch user reports:', e);
+          setReports([]);
+        }
+      } else {
+        setReports([]);
+      }
 
-      const annData = await getRecentAnnouncements(5);
-      setAnnouncements(annData);
+      try {
+        const annData = await getRecentAnnouncements(5);
+        setAnnouncements(annData || []);
+      } catch (e) {
+        console.warn('Could not fetch announcements:', e);
+        setAnnouncements([]);
+      }
     } catch (err) {
       console.error('Dashboard fetch error:', err);
-      toast.error('Failed to load dashboard: ' + (err.message || 'unknown error'));
     } finally {
       setLoading(false);
     }

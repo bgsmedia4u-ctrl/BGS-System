@@ -1,6 +1,7 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getTimetable, getTeacherTimetable, updateTimetableEntry } from '../api/timetableService';
+import { getAllTeachers } from '../data/profileService';
 import { supabase } from '../api/supabase';
 import Layout from '../components/Layout';
 import { Clock, Edit2, Check, X } from 'lucide-react';
@@ -60,7 +61,7 @@ export default function TimetablePage({ isAdmin = false }) {
       const data = await getTimetable(stream, year, cls);
       setTimetable(data || []);
       
-      const { data: tData } = await supabase.from('profiles').select('id, name').eq('role', 'teacher');
+      const tData = await getAllTeachers();
       setTeachers(tData || []);
       
       if (profile?.institution_id) {

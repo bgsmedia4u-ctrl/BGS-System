@@ -1,10 +1,13 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../api/supabase';
+import { getAllTeachers, getTeachersWithReports } from '../data/profileService';
+import { triggerAbsentStudentSms, notifyMeetingAttendees } from '../data/notifications';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { pdfService } from '../api/pdfService';
 import toast from 'react-hot-toast';
-import { Shield, BarChart2, ClipboardList, Users, Megaphone, CheckCircle, FileEdit, XCircle, TrendingUp, Phone, Calendar, BookOpen, AlertTriangle, Trash2, Download, Send, Loader, Video, Plus, X, ClipboardCheck, PenLine } from 'lucide-react';
+import { Shield, BarChart2, ClipboardList, Users, Megaphone, CheckCircle, FileEdit, XCircle, TrendingUp, Phone, Calendar, BookOpen, AlertTriangle, Trash2, Download, Send, Loader, Video, Plus, X, ClipboardCheck, PenLine, MessageSquare } from 'lucide-react';
+import NotifyTeacherModal from '../components/NotifyTeacherModal';
 import { getWeekStart, formatDateISO, formatWeekLabel } from '../utils/week';
 import { formatTopics } from '../utils/formatters';
 
@@ -197,6 +200,7 @@ export default function AdminPortalPage() {
   const [adminTests, setAdminTests] = useState([]);
   const [testsLoading, setTestsLoading] = useState(false);
   const [testsStreamFilter, setTestsStreamFilter] = useState('');
+  const [showNotifyModal, setShowNotifyModal] = useState(false);
 
   useEffect(() => {
     if (profile && profile.role !== 'admin') navigate('/dashboard');
@@ -216,11 +220,11 @@ export default function AdminPortalPage() {
   async function fetchMonitor(date) {
     setMonitorLoading(true);
     try {
-      const [{ data: t, error: tE }, { data: r, error: rE }] = await Promise.all([
-        supabase.from('profiles').select('*').eq('role', 'teacher').order('name'),
+      const [t, { data: r, error: rE }] = await Promise.all([
+        getAllTeachers(),
         supabase.from('weekly_reports').select('*').eq('report_date', date),
       ]);
-      if (tE) throw tE; if (rE) throw rE;
+      if (rE) throw rE;
       setTeachers(t || []);
       setDayReports(r || []);
     } catch (e) { toast.error('Failed to load monitor data'); }
@@ -243,12 +247,7 @@ export default function AdminPortalPage() {
   async function fetchProfiles() {
     setProfilesLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*, weekly_reports(id, status, report_date)')
-        .eq('role', 'teacher')
-        .order('name');
-      if (error) throw error;
+      const data = await getTeachersWithReports();
       setProfilesData(data || []);
     } catch (e) { toast.error('Failed to load teacher profiles'); }
     finally { setProfilesLoading(false); }
@@ -353,7 +352,10 @@ export default function AdminPortalPage() {
         await supabase.from('meeting_attendees').insert(attPayload);
       }
 
-      toast.success('Meeting saved!');
+      // Trigger meeting SMS notification via Edge Function
+      await notifyMeetingAttendees({ meetingId: newMeetingId, isUpdate: !!editingMeeting });
+
+      toast.success('Meeting saved & notification sent!');
       setShowMeetingModal(false);
       fetchMeetings();
     } catch(e) { toast.error('Failed to save meeting'); }
@@ -416,6 +418,16 @@ export default function AdminPortalPage() {
       setAttSessions(data || []);
     } catch (e) { toast.error('Failed to load attendance data'); }
     finally { setAttLoading(false); }
+  }
+
+  async function handleTriggerAbsenceSms() {
+    try {
+      toast.loading('Sending absence SMS alerts to parents...', { id: 'absence-sms' });
+      const res = await triggerAbsentStudentSms(attDateFilter || new Date().toISOString().split('T')[0]);
+      toast.success(`Absence alert sent to ${res?.smsSent || 0} parent(s)!`, { id: 'absence-sms' });
+    } catch (e) {
+      toast.error(e.message || 'Failed to send absence alerts', { id: 'absence-sms' });
+    }
   }
 
   async function fetchAdminTests() {
@@ -504,6 +516,12 @@ export default function AdminPortalPage() {
             <h1 style={s.pageTitle}>Teacher Monitoring Center</h1>
             <p style={s.pageSubtitle}>Monitor all teachers' weekly submissions, view full reports and download PDFs</p>
           </div>
+          <button 
+            style={{ ...s.primaryBtn, background: 'var(--color-gold-500, #c9a227)', color: '#0b1f3a', fontWeight: 700 }}
+            onClick={() => setShowNotifyModal(true)}
+          >
+            <MessageSquare size={16} /> Send SMS (MSG91)
+          </button>
         </div>
 
         {/* TABS — horizontally scrollable on mobile */}
@@ -978,6 +996,12 @@ export default function AdminPortalPage() {
                 </select>
               </div>
               <button style={s.primaryBtn} onClick={fetchAttendanceSessions}>Refresh</button>
+              <button 
+                style={{ ...s.primaryBtn, background: 'var(--color-gold-500, #c9a227)', color: '#0b1f3a', fontWeight: 700 }} 
+                onClick={handleTriggerAbsenceSms}
+              >
+                <Send size={14} /> Send Absence SMS to Parents
+              </button>
             </div>
 
             {attLoading ? (
@@ -1109,6 +1133,8 @@ export default function AdminPortalPage() {
             })()}
           </>
         )}
+
+      <NotifyTeacherModal isOpen={showNotifyModal} onClose={() => setShowNotifyModal(false)} />
 
       <style>{`
         * { box-sizing: border-box; }

@@ -1,5 +1,6 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../api/supabase';
+import { getAllTeachers } from '../data/profileService';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import toast from 'react-hot-toast';
@@ -57,7 +58,7 @@ export default function AcademicManagementPage() {
           class:classes(name),
           academic_year:academic_years(name)
         `).eq('institution_id', instId),
-        supabase.from('profiles').select('*').eq('role', 'teacher'),
+        getAllTeachers(),
         supabase.from('classes').select('*').eq('institution_id', instId),
         supabase.from('academic_years').select('*').eq('institution_id', instId)
       ]);
@@ -66,7 +67,7 @@ export default function AcademicManagementPage() {
       setCourses(courseRes.data || []);
       setSubjects(subjRes.data || []);
       setAssignments(assignRes.data || []);
-      setTeachers(teachersRes.data || []);
+      setTeachers(teachersRes || []);
       setClasses(classRes.data || []);
       setAcademicYears(yearRes.data || []);
     } catch (err) {

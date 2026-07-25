@@ -1,3 +1,9 @@
+-- ⚠️ WARNING: DO NOT RUN THIS SCRIPT ON A LIVE DATABASE ⚠️
+-- This script contains destructive DROP TABLE ... CASCADE statements.
+-- It is maintained for HISTORICAL REFERENCE ONLY and requires explicit human sign-off
+-- and a verified database backup before execution on any existing environment.
+-- ══════════════════════════════════════════════════════════════════════════════
+
 -- ─── 0. CLEANUP (ALLOWS RE-RUNNING SCRIPT) ───
 DROP TABLE IF EXISTS public.class_metrics CASCADE;
 DROP TABLE IF EXISTS public.exam_sections CASCADE;

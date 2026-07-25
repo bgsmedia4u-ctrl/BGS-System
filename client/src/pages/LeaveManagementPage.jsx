@@ -1,6 +1,7 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getTeacherLeaves, submitLeaveRequest } from '../api/leaveService';
+import { getTeachersExcluding } from '../data/profileService';
 import { supabase } from '../api/supabase';
 import Layout from '../components/Layout';
 import { CalendarOff, Plus, CheckCircle, Clock, XCircle, Search } from 'lucide-react';
@@ -40,8 +41,7 @@ export default function LeaveManagementPage() {
 
   async function fetchTeachers() {
     try {
-      const { data, error } = await supabase.from('profiles').select('id, name').eq('role', 'teacher').neq('id', user.id);
-      if (error) throw error;
+      const data = await getTeachersExcluding(user.id);
       setTeachers(data || []);
     } catch (err) {
       console.error(err);

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../api/supabase';
+import { getProfileByUserId, updateProfilePhone } from '../data/profileService';
 
 const AuthContext = createContext(null);
 
@@ -40,17 +41,8 @@ export function AuthProvider({ children }) {
 
   async function fetchProfile(authUser) {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error fetching profile:', error);
-      } else {
-        setProfile(data);
-      }
+      const data = await getProfileByUserId(authUser.id);
+      setProfile(data);
     } catch (err) {
       console.error('Unexpected error in profile fetch:', err);
     } finally {
@@ -83,12 +75,7 @@ export function AuthProvider({ children }) {
 
   async function updatePhone(phone) {
     if (!user) return;
-    const { error } = await supabase
-      .from('profiles')
-      .update({ phone })
-      .eq('id', user.id);
-
-    if (error) throw error;
+    await updateProfilePhone(user.id, phone);
     setProfile((prev) => (prev ? { ...prev, phone } : null));
   }
 

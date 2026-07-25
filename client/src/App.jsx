@@ -21,18 +21,10 @@ const LeaveManagementPage = React.lazy(() => import('./pages/LeaveManagementPage
 const SyllabusTrackerPage = React.lazy(() => import('./pages/SyllabusTrackerPage'));
 const TimetablePage = React.lazy(() => import('./pages/TimetablePage'));
 const TasksPage = React.lazy(() => import('./pages/TasksPage'));
-const TransportationPage = React.lazy(() => import('./pages/TransportationPage'));
-const AobPage = React.lazy(() => import('./pages/AobPage'));
 const StudentManagementPage = React.lazy(() => import('./pages/StudentManagementPage'));
 const StaffManagementPage = React.lazy(() => import('./pages/StaffManagementPage'));
 const AcademicManagementPage = React.lazy(() => import('./pages/AcademicManagementPage'));
 
-const TransportationDashboard = React.lazy(() => import('./pages/TransportationViews/Dashboard'));
-const TransportationStudents = React.lazy(() => import('./pages/TransportationViews/Students'));
-const TransportationRoutesPage = React.lazy(() => import('./pages/TransportationViews/RoutesPage'));
-const TransportationRouteSheet = React.lazy(() => import('./pages/TransportationViews/RouteSheet'));
-const TransportationRouteList = React.lazy(() => import('./pages/TransportationViews/RouteList'));
-const TransportationFee = React.lazy(() => import('./pages/TransportationViews/Fee'));
 
 function App() {
   return (
@@ -69,15 +61,6 @@ function App() {
           <Route path="/syllabus" element={<ProtectedRoute><SyllabusTrackerPage /></ProtectedRoute>} />
           <Route path="/timetable" element={<ProtectedRoute><TimetablePage /></ProtectedRoute>} />
           <Route path="/tasks" element={<ProtectedRoute><TasksPage /></ProtectedRoute>} />
-          <Route path="/transportation" element={<AdminRoute><TransportationPage /></AdminRoute>}>
-            <Route index element={<TransportationDashboard />} />
-            <Route path="students" element={<TransportationStudents />} />
-            <Route path="routes" element={<TransportationRoutesPage />} />
-            <Route path="routes/:id/sheet" element={<TransportationRouteSheet />} />
-            <Route path="routes/list" element={<TransportationRouteList />} />
-            <Route path="fee" element={<TransportationFee />} />
-          </Route>
-          <Route path="/aob" element={<ProtectedRoute allowAdmin={true}><AobPage /></ProtectedRoute>} />
           
           {/* Protected Admin Routes (sidebar-based) */}
           <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />

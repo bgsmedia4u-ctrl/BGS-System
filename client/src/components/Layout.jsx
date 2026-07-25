@@ -5,7 +5,6 @@ import {
   LayoutDashboard,
   GraduationCap,
   Wallet,
-  Bus,
   Users,
   Settings,
   HelpCircle,
@@ -65,9 +64,6 @@ export default function Layout({ children }) {
               </NavLink>
               <NavLink to="/fees" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <Wallet size={20} /> Finance
-              </NavLink>
-              <NavLink to="/transportation" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <Bus size={20} /> Transport
               </NavLink>
               <NavLink to="/personnel" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <Users size={20} /> Personnel

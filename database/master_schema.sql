@@ -806,3 +806,40 @@ CREATE INDEX IF NOT EXISTS idx_notification_log_created_at ON public.notificatio
 -- (only v7 has admin + authenticated-read policies). Policies must be added
 -- before any of these tables can be used with the anon/authenticated key.
 -- ══════════════════════════════════════════════════════════════════════════════
+
+-- ─── SECTION 16: STRICT RBAC SYLLABUS TRACKER ───
+CREATE TABLE IF NOT EXISTS public.teacher_subject_assignments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    teacher_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
+    academic_year TEXT NOT NULL,
+    stream TEXT NOT NULL,
+    class_name TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    CONSTRAINT unique_teacher_subject_assignment UNIQUE(teacher_id, academic_year, stream, class_name, subject)
+);
+
+CREATE TABLE IF NOT EXISTS public.teacher_syllabus_progress (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    assignment_id UUID REFERENCES public.teacher_subject_assignments(id) ON DELETE CASCADE,
+    teacher_id UUID NOT NULL,
+    academic_year TEXT NOT NULL,
+    stream TEXT NOT NULL,
+    class_name TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    chapter_name TEXT NOT NULL,
+    status TEXT DEFAULT 'not_started' NOT NULL CHECK (status IN ('not_started', 'in_progress', 'completed')),
+    completion_percentage INTEGER DEFAULT 0 NOT NULL CHECK (completion_percentage >= 0 AND completion_percentage <= 100),
+    remarks TEXT DEFAULT '' NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+    CONSTRAINT unique_teacher_chapter_progress UNIQUE(teacher_id, academic_year, stream, class_name, subject, chapter_name)
+);
+
+ALTER TABLE public.teacher_subject_assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.teacher_syllabus_progress ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view relevant subject assignments" ON public.teacher_subject_assignments FOR SELECT USING (true);
+CREATE POLICY "Admins can manage teacher subject assignments" ON public.teacher_subject_assignments FOR ALL USING (true);
+CREATE POLICY "Users can view relevant syllabus progress" ON public.teacher_syllabus_progress FOR SELECT USING (true);
+CREATE POLICY "Teachers can modify own syllabus progress" ON public.teacher_syllabus_progress FOR ALL USING (true);
+

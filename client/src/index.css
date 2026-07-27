@@ -55,6 +55,7 @@
   --bg-input-focus: var(--bg-surface);
   
   /* Replace Navy with Maroon for global compatibility */
+  --maroon-900: #731313;
   --navy-950: #3E0000;
   --navy-900: #731313; /* Primary Sidebar Color */
   --navy-800: #93001A;
@@ -183,11 +184,6 @@ img {
 }
 
 /* â”€â”€â”€ Layout â”€â”€â”€ */
-.app-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
 
 .top-nav {
   position: sticky;
@@ -321,15 +317,6 @@ img {
 }
 
 /* â”€â”€â”€ Main Content â”€â”€â”€ */
-.main-content {
-  flex: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 16px 40px 16px;
-  display: flex;
-  flex-direction: column;
-}
 
 .page-header {
   padding: 12px 0 24px 0;

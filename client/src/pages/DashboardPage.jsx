@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getRecentReports } from '../api/reportService';
 import { getRecentAnnouncements } from '../api/announcementService';
+import { getTasks } from '../api/taskService';
+import { getTeacherTimetable } from '../api/timetableService';
+import { getTeacherLeaves, getAllPendingLeaves } from '../api/leaveService';
+import { getOrgWideSyllabusStats } from '../api/syllabusService';
 import Layout from '../components/Layout';
 import GaugeCard from '../components/GaugeCard';
 import TrendLine from '../components/TrendLine';
@@ -34,6 +38,10 @@ export default function DashboardPage() {
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [phone, setPhone] = useState('');
   const [announcements, setAnnouncements] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [todaySchedule, setTodaySchedule] = useState([]);
+  const [pendingLeavesCount, setPendingLeavesCount] = useState(0);
+  const [syllabusPercent, setSyllabusPercent] = useState(0);
 
   useEffect(() => {
     fetchData();
@@ -59,8 +67,38 @@ export default function DashboardPage() {
           console.warn('Could not fetch user reports:', e);
           setReports([]);
         }
+
+        try {
+          const tasksData = await getTasks(user.id);
+          setTasks(tasksData || []);
+        } catch (e) {
+          console.warn('Could not fetch tasks:', e);
+          setTasks([]);
+        }
+
+        try {
+          const timetableData = await getTeacherTimetable(user.id);
+          const currentDay = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+          const filtered = (timetableData || []).filter(t => t.day_of_week === currentDay);
+          setTodaySchedule(filtered);
+        } catch (e) {
+          console.warn('Could not fetch timetable:', e);
+          setTodaySchedule([]);
+        }
+
+        try {
+          const leavesData = profile?.role === 'admin' ? await getAllPendingLeaves() : await getTeacherLeaves(user.id);
+          const pendingCount = (leavesData || []).filter(l => l.status === 'pending').length;
+          setPendingLeavesCount(pendingCount);
+        } catch (e) {
+          console.warn('Could not fetch leaves:', e);
+          setPendingLeavesCount(0);
+        }
       } else {
         setReports([]);
+        setTasks([]);
+        setTodaySchedule([]);
+        setPendingLeavesCount(0);
       }
 
       try {
@@ -69,6 +107,14 @@ export default function DashboardPage() {
       } catch (e) {
         console.warn('Could not fetch announcements:', e);
         setAnnouncements([]);
+      }
+
+      try {
+        const sylStats = await getOrgWideSyllabusStats();
+        setSyllabusPercent(sylStats?.percentage || 0);
+      } catch (e) {
+        console.warn('Could not fetch syllabus stats:', e);
+        setSyllabusPercent(0);
       }
     } catch (err) {
       console.error('Dashboard fetch error:', err);
@@ -122,6 +168,10 @@ export default function DashboardPage() {
 
   const firstName = profile?.name?.split(' ')[0] || 'Teacher';
 
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter(t => t.status === 'done' || t.status === 'completed').length;
+  const taskRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
   return (
     <Layout>
       <div className="page-header">
@@ -162,9 +212,15 @@ export default function DashboardPage() {
           <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div className="stat-label" style={{ marginBottom: 8, fontSize: 14 }}>Class Overview</div>
-              <div className="stat-value" style={{ fontSize: 28, marginBottom: 12 }}>3/5 Sessions</div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--success)' }}>
-                <CheckCircle size={16} /> <span style={{ fontSize: 14, fontWeight: 500 }}>On Track Today</span>
+              <div className="stat-value" style={{ fontSize: 28, marginBottom: 12 }}>{todaySchedule.length} Session{todaySchedule.length !== 1 ? 's' : ''}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: todaySchedule.length > 0 ? 'var(--success)' : 'var(--text-muted)' }}>
+                {todaySchedule.length > 0 ? (
+                  <>
+                    <CheckCircle size={16} /> <span style={{ fontSize: 14, fontWeight: 500 }}>Scheduled for Today</span>
+                  </>
+                ) : (
+                  <span style={{ fontSize: 14, fontWeight: 500 }}>No classes today</span>
+                )}
               </div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -177,12 +233,12 @@ export default function DashboardPage() {
 
           {/* Teacher Tasks completion widget */}
           <Link to="/tasks" style={{ textDecoration: 'none' }}>
-            <div className="card" style={{ background: 'linear-gradient(135deg, var(--accent-light), var(--accent-dark))', color: '#fff', border: 'none', position: 'relative', overflow: 'hidden' }}>
+            <div className="card" style={{ background: 'linear-gradient(135deg, var(--accent-light), var(--accent-dark))', color: '#fff', border: 'none', position: 'relative', overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div style={{ position: 'relative', zIndex: 2 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 500, opacity: 0.9, marginBottom: 8 }}>Task Management</div>
-                    <div style={{ fontSize: 36, fontWeight: 700, lineHeight: 1, marginBottom: 4 }}>82%</div>
+                    <div style={{ fontSize: 36, fontWeight: 700, lineHeight: 1, marginBottom: 4 }}>{taskRate}%</div>
                     <div style={{ fontSize: 14, opacity: 0.9 }}>Completion Rate</div>
                   </div>
                   <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -190,8 +246,12 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                  <div style={{ fontSize: 13, opacity: 0.9 }}>+12% this week</div>
-                  <TrendLine color="#fff" width={100} height={40} data={[60, 65, 62, 70, 75, 72, 82]} />
+                  <div style={{ fontSize: 13, opacity: 0.9 }}>{completedTasks} of {totalTasks} tasks finished</div>
+                  {totalTasks > 0 ? (
+                    <TrendLine color="#fff" width={100} height={40} data={[0, Math.round(taskRate/2), taskRate]} />
+                  ) : (
+                    <span style={{ fontSize: 12, opacity: 0.8 }}>No tasks yet</span>
+                  )}
                 </div>
               </div>
               {/* Decorative circles */}
@@ -215,12 +275,12 @@ export default function DashboardPage() {
             </Link>
             <div style={{ display: 'flex', gap: 16 }}>
               <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
-                <GaugeCard title="Syllabus" value={68} color="var(--accent)" />
+                <GaugeCard title="Syllabus" value={syllabusPercent} color="var(--accent)" />
               </Link>
               <Link to="/leave" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
                 <div className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <div className="stat-label">Pending Leave</div>
-                  <div className="stat-value" style={{ fontSize: 24 }}>2</div>
+                  <div className="stat-value" style={{ fontSize: 24 }}>{pendingLeavesCount}</div>
                 </div>
               </Link>
             </div>
@@ -286,40 +346,28 @@ export default function DashboardPage() {
               View Timetable
             </Link>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: 'var(--bg-surface-hover)', borderRadius: 12, borderLeft: '4px solid #10B981' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-main)', width: 150 }}>09:30 - 10:30 AM</div>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-main)' }}>Physics — Electrodynamics</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>1st Year PUC Science (Section A) · Room 201</div>
+          {todaySchedule.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {todaySchedule.map((entry, index) => (
+                <div key={entry.id || index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: 'var(--bg-surface)', borderRadius: 12, borderLeft: '4px solid var(--accent)', border: '1px solid var(--border-color)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-main)', width: 150 }}>{entry.period || 'Scheduled Period'}</div>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-main)' }}>{entry.subject || 'Assigned Subject'}</div>
+                      <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{entry.year} {entry.stream} ({entry.class})</div>
+                    </div>
+                  </div>
+                  <span style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--accent-hover)', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>Scheduled</span>
                 </div>
-              </div>
-              <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#065F46', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>Completed</span>
+              ))}
             </div>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: 'var(--bg-surface)', borderRadius: 12, borderLeft: '4px solid var(--accent)', border: '1px solid var(--border-color)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-main)', width: 150 }}>11:15 - 12:15 PM</div>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-main)' }}>Physics Lab & Mechanics</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>2nd Year PUC Science (Section B) · Science Lab 1</div>
-                </div>
-              </div>
-              <span style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--accent-hover)', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>In Progress</span>
+          ) : (
+            <div style={{ padding: '32px 24px', textAlign: 'center', background: 'var(--bg-surface-hover)', borderRadius: 12, border: '1px dashed var(--border-color)', color: 'var(--text-muted)' }}>
+              <Calendar size={36} style={{ opacity: 0.4, margin: '0 auto 8px auto', color: 'var(--text-muted)' }} />
+              <div style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-main)', marginBottom: 4 }}>No classes scheduled for today ({new Date().toLocaleDateString('en-US', { weekday: 'long' })})</div>
+              <div style={{ fontSize: 13 }}>Your teaching sessions will appear here automatically when configured in your timetable.</div>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: 'var(--bg-surface)', borderRadius: 12, borderLeft: '4px solid #3B82F6', border: '1px solid var(--border-color)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-main)', width: 150 }}>02:00 - 03:00 PM</div>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-main)' }}>NEET / JEE Problem Solving</div>
-                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Combined Batches · Hall C</div>
-                </div>
-              </div>
-              <span style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#1E40AF', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>Upcoming</span>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Report History */}

@@ -1,24 +1,38 @@
-﻿import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
+import { supabase } from '../api/supabase';
 import { Users, UserPlus, Search, Filter, Briefcase, Mail, Phone } from 'lucide-react';
 import '../layout.css';
 
-const mockStaff = [
-  { id: 'EMP-101', name: 'Dr. Alok Verma', role: 'Teacher', dept: 'Science', email: 'alok.v@bgs.edu', phone: '555-0101', status: 'Active' },
-  { id: 'EMP-102', name: 'Priya Sharma', role: 'Teacher', dept: 'Mathematics', email: 'priya.s@bgs.edu', phone: '555-0102', status: 'Active' },
-  { id: 'EMP-103', name: 'Rajesh Kumar', role: 'Driver', dept: 'Transport', email: 'rajesh.k@bgs.edu', phone: '555-0103', status: 'Active' },
-  { id: 'EMP-104', name: 'Meena Iyer', role: 'Admin', dept: 'Office', email: 'meena.i@bgs.edu', phone: '555-0104', status: 'On Leave' },
-];
-
 export default function StaffManagementPage() {
   const [activeTab, setActiveTab] = useState('directory');
+  const [staffList, setStaffList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    fetchStaff();
+  }, []);
+
+  async function fetchStaff() {
+    setLoading(true);
+    try {
+      const { data } = await supabase.from('profiles').select('*');
+      setStaffList(data || []);
+    } catch (e) {
+      setStaffList([]);
+    }
+    setLoading(false);
+  }
+
+  const filteredStaff = staffList.filter(s => s.name?.toLowerCase().includes(searchTerm.toLowerCase()) || s.email?.toLowerCase().includes(searchTerm.toLowerCase()));
 
   const renderDirectory = () => (
     <div style={{ background: 'var(--bg-surface)', padding: 24, borderRadius: 16, border: '1px solid var(--border-color)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
         <div className="search-bar" style={{ width: 300 }}>
           <Search size={18} className="header-icon" />
-          <input type="text" placeholder="Search staff members..." className="search-input" />
+          <input type="text" placeholder="Search staff members..." className="search-input" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
         </div>
         <div style={{ display: 'flex', gap: 12 }}>
           <button style={{ background: '#F5F5F5', border: '1px solid var(--border-color)', padding: '8px 16px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer' }}>
@@ -41,35 +55,43 @@ export default function StaffManagementPage() {
           </tr>
         </thead>
         <tbody>
-          {mockStaff.map((staff, i) => (
-            <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
-              <td style={{ padding: '16px', fontWeight: 600 }}>{staff.id}</td>
-              <td style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#FCEFEF', color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>
-                  {staff.name.charAt(0)}
-                </div>
-                <span style={{ color: 'var(--maroon-900)', fontWeight: 600 }}>{staff.name}</span>
-              </td>
-              <td style={{ padding: '16px' }}>
-                <div style={{ fontWeight: 500 }}>{staff.role}</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{staff.dept}</div>
-              </td>
-              <td style={{ padding: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}><Mail size={12} color="var(--text-muted)" /> {staff.email}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', marginTop: 4 }}><Phone size={12} color="var(--text-muted)" /> {staff.phone}</div>
-              </td>
-              <td style={{ padding: '16px' }}>
-                <span style={{ 
-                  background: staff.status === 'Active' ? '#D1FAE5' : '#FEE2E2', 
-                  color: staff.status === 'Active' ? '#065F46' : '#991B1B', 
-                  padding: '4px 10px', borderRadius: 12, fontSize: '0.8rem', fontWeight: 600 
-                }}>{staff.status}</span>
-              </td>
-              <td style={{ padding: '16px' }}>
-                <button style={{ background: 'var(--bg-surface-hover)', border: '1px solid var(--border-color)', padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.85rem' }}>View Profile</button>
+          {filteredStaff.length > 0 ? (
+            filteredStaff.map((staff, i) => (
+              <tr key={staff.id || i} style={{ borderBottom: '1px solid var(--border-color)' }}>
+                <td style={{ padding: '16px', fontWeight: 600 }}>{staff.id?.substring(0, 8) || 'EMP-000'}</td>
+                <td style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#FCEFEF', color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>
+                    {staff.name ? staff.name.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <span style={{ color: 'var(--maroon-900)', fontWeight: 600 }}>{staff.name || 'Unnamed Staff'}</span>
+                </td>
+                <td style={{ padding: '16px' }}>
+                  <div style={{ fontWeight: 500 }}>{staff.role || staff.staff_type || 'Faculty'}</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{staff.department || staff.subject || 'General'}</div>
+                </td>
+                <td style={{ padding: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}><Mail size={12} color="var(--text-muted)" /> {staff.email || 'No email registered'}</div>
+                  {staff.phone && <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem', marginTop: 4 }}><Phone size={12} color="var(--text-muted)" /> {staff.phone}</div>}
+                </td>
+                <td style={{ padding: '16px' }}>
+                  <span style={{ 
+                    background: staff.status === 'active' || !staff.status ? '#D1FAE5' : '#FEF3C7', 
+                    color: staff.status === 'active' || !staff.status ? '#065F46' : '#92400E', 
+                    padding: '4px 10px', borderRadius: 12, fontSize: '0.8rem', fontWeight: 600 
+                  }}>{staff.status || 'Active'}</span>
+                </td>
+                <td style={{ padding: '16px' }}>
+                  <button style={{ background: 'var(--bg-surface-hover)', border: '1px solid var(--border-color)', padding: '6px 12px', borderRadius: 6, cursor: 'pointer', fontSize: '0.85rem' }}>View Profile</button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="6" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                No staff records found in database.
               </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
     </div>

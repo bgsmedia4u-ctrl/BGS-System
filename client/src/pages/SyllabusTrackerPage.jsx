@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getSyllabus, updateSyllabusProgress, createSyllabusModule } from '../api/syllabusService';
 import Layout from '../components/Layout';
@@ -15,17 +15,21 @@ export default function SyllabusTrackerPage() {
   const [stream, setStream] = useState('Science');
   const [year, setYear] = useState('1st Year');
   const [cls, setCls] = useState('Class A');
-  const [subject, setSubject] = useState(isAdmin ? 'Physics' : (profile?.subject || 'Physics'));
+  const [subject, setSubject] = useState(profile?.subject || 'All Subjects');
 
   // Admin Create Mode
   const [showCreate, setShowCreate] = useState(false);
   const [newChapter, setNewChapter] = useState('');
+  const [newSubject, setNewSubject] = useState(profile?.subject || '');
 
   useEffect(() => {
-    if (!isAdmin && profile?.subject) {
+    if (profile?.subject) {
       setSubject(profile.subject);
+      setNewSubject(profile.subject);
+    } else {
+      setSubject('All Subjects');
     }
-  }, [profile, isAdmin]);
+  }, [profile]);
 
   useEffect(() => {
     fetchData();
@@ -60,9 +64,14 @@ export default function SyllabusTrackerPage() {
   async function handleCreateModule(e) {
     e.preventDefault();
     if (!newChapter.trim()) return;
+    const targetSubject = newSubject.trim() || subject;
+    if (!targetSubject || targetSubject === 'All Subjects') {
+      toast.error('Please specify the subject for this chapter');
+      return;
+    }
     try {
       const newMod = await createSyllabusModule({
-        stream, year, class: cls, subject, chapter_name: newChapter.trim(), created_by: user.id
+        stream, year, class: cls, subject: targetSubject, chapter_name: newChapter.trim(), created_by: user.id
       }, profile.role);
       
       setModules([...modules, { ...newMod, progress: { status: 'not_started' } }]);
@@ -75,8 +84,10 @@ export default function SyllabusTrackerPage() {
     }
   }
 
-  const filteredModules = modules.filter(m => m.subject === subject);
-  const completedCount = filteredModules.filter(m => m.progress.status === 'completed').length;
+  const standardSubjects = ['All Subjects', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'Accountancy', 'Economics', 'Business Studies', 'Computer Science', 'English', 'Kannada'];
+  const availableSubjects = Array.from(new Set([...standardSubjects, ...modules.map(m => m.subject).filter(Boolean)]));
+  const filteredModules = subject && subject !== 'All Subjects' ? modules.filter(m => m.subject === subject) : modules;
+  const completedCount = filteredModules.filter(m => m.progress?.status === 'completed').length;
   const progressPercent = filteredModules.length > 0 ? Math.round((completedCount / filteredModules.length) * 100) : 0;
 
   return (
@@ -119,30 +130,26 @@ export default function SyllabusTrackerPage() {
               <option value="FTB-1">FTB-1</option>
             </select>
           </div>
-          {isAdmin && (
-            <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
-              <label className="form-label">Subject</label>
-              <select className="form-input" value={subject} onChange={e => setSubject(e.target.value)}>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Maths">Maths</option>
-                <option value="Biology">Biology</option>
-                <option value="Accounts">Accounts</option>
-                <option value="Economics">Economics</option>
-              </select>
-            </div>
-          )}
+          <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
+            <label className="form-label">Subject</label>
+            <select className="form-input" value={subject} onChange={e => setSubject(e.target.value)}>
+              {availableSubjects.map(sub => (
+                <option key={sub} value={sub}>{sub}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Admin Create Form */}
         {isAdmin && showCreate && (
           <form className="card" onSubmit={handleCreateModule} style={{ marginBottom: 24, background: 'var(--bg-surface-hover)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <h3 style={{ margin: 0, fontWeight: 600 }}>Add New Chapter to {subject}</h3>
+              <h3 style={{ margin: 0, fontWeight: 600 }}>Add New Syllabus Chapter</h3>
               <button type="button" className="btn btn-ghost" onClick={() => setShowCreate(false)}>Cancel</button>
             </div>
-            <div style={{ display: 'flex', gap: 12 }}>
-              <input type="text" className="form-input" placeholder="e.g. Thermodynamics, Kinematics..." value={newChapter} onChange={e => setNewChapter(e.target.value)} required style={{ flex: 1 }} />
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <input type="text" className="form-input" placeholder="Subject (e.g. Mathematics)" value={newSubject} onChange={e => setNewSubject(e.target.value)} required style={{ minWidth: 180 }} />
+              <input type="text" className="form-input" placeholder="Chapter Name (e.g. Trigonometry, Kinematics...)" value={newChapter} onChange={e => setNewChapter(e.target.value)} required style={{ flex: 1 }} />
               <button type="submit" className="btn btn-primary"><Save size={16}/> Save</button>
             </div>
           </form>

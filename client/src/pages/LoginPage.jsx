@@ -57,8 +57,8 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div style={{ width: '76px', height: '76px', margin: '0 auto 16px auto', borderRadius: '50%', overflow: 'hidden', boxShadow: '0 4px 16px rgba(115,19,19,0.25)', border: '2px solid rgba(115,19,19,0.15)' }}>
-          <img src="/logo.jpg" alt="BGS School Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ width: '88px', height: '88px', margin: '0 auto 16px auto', borderRadius: '50%', overflow: 'hidden', background: '#ffffff', boxShadow: '0 6px 20px rgba(115,19,19,0.25)', border: '2px solid rgba(115,19,19,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px' }}>
+          <img src="/Logo-removebg-preview.png" alt="BGS School Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
         <h1 className="login-title">Teachers Portal</h1>
         <p className="login-school">BGS Public School & PU College</p>

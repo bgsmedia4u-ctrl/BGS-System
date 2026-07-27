@@ -39,8 +39,8 @@ export default function Layout({ children }) {
       {/* Left Sidebar */}
       <aside className="sidebar">
         <div className="sidebar-header">
-          <div style={{ width: '64px', height: '64px', margin: '0 auto 12px auto', borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
-            <img src="/logo.jpg" alt="BGS Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ width: '68px', height: '68px', margin: '0 auto 12px auto', borderRadius: '50%', overflow: 'hidden', background: '#ffffff', border: '2px solid rgba(255, 255, 255, 0.25)', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}>
+            <img src="/Logo-removebg-preview.png" alt="BGS Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <div className="sidebar-title">BGS Institutional</div>
           <div className="sidebar-subtitle">{profile?.role === 'admin' ? 'Admin Portal' : 'Teachers Portal'}</div>

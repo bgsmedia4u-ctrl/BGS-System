@@ -16,10 +16,11 @@
   --border-color: #F0E6D2; /* Soft gold/tan border */
   
   /* Text Colors - Rich Dark Brown Theme */
-  --text-main: #3F2314; /* Rich Dark Brown */
-  --text-muted: #6B4630; /* Warm Muted Brown */
+  --text-main: #3F2314; /* Deep Rich Dark Brown */
+  --text-muted: #5E3A24; /* Warm Muted Brown */
   --text-inverse: #FFFFFF;
   --text-dark-brown: #3F2314;
+  --text-heading: #2B170D; /* Extra Dark Espresso Brown for Headings */
   
   /* Accent Gradients (Amber to Orange) */
   --accent-light: #FFB84D;
@@ -124,10 +125,27 @@ body {
   font-family: var(--font);
   background: linear-gradient(180deg, var(--bg-gradient-top) 0%, var(--bg-gradient-bottom) 100%);
   background-attachment: fixed;
-  color: var(--text-primary);
+  color: var(--text-main);
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+/* Global Dark Brown Typography Enforcement */
+h1, h2, h3, h4, h5, h6, strong, b, .card-title, .widget-title {
+  color: var(--text-heading, #2B170D);
+}
+
+p, li, label, td, th, dt, dd, table {
+  color: var(--text-main, #3F2314);
+}
+
+.text-muted, small {
+  color: var(--text-muted, #5E3A24);
+}
+
+button, button span, button p, button i, .btn, .tag, .badge {
+  color: inherit;
 }
 
 #root {

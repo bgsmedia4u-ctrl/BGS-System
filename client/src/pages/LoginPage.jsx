@@ -5,7 +5,7 @@ import { supabase } from '../api/supabase';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const { user, profile, loading, loginWithGoogle, loginAsDemoTeacher, refreshProfile, logout } = useAuth();
+  const { user, profile, loading, loginWithGoogle, refreshProfile, logout } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loggingIn, setLoggingIn] = useState(false);
@@ -57,7 +57,9 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="login-logo">B</div>
+        <div style={{ width: '76px', height: '76px', margin: '0 auto 16px auto', borderRadius: '50%', overflow: 'hidden', boxShadow: '0 4px 16px rgba(115,19,19,0.25)', border: '2px solid rgba(115,19,19,0.15)' }}>
+          <img src="/logo.jpg" alt="BGS School Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
         <h1 className="login-title">Teachers Portal</h1>
         <p className="login-school">BGS Public School & PU College</p>
         <p className="login-desc" style={{ marginBottom: 20 }}>
@@ -91,31 +93,6 @@ export default function LoginPage() {
         <div style={{ margin: '16px 0', textAlign: 'center', fontSize: 13, color: 'var(--text-muted)' }}>
           OR
         </div>
-
-        <button
-          type="button"
-          onClick={loginAsDemoTeacher}
-          disabled={loggingIn}
-          style={{
-            width: '100%',
-            padding: '12px',
-            background: 'linear-gradient(135deg, var(--accent), var(--accent-dark))',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            marginBottom: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            boxShadow: '0 4px 12px rgba(249, 115, 22, 0.3)',
-            fontSize: '0.95rem'
-          }}
-        >
-          ⚡ Instant Demo Teacher Login
-        </button>
 
         <button className="google-btn" onClick={loginWithGoogle} disabled={loggingIn} id="google-login-btn">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

@@ -40,7 +40,7 @@ export default function DashboardPage() {
   }, [user]);
 
   useEffect(() => {
-    if (profile && !profile.phone && !loading && user?.id && !user.id.startsWith('demo-')) {
+    if (profile && !profile.phone && !loading && user?.id) {
       const dismissed = localStorage.getItem('phone_modal_dismissed');
       if (!dismissed) {
         setShowPhoneModal(true);

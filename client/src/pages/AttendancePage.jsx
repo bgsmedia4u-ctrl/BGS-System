@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import { getClassOptions, getStudentsByBatch } from '../api/marksService';
@@ -322,7 +322,7 @@ function PrintAttendanceView({ stream, year, cls, date, students, attendanceData
 
         <h4 style={{ marginBottom: 12, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>Absentees List</h4>
         {absentStudents.length === 0 ? (
-          <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Everyone was present! 🎉</p>
+          <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>All students present.</p>
         ) : (
           <div className="table-responsive">
             <table className="table print-table">

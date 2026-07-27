@@ -1,13 +1,6 @@
 import { supabase } from './supabase';
 
 export async function getSyllabus(stream, year, classVal) {
-  const fallbackSyllabus = [
-    { id: 'syl-1', chapter_name: 'Chapter 1: Electrostatics & Coulomb Law', subject: 'Physics', stream, year, class: classVal, progress: { status: 'completed', completion_date: '2026-07-10' } },
-    { id: 'syl-2', chapter_name: 'Chapter 2: Current Electricity & Ohm Rules', subject: 'Physics', stream, year, class: classVal, progress: { status: 'completed', completion_date: '2026-07-20' } },
-    { id: 'syl-3', chapter_name: 'Chapter 3: Magnetic Effects of Electric Current', subject: 'Physics', stream, year, class: classVal, progress: { status: 'in_progress', completion_date: null } },
-    { id: 'syl-4', chapter_name: 'Chapter 4: Electromagnetic Induction & AC Circuits', subject: 'Physics', stream, year, class: classVal, progress: { status: 'not_started', completion_date: null } }
-  ];
-
   try {
     const { data: modules, error: modError } = await supabase
       .from('syllabus_modules')
@@ -18,8 +11,12 @@ export async function getSyllabus(stream, year, classVal) {
       .order('created_at', { ascending: true });
 
     if (modError) {
-      console.warn('Syllabus query failed, using fallback:', modError.message);
-      return fallbackSyllabus;
+      console.error('Syllabus query failed:', modError.message);
+      return [];
+    }
+
+    if (!modules || modules.length === 0) {
+      return [];
     }
 
     const { data: progress, error: progError } = await supabase
@@ -27,26 +24,23 @@ export async function getSyllabus(stream, year, classVal) {
       .select('*');
 
     if (progError) {
-      console.warn('Syllabus progress query failed, using fallback:', progError.message);
-      return fallbackSyllabus;
-    }
-
-    if (!modules || modules.length === 0) {
-      return fallbackSyllabus;
+      console.error('Syllabus progress query failed:', progError.message);
     }
 
     const progressMap = {};
-    progress.forEach(p => {
-      progressMap[p.module_id] = p;
-    });
+    if (progress) {
+      progress.forEach(p => {
+        progressMap[p.module_id] = p;
+      });
+    }
 
     return modules.map(m => ({
       ...m,
       progress: progressMap[m.id] || { status: 'not_started', completion_date: null }
     }));
   } catch (err) {
-    console.warn('Syllabus fetch error, using fallback:', err);
-    return fallbackSyllabus;
+    console.error('Syllabus fetch error:', err);
+    return [];
   }
 }
 

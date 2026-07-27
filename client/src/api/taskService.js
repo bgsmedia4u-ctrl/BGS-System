@@ -3,12 +3,6 @@ import { supabase } from './supabase';
 // Uses the current session's user ID automatically enforced by RLS, 
 // but we pass teacherId for explicitness in the query.
 export async function getTasks(teacherId) {
-  const fallbackTasks = [
-    { id: 'sample-task-1', teacher_id: teacherId, title: 'Grade Physics Midterm Answer Sheets', status: 'in_progress', deadline: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0] },
-    { id: 'sample-task-2', teacher_id: teacherId, title: 'Prepare Unit 4 Electromagnetism Lecture Notes & Lab Experiment', status: 'todo', deadline: new Date(Date.now() + 86400000 * 4).toISOString().split('T')[0] },
-    { id: 'sample-task-3', teacher_id: teacherId, title: 'Submit weekly academic counseling report', status: 'done', deadline: new Date().toISOString().split('T')[0] }
-  ];
-
   try {
     const { data, error } = await supabase
       .from('teacher_tasks')
@@ -17,16 +11,13 @@ export async function getTasks(teacherId) {
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.warn('Tasks query failed, using fallback data:', error.message);
-      return fallbackTasks;
+      console.error('Tasks query failed:', error.message);
+      return [];
     }
-    if (!data || data.length === 0) {
-      return fallbackTasks;
-    }
-    return data;
+    return data || [];
   } catch (err) {
-    console.warn('Tasks fetch error, using fallback data:', err);
-    return fallbackTasks;
+    console.error('Tasks fetch error:', err);
+    return [];
   }
 }
 

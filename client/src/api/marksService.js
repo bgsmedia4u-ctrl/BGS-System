@@ -14,14 +14,6 @@ export function getClassOptions(stream, year) {
 
 // ─── Students ───
 export async function getStudentsByBatch(stream, year, cls) {
-  const fallbackStudents = [
-    { id: 'sample-student-1', name: 'Aarav Sharma', roll_number: 101, stream, year, class: cls },
-    { id: 'sample-student-2', name: 'Aditi Rao', roll_number: 102, stream, year, class: cls },
-    { id: 'sample-student-3', name: 'Rohan Verma', roll_number: 103, stream, year, class: cls },
-    { id: 'sample-student-4', name: 'Siddharth Nair', roll_number: 104, stream, year, class: cls },
-    { id: 'sample-student-5', name: 'Priya Patel', roll_number: 105, stream, year, class: cls }
-  ];
-
   try {
     const { data, error } = await supabase
       .from('students')
@@ -33,16 +25,13 @@ export async function getStudentsByBatch(stream, year, cls) {
       .order('name', { ascending: true });
 
     if (error) {
-      console.warn('Students query failed, using fallback:', error.message);
-      return fallbackStudents;
+      console.error('Students query failed:', error.message);
+      return [];
     }
-    if (!data || data.length === 0) {
-      return fallbackStudents;
-    }
-    return data;
+    return data || [];
   } catch (err) {
-    console.warn('Students fetch error, using fallback:', err);
-    return fallbackStudents;
+    console.error('Students fetch error:', err);
+    return [];
   }
 }
 

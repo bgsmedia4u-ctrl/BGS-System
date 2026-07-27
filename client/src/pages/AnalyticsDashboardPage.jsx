@@ -208,7 +208,7 @@ export default function AnalyticsDashboardPage() {
 
           {irregularStudents.length === 0 ? (
             <div style={{ padding: 24, textAlign: 'center', color: 'var(--text-muted)' }}>
-              🎉 Excellent! No students are below the 75% attendance threshold.
+              Excellent! No students are below the 75% attendance threshold.
             </div>
           ) : (
             <div className="table-responsive">

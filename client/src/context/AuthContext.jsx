@@ -106,25 +106,6 @@ export function AuthProvider({ children }) {
     });
   }
 
-  function loginAsDemoTeacher() {
-    authGenerationRef.current += 1;
-    const demoUser = { id: 'demo-teacher-id-101', email: 'alok.verma@bgs.edu', user_metadata: { full_name: 'Dr. Alok Verma' } };
-    const demoProfile = {
-      id: 'demo-teacher-id-101',
-      name: 'Dr. Alok Verma',
-      email: 'alok.verma@bgs.edu',
-      role: 'teacher',
-      department: 'Science',
-      subject: 'Physics',
-      staff_type: 'teaching',
-      status: 'approved',
-      phone: '9876543210'
-    };
-    setUser(demoUser);
-    setProfile(demoProfile);
-    setLoading(false);
-  }
-
   async function logout() {
     authGenerationRef.current += 1;
     setLoading(true);
@@ -150,7 +131,6 @@ export function AuthProvider({ children }) {
         profile,
         loading,
         loginWithGoogle,
-        loginAsDemoTeacher,
         logout,
         updatePhone,
         isAdmin,

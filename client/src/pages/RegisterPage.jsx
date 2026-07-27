@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../api/supabase';
 import toast from 'react-hot-toast';
@@ -74,7 +74,9 @@ export default function RegisterPage() {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="login-logo">B</div>
+        <div style={{ width: '76px', height: '76px', margin: '0 auto 16px auto', borderRadius: '50%', overflow: 'hidden', boxShadow: '0 4px 16px rgba(115,19,19,0.25)', border: '2px solid rgba(115,19,19,0.15)' }}>
+          <img src="/logo.jpg" alt="BGS School Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        </div>
         <h1 className="login-title">Teacher Registration</h1>
         <p className="login-school">BGS Public School & PU College</p>
         <p className="login-desc" style={{ marginBottom: 20 }}>

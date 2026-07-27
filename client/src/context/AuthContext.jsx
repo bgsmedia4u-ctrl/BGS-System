@@ -75,7 +75,8 @@ export function AuthProvider({ children }) {
       department: 'Science',
       subject: 'Physics',
       staff_type: 'teaching',
-      status: 'approved'
+      status: 'approved',
+      phone: '9876543210'
     };
     setUser(demoUser);
     setProfile(demoProfile);

@@ -40,8 +40,11 @@ export default function DashboardPage() {
   }, [user]);
 
   useEffect(() => {
-    if (profile && !profile.phone && !loading) {
-      setShowPhoneModal(true);
+    if (profile && !profile.phone && !loading && user?.id && !user.id.startsWith('demo-')) {
+      const dismissed = localStorage.getItem('phone_modal_dismissed');
+      if (!dismissed) {
+        setShowPhoneModal(true);
+      }
     }
   }, [profile, loading]);
 
@@ -415,7 +418,7 @@ export default function DashboardPage() {
                 <button
                   type="button"
                   className="btn btn-ghost"
-                  onClick={() => setShowPhoneModal(false)}
+                  onClick={() => { setShowPhoneModal(false); localStorage.setItem('phone_modal_dismissed', 'true'); }}
                 >
                   Skip
                 </button>

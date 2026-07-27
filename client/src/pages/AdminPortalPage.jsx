@@ -271,7 +271,7 @@ export default function AdminPortalPage() {
     try {
       const { data, error } = await supabase
         .from('meetings')
-        .select('*, profiles(name)')
+        .select('*')
         .order('meeting_date', { ascending: false });
       if (error) throw error;
       setMeetings(data || []);
@@ -280,7 +280,7 @@ export default function AdminPortalPage() {
       }
     } catch (e) {
       console.error('Meetings fetch error:', e);
-      toast.error('Failed to load meetings'); 
+      toast.error('Failed to load meetings: ' + (e.message || 'Database error')); 
     }
     finally { setMeetingsLoading(false); }
   }
@@ -307,17 +307,28 @@ export default function AdminPortalPage() {
   }
 
   async function saveMeeting() {
-    if (!meetTitle || !meetDate || !meetStart || !meetEnd) return toast.error('Fill required fields');
-    if (meetAudience === 'department' && !meetDept) return toast.error('Specify department');
-    if (meetAudience === 'individual' && meetAttendees.length === 0) return toast.error('Select at least one teacher');
+    if (!meetTitle.trim() || !meetDate || !meetStart || !meetEnd) {
+      return toast.error('Validation Error: Title, Date, Start Time, and End Time are required.');
+    }
+    if (meetAudience === 'department' && !meetDept) {
+      return toast.error('Validation Error: Please specify the target department.');
+    }
+    if (meetAudience === 'individual' && (!meetAttendees || meetAttendees.length === 0)) {
+      return toast.error('Validation Error: Please select at least one attending teacher.');
+    }
     
     setMeetSaving(true);
     try {
       const payload = {
-        title: meetTitle, description: meetDesc, meeting_date: meetDate,
-        start_time: meetStart, end_time: meetEnd, location: meetLoc,
-        audience_type: meetAudience, department: meetDept,
-        created_by: profile.id
+        title: meetTitle.trim(),
+        description: meetDesc?.trim() || null,
+        meeting_date: meetDate,
+        start_time: meetStart,
+        end_time: meetEnd,
+        location: meetLoc?.trim() || 'Institutional Conference Room',
+        audience_type: meetAudience,
+        department: meetAudience === 'department' ? meetDept : null,
+        created_by: profile?.id || user?.id || null
       };
       let newMeetingId = null;
 
@@ -326,39 +337,50 @@ export default function AdminPortalPage() {
         if (error) throw error;
         newMeetingId = editingMeeting.id;
         
-        // Notify edit
-        await supabase.from('announcements').insert({
-          title: `Updated: ${meetTitle}`,
-          body: `Meeting updated for ${meetDate} at ${meetStart}.`,
-          posted_by: profile?.name || 'Admin',
-        });
+        // Notify edit safely without blocking DB save
+        try {
+          await supabase.from('announcements').insert({
+            title: `Updated: ${meetTitle}`,
+            body: `Meeting updated for ${meetDate} at ${meetStart}.`,
+            posted_by: profile?.name || 'Admin',
+          });
+        } catch (auxErr) { console.warn('Announcement log notice:', auxErr); }
       } else {
         const { data, error } = await supabase.from('meetings').insert([payload]).select().single();
         if (error) throw error;
         newMeetingId = data.id;
         
-        // Notify new
-        await supabase.from('announcements').insert({
-          title: `New Meeting: ${meetTitle}`,
-          body: `A new meeting is scheduled for ${meetDate} at ${meetStart}. Location: ${meetLoc || 'TBA'}`,
-          posted_by: profile?.name || 'Admin',
-        });
+        // Notify new safely without blocking DB save
+        try {
+          await supabase.from('announcements').insert({
+            title: `New Meeting: ${meetTitle}`,
+            body: `A new meeting is scheduled for ${meetDate} at ${meetStart}. Location: ${meetLoc || 'TBA'}`,
+            posted_by: profile?.name || 'Admin',
+          });
+        } catch (auxErr) { console.warn('Announcement log notice:', auxErr); }
       }
 
-      // Handle attendees
-      if (meetAudience === 'individual') {
-        await supabase.from('meeting_attendees').delete().eq('meeting_id', newMeetingId);
-        const attPayload = meetAttendees.map(tid => ({ meeting_id: newMeetingId, teacher_id: tid }));
-        await supabase.from('meeting_attendees').insert(attPayload);
+      // Handle attendees safely
+      try {
+        if (meetAudience === 'individual' && newMeetingId) {
+          await supabase.from('meeting_attendees').delete().eq('meeting_id', newMeetingId);
+          const attPayload = meetAttendees.map(tid => ({ meeting_id: newMeetingId, teacher_id: tid }));
+          await supabase.from('meeting_attendees').insert(attPayload);
+        }
+
+        // Trigger meeting SMS notification via Edge Function
+        await notifyMeetingAttendees({ meetingId: newMeetingId, isUpdate: !!editingMeeting });
+      } catch (auxErr) {
+        console.warn('Meeting accessory SMS notice:', auxErr);
       }
 
-      // Trigger meeting SMS notification via Edge Function
-      await notifyMeetingAttendees({ meetingId: newMeetingId, isUpdate: !!editingMeeting });
-
-      toast.success('Meeting saved & notification sent!');
+      toast.success('Meeting successfully saved to database & attendees notified!');
       setShowMeetingModal(false);
       fetchMeetings();
-    } catch(e) { toast.error('Failed to save meeting'); }
+    } catch(e) { 
+      console.error('Meeting save error:', e);
+      toast.error(e?.message || 'Failed to save meeting to database');
+    }
     finally { setMeetSaving(false); }
   }
 

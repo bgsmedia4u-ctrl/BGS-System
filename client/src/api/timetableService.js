@@ -42,11 +42,8 @@ export async function getTeacherTimetable(teacherId) {
 }
 
 export async function updateTimetableEntry(entryData) {
-  // If entry exists (id), update it. Otherwise, insert it.
-  const { data, error } = await supabase
-    .from('timetable')
-    .upsert({
-      id: entryData.id, // Supabase will match by this if it exists, or by unique constraints
+  try {
+    const payload = {
       stream: entryData.stream,
       year: entryData.year,
       class: entryData.class,
@@ -54,10 +51,46 @@ export async function updateTimetableEntry(entryData) {
       period: entryData.period,
       subject: entryData.subject,
       teacher_id: entryData.teacher_id || null
-    }, { onConflict: 'stream,year,class,day_of_week,period' })
-    .select()
-    .single();
+    };
 
-  if (error) throw error;
-  return data;
+    let targetId = entryData.id;
+    if (!targetId) {
+      // Check if entry already exists in database for this specific slot and batch
+      const { data: existing, error: findError } = await supabase
+        .from('timetable')
+        .select('id')
+        .eq('stream', payload.stream)
+        .eq('year', payload.year)
+        .eq('class', payload.class)
+        .eq('day_of_week', payload.day_of_week)
+        .eq('period', payload.period)
+        .maybeSingle();
+
+      if (!findError && existing?.id) {
+        targetId = existing.id;
+      }
+    }
+
+    if (targetId) {
+      const { data, error } = await supabase
+        .from('timetable')
+        .update(payload)
+        .eq('id', targetId)
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    } else {
+      const { data, error } = await supabase
+        .from('timetable')
+        .insert([payload])
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    }
+  } catch (error) {
+    console.error('Timetable save error:', error);
+    throw new Error(error.message || 'Failed to save timetable entry to database.');
+  }
 }

@@ -8,7 +8,15 @@ import { Clock, Edit2, Check, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const PERIODS = ['1st Period', '2nd Period', '3rd Period', 'Lunch', '4th Period', '5th Period'];
+const PERIODS = [
+  'College Prayer (9:30 - 9:45 AM)',
+  '1st Period (9:45 - 10:45 AM)',
+  '2nd Period (10:45 - 11:45 AM)',
+  '3rd Period (11:45 AM - 12:45 PM)',
+  'Lunch (12:45 - 1:30 PM)',
+  '4th Period (1:30 - 2:30 PM)',
+  '5th Period (2:30 - 3:30 PM)'
+];
 
 export default function TimetablePage({ isAdmin = false }) {
   const { user, profile } = useAuth();
@@ -108,7 +116,7 @@ export default function TimetablePage({ isAdmin = false }) {
       const targetYear = isAdmin ? year : editYear;
       const targetCls = isAdmin ? cls : editCls;
 
-      const updated = await updateTimetableEntry({
+      await updateTimetableEntry({
         id: entryId,
         stream: targetStream,
         year: targetYear,
@@ -119,24 +127,18 @@ export default function TimetablePage({ isAdmin = false }) {
         teacher_id: editTeacherId
       });
       
-      const teacherInfo = teachers.find(t => t.id === editTeacherId);
-      const newEntry = { ...updated, teacher: { raw_user_meta_data: { full_name: teacherInfo?.name } } };
-      
-      setTimetable(prev => {
-        const existing = prev.findIndex(p => p.id === updated.id);
-        if (existing > -1) {
-          const arr = [...prev];
-          arr[existing] = newEntry;
-          return arr;
-        }
-        return [...prev, newEntry];
-      });
-      
       setEditingKey(null);
-      toast.success('Timetable updated');
+      toast.success('Timetable successfully updated and saved to database!');
+      
+      // Immediately refresh the UI from the database
+      if (isAdmin) {
+        await fetchAdminData();
+      } else {
+        await fetchTeacherData();
+      }
     } catch (err) {
       console.error(err);
-      toast.error('Failed to update timetable');
+      toast.error(err.message || 'Failed to save timetable update to database.');
     }
   };
 
@@ -211,8 +213,12 @@ export default function TimetablePage({ isAdmin = false }) {
                   {PERIODS.map(period => (
                     <tr key={period}>
                       <td style={{ fontWeight: 600, background: 'var(--bg-surface-hover)', whiteSpace: 'nowrap' }}>{period}</td>
-                      {period === 'Lunch' ? (
-                        <td colSpan="6" style={{ textAlign: 'center', background: 'var(--bg-surface-hover)', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                      {period.includes('Prayer') ? (
+                        <td colSpan="6" style={{ textAlign: 'center', background: '#FEF3C7', color: '#92400E', fontWeight: 600, letterSpacing: '0.04em', borderBottom: '1px solid var(--border-color)', padding: '14px' }}>
+                          🙏 College Prayer (9:30 AM – 9:45 AM) • Non-Teaching Assembly Period
+                        </td>
+                      ) : period.includes('Lunch') ? (
+                        <td colSpan="6" style={{ textAlign: 'center', background: 'var(--bg-surface-hover)', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '14px' }}>
                           Lunch Break
                         </td>
                       ) : (

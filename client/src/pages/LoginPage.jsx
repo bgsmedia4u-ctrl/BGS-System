@@ -113,6 +113,12 @@ export default function LoginPage() {
         <p style={{ marginTop: 24, fontSize: 12, color: 'var(--text-muted)' }}>
           Shidlaghatta · Weekly Report Submission System
         </p>
+
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 14, fontSize: '0.8rem', borderTop: '1px solid var(--border-color)', paddingTop: 14 }}>
+          <Link to="/privacy" style={{ color: 'var(--maroon-900)', textDecoration: 'none', fontWeight: 600 }}>Privacy Policy</Link>
+          <span style={{ color: 'var(--text-muted)' }}>•</span>
+          <Link to="/terms" style={{ color: 'var(--maroon-900)', textDecoration: 'none', fontWeight: 600 }}>Terms & Conditions</Link>
+        </div>
       </div>
     </div>
   );

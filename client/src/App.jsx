@@ -24,6 +24,12 @@ import TasksPage from './pages/TasksPage';
 import StudentManagementPage from './pages/StudentManagementPage';
 import StaffManagementPage from './pages/StaffManagementPage';
 import AcademicManagementPage from './pages/AcademicManagementPage';
+import SettingsPage from './pages/SettingsPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
+import FreeTeachersPage from './pages/FreeTeachersPage';
+import TransportationPage from './pages/TransportationPage';
+import AlumniPage from './pages/AlumniPage';
 
 
 function App() {
@@ -73,6 +79,16 @@ function App() {
           {/* Separate Standalone Admin Portal */}
           <Route path="/admin-portal" element={<AdminRoute><AdminPortalPage /></AdminRoute>} />
           
+          {/* Institutional & Legal Pages */}
+          <Route path="/settings" element={<ProtectedRoute allowAdmin={true}><SettingsPage /></ProtectedRoute>} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          
+          {/* Admin "Others" Modules */}
+          <Route path="/transportation" element={<AdminRoute><TransportationPage /></AdminRoute>} />
+          <Route path="/alumni" element={<AdminRoute><AlumniPage /></AdminRoute>} />
+          <Route path="/free-teachers" element={<ProtectedRoute allowAdmin={true}><FreeTeachersPage /></ProtectedRoute>} />
+
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>

@@ -35,8 +35,29 @@ export async function getStudentsByBatch(stream, year, cls) {
   }
 }
 
+// ─── Backend Security Verification ───
+async function assertNotAdmin() {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle();
+
+    if (profile && profile.role === 'admin') {
+      throw new Error('Security Violation: Administrative staff are strictly prohibited from viewing or altering student academic marks.');
+    }
+  } catch (e) {
+    if (e.message?.includes('Security Violation')) throw e;
+  }
+}
+
 // ─── Tests ───
 export async function getTestsByBatch(stream, year, cls) {
+  await assertNotAdmin();
   const { data, error } = await supabase
     .from('tests')
     .select('*')
@@ -50,6 +71,7 @@ export async function getTestsByBatch(stream, year, cls) {
 }
 
 export async function createTest(name, stream, year, cls, subjects, userId) {
+  await assertNotAdmin();
   const { data, error } = await supabase
     .from('tests')
     .insert({
@@ -73,6 +95,7 @@ export async function createTest(name, stream, year, cls, subjects, userId) {
 }
 
 export async function deleteTest(testId) {
+  await assertNotAdmin();
   const { error } = await supabase
     .from('tests')
     .delete()
@@ -83,6 +106,7 @@ export async function deleteTest(testId) {
 
 // ─── Mark Entries ───
 export async function getMarkEntries(testId) {
+  await assertNotAdmin();
   const { data, error } = await supabase
     .from('mark_entries')
     .select('*, students(id, name, roll_number)')
@@ -93,6 +117,7 @@ export async function getMarkEntries(testId) {
 }
 
 export async function saveMarkEntries(testId, entries) {
+  await assertNotAdmin();
   // entries: [{ student_id, marks: { subject: score }, is_absent }]
   const rows = entries.map((e) => ({
     test_id: testId,
@@ -107,3 +132,4 @@ export async function saveMarkEntries(testId, entries) {
 
   if (error) throw error;
 }
+

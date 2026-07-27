@@ -44,30 +44,45 @@ export async function getTeacherTimetable(teacherId) {
 export async function updateTimetableEntry(entryData) {
   try {
     const payload = {
-      stream: entryData.stream,
-      year: entryData.year,
-      class: entryData.class,
+      stream: entryData.stream || 'General',
+      year: entryData.year || '1st Year',
+      class: entryData.class || 'Section A',
       day_of_week: entryData.day_of_week,
       period: entryData.period,
-      subject: entryData.subject,
+      subject: entryData.subject || 'Free Hour',
       teacher_id: entryData.teacher_id || null
     };
 
     let targetId = entryData.id;
     if (!targetId) {
-      // Check if entry already exists in database for this specific slot and batch
-      const { data: existing, error: findError } = await supabase
-        .from('timetable')
-        .select('id')
-        .eq('stream', payload.stream)
-        .eq('year', payload.year)
-        .eq('class', payload.class)
-        .eq('day_of_week', payload.day_of_week)
-        .eq('period', payload.period)
-        .maybeSingle();
+      // When a Teacher edits their schedule, check if they already have an entry for this day & period
+      if (entryData.isTeacherEdit && payload.teacher_id) {
+        const { data: existingSlot } = await supabase
+          .from('timetable')
+          .select('id')
+          .eq('teacher_id', payload.teacher_id)
+          .eq('day_of_week', payload.day_of_week)
+          .eq('period', payload.period)
+          .maybeSingle();
 
-      if (!findError && existing?.id) {
-        targetId = existing.id;
+        if (existingSlot?.id) {
+          targetId = existingSlot.id;
+        }
+      } else {
+        // For Admin class view, check if entry already exists for this specific batch & slot
+        const { data: existing, error: findError } = await supabase
+          .from('timetable')
+          .select('id')
+          .eq('stream', payload.stream)
+          .eq('year', payload.year)
+          .eq('class', payload.class)
+          .eq('day_of_week', payload.day_of_week)
+          .eq('period', payload.period)
+          .maybeSingle();
+
+        if (!findError && existing?.id) {
+          targetId = existing.id;
+        }
       }
     }
 
@@ -94,3 +109,18 @@ export async function updateTimetableEntry(entryData) {
     throw new Error(error.message || 'Failed to save timetable entry to database.');
   }
 }
+
+export async function deleteTimetableEntry(entryId) {
+  if (!entryId) return;
+  try {
+    const { error } = await supabase
+      .from('timetable')
+      .delete()
+      .eq('id', entryId);
+    if (error) throw error;
+  } catch (error) {
+    console.error('Timetable delete error:', error);
+    throw new Error(error.message || 'Failed to remove timetable slot.');
+  }
+}
+

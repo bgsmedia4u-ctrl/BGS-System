@@ -1,0 +1,197 @@
+{
+    "board": "Karnataka",
+    "academic_year": "1st PUC",
+    "streams": [
+        {
+            "name": "Science",
+            "subjects": [
+                {
+                    "name": "Physics",
+                    "chapters": [
+                        "Physical World",
+                        "Units and Measurements",
+                        "Motion in a Straight Line",
+                        "Motion in a Plane",
+                        "Laws of Motion",
+                        "Work, Energy and Power",
+                        "System of Particles and Rotational Motion",
+                        "Gravitation",
+                        "Mechanical Properties of Solids",
+                        "Mechanical Properties of Fluids",
+                        "Thermal Properties of Matter",
+                        "Thermodynamics",
+                        "Kinetic Theory",
+                        "Oscillations",
+                        "Waves"
+                    ]
+                },
+                {
+                    "name": "Chemistry",
+                    "chapters": [
+                        "Some Basic Concepts of Chemistry",
+                        "Structure of Atom",
+                        "Classification of Elements and Periodicity",
+                        "Chemical Bonding and Molecular Structure",
+                        "States of Matter",
+                        "Thermodynamics",
+                        "Equilibrium",
+                        "Redox Reactions",
+                        "Hydrogen",
+                        "The s-Block Elements",
+                        "The p-Block Elements",
+                        "Organic Chemistry - Some Basic Principles and Techniques",
+                        "Hydrocarbons",
+                        "Environmental Chemistry"
+                    ]
+                },
+                {
+                    "name": "Mathematics",
+                    "chapters": [
+                        "Sets",
+                        "Relations and Functions",
+                        "Trigonometric Functions",
+                        "Complex Numbers and Quadratic Equations",
+                        "Linear Inequalities",
+                        "Permutations and Combinations",
+                        "Binomial Theorem",
+                        "Sequences and Series",
+                        "Straight Lines",
+                        "Conic Sections",
+                        "Introduction to Three Dimensional Geometry",
+                        "Limits and Derivatives",
+                        "Statistics",
+                        "Probability"
+                    ]
+                },
+                {
+                    "name": "Biology",
+                    "chapters": [
+                        "The Living World",
+                        "Biological Classification",
+                        "Plant Kingdom",
+                        "Animal Kingdom",
+                        "Morphology of Flowering Plants",
+                        "Anatomy of Flowering Plants",
+                        "Structural Organisation in Animals",
+                        "Cell: The Unit of Life",
+                        "Biomolecules",
+                        "Cell Cycle and Cell Division",
+                        "Transport in Plants",
+                        "Mineral Nutrition",
+                        "Photosynthesis in Higher Plants",
+                        "Respiration in Plants",
+                        "Plant Growth and Development",
+                        "Digestion and Absorption",
+                        "Breathing and Exchange of Gases",
+                        "Body Fluids and Circulation",
+                        "Excretory Products and their Elimination",
+                        "Locomotion and Movement",
+                        "Neural Control and Coordination",
+                        "Chemical Coordination and Integration"
+                    ]
+                },
+                {
+                    "name": "Computer Science",
+                    "chapters": [
+                        "Computer System Overview",
+                        "Introduction to Problem Solving",
+                        "Getting Started with Python",
+                        "Python Fundamentals",
+                        "Conditional and Looping Statements",
+                        "Strings",
+                        "Lists",
+                        "Tuples and Dictionaries",
+                        "Functions",
+                        "File Handling",
+                        "NumPy Basics",
+                        "Introduction to Data Visualization",
+                        "Database Concepts",
+                        "Structured Query Language (SQL)",
+                        "Computer Networks",
+                        "Cyber Safety and Security",
+                        "Societal Impacts of Information Technology"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Commerce",
+            "subjects": [
+                {
+                    "name": "Accountancy",
+                    "chapters": [
+                        "Introduction to Accounting",
+                        "Theory Base of Accounting",
+                        "Recording of Transactions - I",
+                        "Recording of Transactions - II",
+                        "Bank Reconciliation Statement",
+                        "Trial Balance and Rectification of Errors",
+                        "Depreciation, Provisions and Reserves",
+                        "Financial Statements - I",
+                        "Financial Statements - II"
+                    ]
+                },
+                {
+                    "name": "Business Studies",
+                    "chapters": [
+                        "Nature and Purpose of Business",
+                        "Forms of Business Organisation",
+                        "Public, Private and Global Enterprises",
+                        "Business Services",
+                        "Emerging Modes of Business",
+                        "Social Responsibility of Business",
+                        "Formation of a Company",
+                        "Sources of Business Finance",
+                        "Small Business",
+                        "Internal Trade",
+                        "International Business"
+                    ]
+                },
+                {
+                    "name": "Economics",
+                    "chapters": [
+                        "Introduction to Microeconomics",
+                        "Consumer's Equilibrium and Demand",
+                        "Producer Behaviour and Supply",
+                        "Forms of Market and Price Determination",
+                        "Introduction to Statistics",
+                        "Collection of Data",
+                        "Organisation of Data",
+                        "Presentation of Data",
+                        "Statistical Tools and Interpretation"
+                    ]
+                },
+                {
+                    "name": "Basic Mathematics",
+                    "chapters": []
+                },
+                {
+                    "name": "Statistics",
+                    "chapters": []
+                },
+                {
+                    "name": "Computer Science",
+                    "chapters": [
+                        "Computer System Overview",
+                        "Introduction to Problem Solving",
+                        "Getting Started with Python",
+                        "Python Fundamentals",
+                        "Conditional and Looping Statements",
+                        "Strings",
+                        "Lists",
+                        "Tuples and Dictionaries",
+                        "Functions",
+                        "File Handling",
+                        "NumPy Basics",
+                        "Introduction to Data Visualization",
+                        "Database Concepts",
+                        "Structured Query Language (SQL)",
+                        "Computer Networks",
+                        "Cyber Safety and Security",
+                        "Societal Impacts of Information Technology"
+                    ]
+                }
+            ]
+        }
+    ]
+}

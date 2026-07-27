@@ -52,10 +52,13 @@ export default function FreeTeachersPage() {
     // Clean period string matching (whether db stores "1st Period" or full time string)
     const basePeriod = periodStr.split(' ')[0] + ' ' + periodStr.split(' ')[1];
     
-    // Find teacher IDs busy during this day and period
+    // Find teacher IDs busy during this day and period (excluding Free Hour or prep slots)
     const busyTeacherIds = new Set(
       timetable
-        .filter(t => t.day_of_week === selectedDay && (t.period === periodStr || t.period?.startsWith(basePeriod)))
+        .filter(t => t.day_of_week === selectedDay && 
+          (t.period === periodStr || t.period?.startsWith(basePeriod)) && 
+          t.subject !== 'Free Hour' && 
+          t.subject !== 'Preparation Time')
         .map(t => t.teacher_id)
     );
 

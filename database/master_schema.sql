@@ -595,34 +595,17 @@ CREATE POLICY "Teachers can update own progress" ON public.syllabus_progress
     FOR UPDATE USING (auth.uid() = teacher_id);
 
 -- ─── 14n. Timetable ───
--- Source: schema_updates_v2.sql (base) + schema_updates_v4.sql (updated)
 CREATE POLICY "Anyone can view timetable" ON public.timetable
-    FOR SELECT USING (auth.role() = 'authenticated');
+    FOR SELECT USING (true);
 
-CREATE POLICY "Admins and assigned teachers can insert timetable" ON public.timetable
-    FOR INSERT WITH CHECK (
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        (auth.uid() = teacher_id AND EXISTS (
-            SELECT 1 FROM public.timetable t
-            WHERE t.teacher_id = auth.uid()
-              AND t.stream = timetable.stream
-              AND t.year = timetable.year
-              AND t.class = timetable.class
-              AND t.subject = timetable.subject
-        ))
-    );
+CREATE POLICY "Authenticated users can insert timetable" ON public.timetable
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
-CREATE POLICY "Admins and assigned teachers can update timetable" ON public.timetable
-    FOR UPDATE USING (
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.uid() = teacher_id
-    );
+CREATE POLICY "Authenticated users can update timetable" ON public.timetable
+    FOR UPDATE USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
 
-CREATE POLICY "Admins and assigned teachers can delete timetable" ON public.timetable
-    FOR DELETE USING (
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.uid() = teacher_id
-    );
+CREATE POLICY "Authenticated users can delete timetable" ON public.timetable
+    FOR DELETE USING (auth.role() = 'authenticated');
 
 -- ─── 14o. Teacher Tasks ───
 -- Source: schema_updates_v2.sql

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../api/supabase';
 import { getProfileByUserId, updateProfilePhone } from '../data/profileService';
 
@@ -8,6 +8,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const authGenerationRef = useRef(0);
 
   useEffect(() => {
     // 1. Check current session on load
@@ -17,6 +18,7 @@ export function AuthProvider({ children }) {
       if (authUser) {
         fetchProfile(authUser);
       } else {
+        authGenerationRef.current += 1;
         setLoading(false);
       }
     });
@@ -29,6 +31,7 @@ export function AuthProvider({ children }) {
       if (authUser) {
         await fetchProfile(authUser);
       } else {
+        authGenerationRef.current += 1;
         setProfile(null);
         setLoading(false);
       }
@@ -40,40 +43,51 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function fetchProfile(authUser) {
+    const currentGen = ++authGenerationRef.current;
     try {
       const data = await getProfileByUserId(authUser.id);
+      if (authGenerationRef.current !== currentGen) return;
       if (data) {
         setProfile(data);
       } else {
-        // No profile found in DB — create a fallback from Google OAuth metadata
+        // No profile found in DB — preserve existing or use pending fallback with no role
         console.warn('No profile found in database, using OAuth metadata fallback');
-        setProfile({
+        setProfile((prev) => {
+          if (prev && prev.id === authUser.id) return prev;
+          return {
+            id: authUser.id,
+            name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
+            email: authUser.email || '',
+            role: null,
+            status: 'pending',
+            department: null,
+            subject: null,
+            staff_type: 'teaching',
+            phone: authUser.phone || null
+          };
+        });
+      }
+    } catch (err) {
+      if (authGenerationRef.current !== currentGen) return;
+      console.error('Profile fetch failed, using OAuth metadata fallback:', err);
+      setProfile((prev) => {
+        if (prev && prev.id === authUser.id) return prev;
+        return {
           id: authUser.id,
-          name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Teacher',
+          name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
           email: authUser.email || '',
-          role: 'teacher',
-          status: 'approved',
+          role: null,
+          status: 'pending',
           department: null,
           subject: null,
           staff_type: 'teaching',
           phone: authUser.phone || null
-        });
-      }
-    } catch (err) {
-      console.error('Profile fetch failed, using OAuth metadata fallback:', err);
-      setProfile({
-        id: authUser.id,
-        name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Teacher',
-        email: authUser.email || '',
-        role: 'teacher',
-        status: 'approved',
-        department: null,
-        subject: null,
-        staff_type: 'teaching',
-        phone: authUser.phone || null
+        };
       });
     } finally {
-      setLoading(false);
+      if (authGenerationRef.current === currentGen) {
+        setLoading(false);
+      }
     }
   }
 
@@ -93,6 +107,7 @@ export function AuthProvider({ children }) {
   }
 
   function loginAsDemoTeacher() {
+    authGenerationRef.current += 1;
     const demoUser = { id: 'demo-teacher-id-101', email: 'alok.verma@bgs.edu', user_metadata: { full_name: 'Dr. Alok Verma' } };
     const demoProfile = {
       id: 'demo-teacher-id-101',
@@ -111,8 +126,10 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
+    authGenerationRef.current += 1;
     setLoading(true);
     await supabase.auth.signOut();
+    authGenerationRef.current += 1;
     setUser(null);
     setProfile(null);
     setLoading(false);

@@ -318,8 +318,8 @@ export default function DashboardPage() {
                 <BookOpen size={24} />
               </div>
               <div>
-                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: 15 }}>Syllabus Tracker</div>
-                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Chapter progress update</div>
+                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: 15 }}>{profile?.role === 'admin' ? 'Assign Subjects & Syllabus' : profile?.role === 'principal' ? 'Monitor Syllabus Progress' : 'My Subject Syllabus'}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{profile?.role === 'admin' ? 'Configure teacher subjects & modules' : profile?.role === 'principal' ? 'Consolidated reports & export CSV' : 'Update chapter completion & remarks'}</div>
               </div>
             </Link>
 

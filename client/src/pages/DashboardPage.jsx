@@ -19,7 +19,11 @@ import {
   Users,
   Target,
   ArrowRight,
-  PieChart
+  PieChart,
+  ClipboardList,
+  Video,
+  CheckSquare,
+  GraduationCap
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -195,33 +199,122 @@ export default function DashboardPage() {
 
           {/* Gauge Stat Tiles */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {profile?.staff_type === 'teaching' && (
-              <>
-                <Link to="/analytics" style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="card" style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'all var(--transition)' }}>
-                    <div>
-                      <div className="stat-label" style={{ marginBottom: 4 }}>Student Analytics</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>View full performance & trends</div>
-                    </div>
-                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
-                      <PieChart size={20} />
-                    </div>
-                  </div>
-                </Link>
-              </>
-            )}
+            <Link to="/analytics" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <div className="card" style={{ padding: '20px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', transition: 'all var(--transition)' }}>
+                <div>
+                  <div className="stat-label" style={{ marginBottom: 4 }}>Student Analytics</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>View full performance & trends</div>
+                </div>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-surface-hover)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
+                  <PieChart size={20} />
+                </div>
+              </div>
+            </Link>
             <div style={{ display: 'flex', gap: 16 }}>
-              {profile?.staff_type === 'teaching' && (
-                <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
-                  <GaugeCard title="Syllabus" value={68} color="var(--accent)" />
-                </Link>
-              )}
+              <Link to="/syllabus" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                <GaugeCard title="Syllabus" value={68} color="var(--accent)" />
+              </Link>
               <Link to="/leave" style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
                 <div className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <div className="stat-label">Pending Leave</div>
                   <div className="stat-value" style={{ fontSize: 24 }}>2</div>
                 </div>
               </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Teacher Actions Grid */}
+        <div style={{ marginBottom: 32 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <GraduationCap size={22} style={{ color: 'var(--accent)' }} /> Teacher Portal Quick Actions
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+            <Link to="/attendance" className="card" style={{ textDecoration: 'none', padding: 20, display: 'flex', alignItems: 'center', gap: 16, transition: 'all var(--transition)', border: '1px solid var(--border-color)' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Users size={24} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: 15 }}>Mark Attendance</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Daily class records</div>
+              </div>
+            </Link>
+            
+            <Link to="/marks" className="card" style={{ textDecoration: 'none', padding: 20, display: 'flex', alignItems: 'center', gap: 16, transition: 'all var(--transition)', border: '1px solid var(--border-color)' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(249, 115, 22, 0.15)', color: '#F97316', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <ClipboardList size={24} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: 15 }}>Enter Mark Scores</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>CET, NEET, JEE & Exams</div>
+              </div>
+            </Link>
+
+            <Link to="/syllabus" className="card" style={{ textDecoration: 'none', padding: 20, display: 'flex', alignItems: 'center', gap: 16, transition: 'all var(--transition)', border: '1px solid var(--border-color)' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(59, 130, 246, 0.15)', color: '#3B82F6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <BookOpen size={24} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: 15 }}>Syllabus Tracker</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Chapter progress update</div>
+              </div>
+            </Link>
+
+            <Link to="/meetings" className="card" style={{ textDecoration: 'none', padding: 20, display: 'flex', alignItems: 'center', gap: 16, transition: 'all var(--transition)', border: '1px solid var(--border-color)' }}>
+              <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(147, 0, 26, 0.15)', color: 'var(--navy-800)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Video size={24} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: 15 }}>Meetings & SMS</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Student counseling setup</div>
+              </div>
+            </Link>
+          </div>
+        </div>
+
+        {/* Today's Teaching Schedule */}
+        <div className="card" style={{ marginBottom: 32, padding: 24 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <div>
+              <h3 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', marginBottom: 4 }}>Today's Teaching Schedule</h3>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>Scheduled lectures and class sessions for today</p>
+            </div>
+            <Link to="/timetable" className="btn" style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-main)', fontSize: 13, padding: '8px 16px', borderRadius: 'var(--radius-full)', textDecoration: 'none', border: '1px solid var(--border-color)' }}>
+              View Timetable
+            </Link>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: 'var(--bg-surface-hover)', borderRadius: 12, borderLeft: '4px solid #10B981' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-main)', width: 150 }}>09:30 - 10:30 AM</div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-main)' }}>Physics — Electrodynamics</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>1st Year PUC Science (Section A) · Room 201</div>
+                </div>
+              </div>
+              <span style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#065F46', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>Completed</span>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: 'var(--bg-surface)', borderRadius: 12, borderLeft: '4px solid var(--accent)', border: '1px solid var(--border-color)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-main)', width: 150 }}>11:15 - 12:15 PM</div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-main)' }}>Physics Lab & Mechanics</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>2nd Year PUC Science (Section B) · Science Lab 1</div>
+                </div>
+              </div>
+              <span style={{ background: 'rgba(249, 115, 22, 0.1)', color: 'var(--accent-hover)', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>In Progress</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', background: 'var(--bg-surface)', borderRadius: 12, borderLeft: '4px solid #3B82F6', border: '1px solid var(--border-color)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-main)', width: 150 }}>02:00 - 03:00 PM</div>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text-main)' }}>NEET / JEE Problem Solving</div>
+                  <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Combined Batches · Hall C</div>
+                </div>
+              </div>
+              <span style={{ background: 'rgba(59, 130, 246, 0.1)', color: '#1E40AF', padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>Upcoming</span>
             </div>
           </div>
         </div>

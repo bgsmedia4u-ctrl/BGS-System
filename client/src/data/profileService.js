@@ -8,7 +8,11 @@ function normalizeProfile(personOrProfile) {
 
   // If it's already a legacy profile row
   if ('role' in personOrProfile && !('employees' in personOrProfile)) {
-    return personOrProfile;
+    return {
+      ...personOrProfile,
+      staff_type: personOrProfile.staff_type || 'teaching',
+      role: personOrProfile.role || 'teacher'
+    };
   }
 
   // If it's a person row with embedded employees array/object
@@ -68,7 +72,7 @@ export async function getProfileByUserId(userId) {
     .maybeSingle();
 
   if (error) throw error;
-  return data;
+  return normalizeProfile(data);
 }
 
 /**

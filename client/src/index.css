@@ -1,7 +1,7 @@
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+/* â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• 
    BGS Teachers Portal â€” Design System
    Navy & Gold institutional branding
-   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+   â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â• â•  */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
@@ -15,10 +15,11 @@
   --bg-surface-hover: #FAFAFA;
   --border-color: #F0E6D2; /* Soft gold/tan border */
   
-  /* Text Colors */
-  --text-main: #362217; /* Rich Dark Brown */
-  --text-muted: #6B5547; /* Warm Muted Brown */
+  /* Text Colors - Rich Dark Brown Theme */
+  --text-main: #3F2314; /* Rich Dark Brown */
+  --text-muted: #6B4630; /* Warm Muted Brown */
   --text-inverse: #FFFFFF;
+  --text-dark-brown: #3F2314;
   
   /* Accent Gradients (Amber to Orange) */
   --accent-light: #FFB84D;

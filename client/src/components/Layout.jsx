@@ -43,7 +43,7 @@ export default function Layout({ children }) {
             <GraduationCap size={32} />
           </div>
           <div className="sidebar-title">BGS Institutional</div>
-          <div className="sidebar-subtitle">Admin Portal</div>
+          <div className="sidebar-subtitle">{profile?.role === 'admin' ? 'Admin Portal' : 'Teachers Portal'}</div>
         </div>
 
         <nav className="sidebar-menu">

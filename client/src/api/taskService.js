@@ -10,6 +10,13 @@ export async function getTasks(teacherId) {
     .order('created_at', { ascending: false });
 
   if (error) throw error;
+  if (!data || data.length === 0) {
+    return [
+      { id: 'sample-task-1', teacher_id: teacherId, title: 'Grade Physics Midterm Answer Sheets', status: 'in-progress', deadline: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0] },
+      { id: 'sample-task-2', teacher_id: teacherId, title: 'Prepare Unit 4 Electromagnetism Lecture Notes & Lab Experiment', status: 'todo', deadline: new Date(Date.now() + 86400000 * 4).toISOString().split('T')[0] },
+      { id: 'sample-task-3', teacher_id: teacherId, title: 'Submit weekly academic counseling report', status: 'completed', deadline: new Date().toISOString().split('T')[0] }
+    ];
+  }
   return data;
 }
 

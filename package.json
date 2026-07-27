@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "BGS Institutional & Teachers Portal Root Workspace",
   "scripts": {
-    "install": "cd client && npm install",
+    "postinstall": "cd client && npm install --legacy-peer-deps",
     "dev": "cd client && npm run dev",
     "build": "cd client && npm run build",
     "preview": "cd client && npm run preview",

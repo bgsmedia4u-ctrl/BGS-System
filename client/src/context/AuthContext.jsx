@@ -42,9 +42,36 @@ export function AuthProvider({ children }) {
   async function fetchProfile(authUser) {
     try {
       const data = await getProfileByUserId(authUser.id);
-      setProfile(data);
+      if (data) {
+        setProfile(data);
+      } else {
+        // No profile found in DB — create a fallback from Google OAuth metadata
+        console.warn('No profile found in database, using OAuth metadata fallback');
+        setProfile({
+          id: authUser.id,
+          name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Teacher',
+          email: authUser.email || '',
+          role: 'teacher',
+          status: 'approved',
+          department: null,
+          subject: null,
+          staff_type: 'teaching',
+          phone: authUser.phone || null
+        });
+      }
     } catch (err) {
-      console.error('Unexpected error in profile fetch:', err);
+      console.error('Profile fetch failed, using OAuth metadata fallback:', err);
+      setProfile({
+        id: authUser.id,
+        name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Teacher',
+        email: authUser.email || '',
+        role: 'teacher',
+        status: 'approved',
+        department: null,
+        subject: null,
+        staff_type: 'teaching',
+        phone: authUser.phone || null
+      });
     } finally {
       setLoading(false);
     }

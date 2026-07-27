@@ -4,26 +4,26 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
 
-// Pages
-const LoginPage = React.lazy(() => import('./pages/LoginPage'));
-const AdminLoginPage = React.lazy(() => import('./pages/AdminLoginPage'));
-const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
-const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
-const ReportFormPage = React.lazy(() => import('./pages/ReportFormPage'));
-const AdminDashboardPage = React.lazy(() => import('./pages/AdminDashboardPage'));
-const AdminExportPage = React.lazy(() => import('./pages/AdminExportPage'));
-const AdminPortalPage = React.lazy(() => import('./pages/AdminPortalPage'));
-const AttendancePage = React.lazy(() => import('./pages/AttendancePage'));
-const MarksPage = React.lazy(() => import('./pages/MarksPage'));
-const TeacherMeetingsPage = React.lazy(() => import('./pages/TeacherMeetingsPage'));
-const AnalyticsDashboardPage = React.lazy(() => import('./pages/AnalyticsDashboardPage'));
-const LeaveManagementPage = React.lazy(() => import('./pages/LeaveManagementPage'));
-const SyllabusTrackerPage = React.lazy(() => import('./pages/SyllabusTrackerPage'));
-const TimetablePage = React.lazy(() => import('./pages/TimetablePage'));
-const TasksPage = React.lazy(() => import('./pages/TasksPage'));
-const StudentManagementPage = React.lazy(() => import('./pages/StudentManagementPage'));
-const StaffManagementPage = React.lazy(() => import('./pages/StaffManagementPage'));
-const AcademicManagementPage = React.lazy(() => import('./pages/AcademicManagementPage'));
+// Pages - Imported statically to eliminate Vite dynamic module loading failures in production
+import LoginPage from './pages/LoginPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import RegisterPage from './pages/RegisterPage';
+import DashboardPage from './pages/DashboardPage';
+import ReportFormPage from './pages/ReportFormPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminExportPage from './pages/AdminExportPage';
+import AdminPortalPage from './pages/AdminPortalPage';
+import AttendancePage from './pages/AttendancePage';
+import MarksPage from './pages/MarksPage';
+import TeacherMeetingsPage from './pages/TeacherMeetingsPage';
+import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
+import LeaveManagementPage from './pages/LeaveManagementPage';
+import SyllabusTrackerPage from './pages/SyllabusTrackerPage';
+import TimetablePage from './pages/TimetablePage';
+import TasksPage from './pages/TasksPage';
+import StudentManagementPage from './pages/StudentManagementPage';
+import StaffManagementPage from './pages/StaffManagementPage';
+import AcademicManagementPage from './pages/AcademicManagementPage';
 
 
 function App() {

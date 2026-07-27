@@ -1,0 +1,16 @@
+{
+  "name": "bgs-institutional-portal",
+  "private": true,
+  "version": "1.0.0",
+  "description": "BGS Institutional & Teachers Portal Root Workspace",
+  "scripts": {
+    "install": "cd client && npm install",
+    "dev": "cd client && npm run dev",
+    "build": "cd client && npm run build",
+    "preview": "cd client && npm run preview",
+    "lint": "cd client && npm run lint"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

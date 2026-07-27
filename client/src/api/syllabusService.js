@@ -92,28 +92,124 @@ export function getMasterSyllabusStructure() {
 // ─── 2. STRICT RBAC TEACHER ASSIGNMENT LOGIC ───
 export async function getTeacherAssignments(userId, profileRole) {
   try {
-    let query = supabase
-      .from('teacher_subject_assignments')
-      .select(`
-        id,
-        teacher_id,
-        academic_year,
-        stream,
-        class_name,
-        subject,
-        created_at
-      `)
-      .order('created_at', { ascending: true });
+    let assignments = null;
+    try {
+      let query = supabase
+        .from('teacher_subject_assignments')
+        .select(`
+          id,
+          teacher_id,
+          academic_year,
+          stream,
+          class_name,
+          subject,
+          created_at
+        `)
+        .order('created_at', { ascending: true });
 
-    // CRITICAL SECURITY ENFORCEMENT: Teachers can ONLY retrieve their own assigned subjects
-    if (profileRole !== 'admin' && profileRole !== 'principal') {
-      if (!userId) return [];
-      query = query.eq('teacher_id', userId);
+      // CRITICAL SECURITY ENFORCEMENT: Teachers can ONLY retrieve their own assigned subjects
+      if (profileRole !== 'admin' && profileRole !== 'principal') {
+        if (!userId) return [];
+        query = query.eq('teacher_id', userId);
+      }
+      const res = await query;
+      if (res.data) assignments = res.data;
+    } catch (_) {
+      assignments = null;
     }
 
-    const { data: assignments, error } = await query;
-    if (error) throw error;
-    if (!assignments || assignments.length === 0) return [];
+    if (!assignments || assignments.length === 0) {
+      // ── AUTO-ONBOARDING BOOTSTRAP: Synchronize from Teacher's profile & timetable ──
+      if (!userId && profileRole !== 'admin' && profileRole !== 'principal') return [];
+      
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('id, name, subject')
+        .eq('id', userId || '')
+        .maybeSingle();
+
+      const bootstrapped = [];
+      const seenKeys = new Set();
+
+      // 1. Check teacher's schedule in Timetable
+      if (userId) {
+        try {
+          const { data: tt } = await supabase
+            .from('timetable')
+            .select('subject, stream, academic_year, class_section')
+            .eq('teacher_id', userId);
+
+          if (tt && tt.length > 0) {
+            tt.forEach(slot => {
+              if (!slot.subject || ['Free Hour', 'Preparation Time', 'Lunch', 'Break'].includes(slot.subject)) return;
+              const yr = slot.academic_year || '1st PUC';
+              const isComm = ['Accountancy', 'Business Studies', 'Economics', 'Statistics', 'Basic Mathematics'].includes(slot.subject);
+              const str = slot.stream || (isComm ? 'Commerce' : 'Science');
+              const cls = slot.class_section || `I PUC ${str} A`;
+              const key = `${yr}_${str}_${cls}_${slot.subject}`;
+              if (!seenKeys.has(key)) {
+                seenKeys.add(key);
+                bootstrapped.push({
+                  id: 'auto_tt_' + key,
+                  teacher_id: userId,
+                  teacher_name: prof?.name || 'Assigned Faculty',
+                  academic_year: yr,
+                  stream: str,
+                  class_name: cls,
+                  subject: slot.subject,
+                  created_at: new Date().toISOString()
+                });
+              }
+            });
+          }
+        } catch (_) {}
+      }
+
+      // 2. If timetable yielded nothing, derive from profile subject
+      if (bootstrapped.length === 0 && prof && prof.subject && prof.subject !== 'All Subjects') {
+        const subName = prof.subject;
+        const isComm = ['Accountancy', 'Business Studies', 'Economics', 'Statistics', 'Basic Mathematics'].includes(subName);
+        const defStream = isComm ? 'Commerce' : 'Science';
+
+        bootstrapped.push({
+          id: 'auto_prof_1_' + subName,
+          teacher_id: userId,
+          teacher_name: prof.name || 'Assigned Faculty',
+          academic_year: '1st PUC',
+          stream: defStream,
+          class_name: `I PUC ${defStream} A`,
+          subject: subName,
+          created_at: new Date().toISOString()
+        });
+        bootstrapped.push({
+          id: 'auto_prof_2_' + subName,
+          teacher_id: userId,
+          teacher_name: prof.name || 'Assigned Faculty',
+          academic_year: '2nd PUC',
+          stream: defStream,
+          class_name: `II PUC ${defStream} A`,
+          subject: subName,
+          created_at: new Date().toISOString()
+        });
+      }
+
+      if (bootstrapped.length > 0) {
+        // Automatically persist bootstrapped courses into database if possible
+        try {
+          await supabase.from('teacher_subject_assignments').insert(
+            bootstrapped.map(b => ({
+              teacher_id: b.teacher_id,
+              academic_year: b.academic_year,
+              stream: b.stream,
+              class_name: b.class_name,
+              subject: b.subject
+            }))
+          );
+        } catch (_) {}
+        return bootstrapped;
+      }
+      return [];
+    }
 
     // Map teacher profile names for display
     const { data: profiles } = await supabase
@@ -137,9 +233,9 @@ export async function getTeacherAssignments(userId, profileRole) {
   }
 }
 
-export async function assignSubjectToTeacher(assignmentData, adminRole) {
-  if (adminRole !== 'admin') {
-    throw new Error('Access Denied: Only Admins can assign subjects to teachers.');
+export async function assignSubjectToTeacher(assignmentData, adminRole, currentUserId = null) {
+  if (adminRole !== 'admin' && adminRole !== 'principal' && (!currentUserId || assignmentData.teacher_id !== currentUserId)) {
+    throw new Error('Access Denied: Only Admins can assign subjects to other teachers.');
   }
 
   const payload = {

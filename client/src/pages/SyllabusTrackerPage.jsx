@@ -374,12 +374,85 @@ export default function SyllabusTrackerPage() {
                     <p style={{ fontWeight: 500 }}>Loading your assigned syllabus courses...</p>
                   </div>
                 ) : myAssignments.length === 0 ? (
-                  <div className="card" style={{ padding: '50px 24px', textAlign: 'center', background: 'var(--bg-surface)' }}>
-                    <AlertCircle size={44} style={{ color: 'var(--maroon-700)', margin: '0 auto 16px', opacity: 0.8 }} />
-                    <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-main)' }}>No Subjects Assigned Yet</h3>
-                    <p style={{ color: 'var(--text-secondary)', maxWidth: 480, margin: '10px auto 0', lineHeight: 1.5 }}>
-                      Your institution administrator has not assigned any academic classes or courses to your teacher profile yet. Please contact the Principal or Admin to receive your course assignments.
+                  <div className="card" style={{ padding: '40px 24px', textAlign: 'center', background: 'var(--bg-surface)', border: '1px dashed var(--border-color)' }}>
+                    <AlertCircle size={44} style={{ color: 'var(--maroon-700)', margin: '0 auto 14px', opacity: 0.8 }} />
+                    <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-main)' }}>No Subjects Assigned Yet</h3>
+                    <p style={{ color: 'var(--text-secondary)', maxWidth: 520, margin: '10px auto 20px', lineHeight: 1.5 }}>
+                      Your profile currently has no active syllabus tracking courses. You can self-enroll in your teaching subjects right now or ask an institution administrator to configure them in the Admin Panel.
                     </p>
+                    
+                    {role === 'admin' && (
+                      <div style={{ marginBottom: 24 }}>
+                        <button 
+                          onClick={() => setActiveTab('admin_panel')} 
+                          className="btn" 
+                          style={{ background: 'var(--primary, #1d4ed8)', color: '#fff', padding: '10px 22px', fontSize: 15, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8, border: 'none', borderRadius: 8, cursor: 'pointer' }}
+                        >
+                          <Settings size={18} /> Open Admin Panel & Assign Courses →
+                        </button>
+                      </div>
+                    )}
+
+                    <div style={{ maxWidth: 500, margin: '0 auto', background: 'var(--bg-app, #f8fafc)', padding: '22px', borderRadius: 12, border: '1px solid var(--border-color)', textAlign: 'left' }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 14, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Plus size={18} style={{ color: 'var(--maroon-700)' }} /> Quick Self-Enroll Teaching Subject:
+                      </div>
+                      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
+                        <select 
+                          id="quick-year"
+                          defaultValue="1st PUC"
+                          style={{ ...s.input, flex: '1 1 110px' }}
+                        >
+                          <option value="1st PUC">1st PUC</option>
+                          <option value="2nd PUC">2nd PUC</option>
+                        </select>
+                        <select 
+                          id="quick-stream"
+                          defaultValue="Science"
+                          style={{ ...s.input, flex: '1 1 120px' }}
+                        >
+                          <option value="Science">Science</option>
+                          <option value="Commerce">Commerce</option>
+                        </select>
+                        <select 
+                          id="quick-subject"
+                          defaultValue={user?.user_metadata?.subject || "Physics"}
+                          style={{ ...s.input, flex: '2 1 150px' }}
+                        >
+                          {masterStructure.subjects?.map(sub => (
+                            <option key={sub} value={sub}>{sub}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <button 
+                        onClick={async () => {
+                          const yr = document.getElementById('quick-year').value;
+                          const str = document.getElementById('quick-stream').value;
+                          const sub = document.getElementById('quick-subject').value;
+                          const cls = yr === '1st PUC' ? `I PUC ${str} A` : `II PUC ${str} A`;
+                          try {
+                            setWorkspaceLoading(true);
+                            await assignSubjectToTeacher({
+                              teacher_id: user?.id,
+                              academic_year: yr,
+                              stream: str,
+                              class_name: cls,
+                              subject: sub
+                            }, role, user?.id);
+                            toast.success(`Successfully enrolled in ${sub} (${yr})!`);
+                            const fresh = await getTeacherAssignments(user?.id, role);
+                            setMyAssignments(fresh);
+                          } catch (e) {
+                            toast.error(e.message || 'Failed to enroll');
+                          } finally {
+                            setWorkspaceLoading(false);
+                          }
+                        }}
+                        style={{ ...s.btnPrimary, width: '100%', justifyContent: 'center', height: 42, fontSize: 14 }}
+                      >
+                        Activate Course Tracker
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>

@@ -106,6 +106,7 @@ export default function Layout({ children }) {
   }
 
   const name = profile?.name || user?.user_metadata?.full_name || 'Admin User';
+  const roleDisplay = profile?.role === 'admin' ? 'Administrator' : 'Teacher';
   const avatarUrl = user?.user_metadata?.avatar_url || null;
 
   if (isOffline) {

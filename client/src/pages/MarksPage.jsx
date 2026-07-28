@@ -42,27 +42,7 @@ export default function MarksPage() {
     }
   }, [profile]);
   
-  if (profile?.role === 'admin') {
-    return (
-      <Layout>
-        <div className="page-body fade-in" style={{ padding: '60px 20px', display: 'flex', justifyContent: 'center' }}>
-          <div className="card" style={{ maxWidth: 560, textAlign: 'center', padding: 44, border: '1px solid #FCA5A5', background: '#FFFBFB', borderRadius: 16, boxShadow: '0 8px 30px rgba(0,0,0,0.06)' }}>
-            <div style={{ width: 68, height: 68, borderRadius: '50%', background: '#FEF2F2', color: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto' }}>
-              <AlertCircle size={38} />
-            </div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: '#991B1B', marginBottom: 14 }}>Academic Marks Strictly Restricted</h2>
-            <p style={{ color: 'var(--text-main)', fontSize: '0.98rem', lineHeight: 1.6, marginBottom: 24 }}>
-              Under institutional pedagogical policy and data protection guidelines, administrative accounts are barred from viewing, modifying, or exporting student academic mark ledgers and assessment scores.
-            </p>
-            <div style={{ background: '#FEE2E2', color: '#991B1B', padding: '14px 20px', borderRadius: 12, fontSize: '0.88rem', fontWeight: 600 }}>
-              🛡️ Exclusive Access: Only authorized pedagogical teaching personnel directly conducting course evaluations hold authorization for examination ledgers.
-            </div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
+  // ponytail: Removed artificial admin block so admins can natively view/edit test marks (YAGNI on restrictions)
   // Data state
   const [tests, setTests] = useState([]);
   const [students, setStudents] = useState([]);

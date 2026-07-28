@@ -36,16 +36,15 @@ const AVAILABLE_YEARS = [
 ];
 
 const STANDARD_CLASSES = [
-  'Section A',
-  'Section B',
-  'Section C',
-  'Section D',
-  'Section E',
-  'Section F',
-  'Class 11 A',
-  'Class 11 B',
-  'Class 12 A',
-  'Class 12 B'
+  '1st FTB',
+  '2nd FTB - 1',
+  '2nd FTB - 2',
+  '1st Class A',
+  '1st Class B',
+  '2nd Class A',
+  '2nd Class B',
+  '1st Inspire',
+  '2nd Inspire'
 ];
 
 export default function SettingsPage() {
@@ -55,7 +54,7 @@ export default function SettingsPage() {
   const [subject, setSubject] = useState('');
   const [stream, setStream] = useState('Science');
   const [academicYear, setAcademicYear] = useState('1st PUC');
-  const [selectedClasses, setSelectedClasses] = useState(['Section A', 'Section B']);
+  const [selectedClasses, setSelectedClasses] = useState(['1st FTB', '2nd FTB - 2']);
   const [saving, setSaving] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(true);
@@ -112,7 +111,7 @@ export default function SettingsPage() {
         }).catch(err => console.warn('Auth meta update notice:', err.message));
       }
 
-      // 2. Update supabase profiles table
+      // 2. Update or insert into supabase profiles table (upsert avoids missing profile FK errors)
       const updateData = {
         name: displayName.trim(),
         subject: subject,
@@ -128,30 +127,41 @@ export default function SettingsPage() {
         updateData.department = subject;
       }
 
+      const profilePayload = {
+        id: user.id,
+        email: user?.email || profile?.email || undefined,
+        role: profile?.role || 'teacher',
+        ...updateData
+      };
+
       const { error } = await supabase
         .from('profiles')
-        .update(updateData)
-        .eq('id', user.id);
+        .upsert(profilePayload, { onConflict: 'id' });
 
       if (error && error.code !== 'PGRST116') {
-        console.warn('Profile DB update:', error.message);
+        console.warn('Profile DB upsert:', error.message);
       }
 
       // 3. Sync directly to teacher_subject_assignments table so it immediately reflects on Syllabus Tracker!
       if (user?.id) {
         try {
           await supabase.from('teacher_subject_assignments').delete().eq('teacher_id', user.id);
-          const yearsToAssign = academicYear === 'Both 1st & 2nd PUC' ? ['1st PUC', '2nd PUC'] : [academicYear];
           const assignmentRows = [];
-          yearsToAssign.forEach(yr => {
-            selectedClasses.forEach(clsName => {
-              assignmentRows.push({
-                teacher_id: user.id,
-                academic_year: yr,
-                stream: stream,
-                class_name: clsName,
-                subject: subject
-              });
+          selectedClasses.forEach(clsName => {
+            // Automatically determine if the batch belongs to 1st year or 2nd year
+            let derivedYear = academicYear === 'Both 1st & 2nd PUC' ? '1st PUC' : academicYear;
+            const lowerCls = clsName.toLowerCase();
+            if (lowerCls.startsWith('1st') || lowerCls.includes('1st') || lowerCls.includes('pu 1')) {
+              derivedYear = '1st PUC';
+            } else if (lowerCls.startsWith('2nd') || lowerCls.includes('2nd') || lowerCls.includes('pu 2')) {
+              derivedYear = '2nd PUC';
+            }
+            assignmentRows.push({
+              teacher_id: user.id,
+              academic_year: derivedYear,
+              stream: stream,
+              class_name: clsName,
+              subject: subject
             });
           });
           if (assignmentRows.length > 0) {

@@ -124,7 +124,7 @@ export async function getTeacherAssignments(userId, profileRole) {
       
       const { data: prof } = await supabase
         .from('profiles')
-        .select('id, name, subject')
+        .select('id, name, subject, stream, academic_year, assigned_classes')
         .eq('id', userId || '')
         .maybeSingle();
 
@@ -165,32 +165,53 @@ export async function getTeacherAssignments(userId, profileRole) {
         } catch (_) {}
       }
 
-      // 2. If timetable yielded nothing, derive from profile subject
+      // 2. If timetable yielded nothing, derive from profile subject and assigned_classes
       if (bootstrapped.length === 0 && prof && prof.subject && prof.subject !== 'All Subjects') {
         const subName = prof.subject;
         const isComm = ['Accountancy', 'Business Studies', 'Economics', 'Statistics', 'Basic Mathematics'].includes(subName);
-        const defStream = isComm ? 'Commerce' : 'Science';
+        const defStream = prof.stream || (isComm ? 'Commerce' : 'Science');
+        const assignedClasses = prof.assigned_classes ? prof.assigned_classes.split(',').map(c => c.trim()).filter(Boolean) : [];
 
-        bootstrapped.push({
-          id: 'auto_prof_1_' + subName,
-          teacher_id: userId,
-          teacher_name: prof.name || 'Assigned Faculty',
-          academic_year: '1st PUC',
-          stream: defStream,
-          class_name: `I PUC ${defStream} A`,
-          subject: subName,
-          created_at: new Date().toISOString()
-        });
-        bootstrapped.push({
-          id: 'auto_prof_2_' + subName,
-          teacher_id: userId,
-          teacher_name: prof.name || 'Assigned Faculty',
-          academic_year: '2nd PUC',
-          stream: defStream,
-          class_name: `II PUC ${defStream} A`,
-          subject: subName,
-          created_at: new Date().toISOString()
-        });
+        if (assignedClasses.length > 0) {
+          assignedClasses.forEach(clsName => {
+            let yr = prof.academic_year === 'Both 1st & 2nd PUC' ? '1st PUC' : (prof.academic_year || '1st PUC');
+            const lowerCls = clsName.toLowerCase();
+            if (lowerCls.startsWith('1st') || lowerCls.includes('1st') || lowerCls.includes('pu 1')) yr = '1st PUC';
+            else if (lowerCls.startsWith('2nd') || lowerCls.includes('2nd') || lowerCls.includes('pu 2')) yr = '2nd PUC';
+
+            bootstrapped.push({
+              id: 'auto_prof_' + clsName + '_' + subName,
+              teacher_id: userId,
+              teacher_name: prof.name || 'Assigned Faculty',
+              academic_year: yr,
+              stream: defStream,
+              class_name: clsName,
+              subject: subName,
+              created_at: new Date().toISOString()
+            });
+          });
+        } else {
+          bootstrapped.push({
+            id: 'auto_prof_1_' + subName,
+            teacher_id: userId,
+            teacher_name: prof.name || 'Assigned Faculty',
+            academic_year: '1st PUC',
+            stream: defStream,
+            class_name: '1st FTB',
+            subject: subName,
+            created_at: new Date().toISOString()
+          });
+          bootstrapped.push({
+            id: 'auto_prof_2_' + subName,
+            teacher_id: userId,
+            teacher_name: prof.name || 'Assigned Faculty',
+            academic_year: '2nd PUC',
+            stream: defStream,
+            class_name: '2nd FTB - 2',
+            subject: subName,
+            created_at: new Date().toISOString()
+          });
+        }
       }
 
       if (bootstrapped.length > 0) {
@@ -242,7 +263,7 @@ export async function assignSubjectToTeacher(assignmentData, adminRole, currentU
     teacher_id: assignmentData.teacher_id,
     academic_year: assignmentData.academic_year || '1st PUC',
     stream: assignmentData.stream || 'Science',
-    class_name: assignmentData.class_name || 'Class A',
+    class_name: assignmentData.class_name || '1st FTB',
     subject: assignmentData.subject
   };
 

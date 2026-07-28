@@ -37,6 +37,26 @@ export default function Layout({ children }) {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // ponytail: native offline state + force teacher profile completion in 1 file (YAGNI on complex onboarding wizards or network frameworks)
+  const [isOffline, setIsOffline] = useState(typeof navigator !== 'undefined' && !navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (profile && profile.role !== 'admin' && !profile.assigned_classes && window.location.pathname !== '/settings') {
+      toast.error('Please complete your profile (Subject & Classes) to continue.', { id: 'force_prof' });
+      navigate('/settings');
+    }
+  }, [profile, navigate]);
 
   useEffect(() => {
     fetchNotifications();
@@ -86,8 +106,27 @@ export default function Layout({ children }) {
   }
 
   const name = profile?.name || user?.user_metadata?.full_name || 'Admin User';
-  const roleDisplay = profile?.role === 'admin' ? 'Administrator' : 'Teacher';
   const avatarUrl = user?.user_metadata?.avatar_url || null;
+
+  if (isOffline) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0B0F19', color: '#F8FAFC', padding: 24, textAlign: 'center' }}>
+        <div style={{ width: 84, height: 84, borderRadius: '50%', background: 'rgba(239, 68, 68, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24, border: '2px solid rgba(239, 68, 68, 0.4)' }}>
+          <span style={{ fontSize: 42 }}>📡</span>
+        </div>
+        <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 12 }}>No Network Connection</h1>
+        <p style={{ color: '#94A3B8', maxWidth: 440, marginBottom: 28, fontSize: '1.05rem', lineHeight: 1.6 }}>
+          You appear to be offline. Please verify your internet connection or Wi-Fi settings to access the BGS Institutional Server.
+        </p>
+        <button 
+          onClick={() => window.location.reload()} 
+          style={{ background: '#3B82F6', color: '#fff', border: 'none', padding: '14px 32px', borderRadius: 12, fontSize: '1.05rem', fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 18px rgba(59, 130, 246, 0.4)', transition: 'transform 0.2s' }}
+        >
+          Retry Connection
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="app-layout">
@@ -134,9 +173,14 @@ export default function Layout({ children }) {
               <NavLink to="/personnel" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <Users size={20} /> Personnel
               </NavLink>
-
+              <NavLink to="/free-teachers" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+                <UserCheck size={20} /> Free Teachers
+              </NavLink>
               <NavLink to="/admin/tasks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <CheckSquare size={20} /> Event Tasks
+              </NavLink>
+              <NavLink to="/marks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+                <ClipboardList size={20} /> Test Marks
               </NavLink>
 
               <div className="sidebar-menu-label" style={{ marginTop: 18 }}>Others</div>
@@ -158,9 +202,6 @@ export default function Layout({ children }) {
               </NavLink>
               <NavLink to="/marks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <ClipboardList size={20} /> Mark Entry
-              </NavLink>
-              <NavLink to="/free-teachers" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <UserCheck size={20} /> Free Teachers
               </NavLink>
               <NavLink to="/syllabus" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <BookOpen size={20} /> Syllabus Tracker

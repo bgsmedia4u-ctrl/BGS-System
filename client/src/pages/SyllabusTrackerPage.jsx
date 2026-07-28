@@ -304,6 +304,15 @@ export default function SyllabusTrackerPage() {
     return masterStructure.streamSubjectMap[assignStream] || masterStructure.subjects || ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Accountancy', 'Economics', 'Business Studies', 'Computer Science'];
   }, [assignStream, masterStructure]);
 
+  const formatSubjectDisplay = (assign) => {
+    if (!assign || !assign.subject) return '';
+    const yr = (assign.academic_year || '').includes('1st') ? '1st Year' : (assign.academic_year || '').includes('2nd') ? '2nd Year' : '';
+    if (yr && !assign.subject.toLowerCase().includes(yr.toLowerCase()) && !assign.subject.toLowerCase().includes('puc')) {
+      return `${yr} ${assign.subject}`;
+    }
+    return assign.subject;
+  };
+
   return (
     <Layout>
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
@@ -338,9 +347,9 @@ export default function SyllabusTrackerPage() {
           )}
 
           <button
-            onClick={() => { setActiveTab('my_workspace'); setSelectedAssignment(null); }}
+            onClick={() => { setActiveTab('my_workspace'); setSelectedAssignment(null); loadMyWorkspace(); }}
             className={`btn ${activeTab === 'my_workspace' ? 'btn-primary' : 'btn-ghost'}`}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem', color: '#ffffff', backgroundColor: activeTab === 'my_workspace' ? 'var(--primary, #3B82F6)' : 'transparent' }}
           >
             <UserCheck size={16} /> Teacher Panel (My Subjects)
           </button>
@@ -471,7 +480,7 @@ export default function SyllabusTrackerPage() {
                             <ChevronRight size={18} style={{ color: 'var(--text-secondary)' }} />
                           </div>
                           <h3 style={{ margin: '0 0 6px 0', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
-                            {assign.subject}
+                            {formatSubjectDisplay(assign)}
                           </h3>
                           <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
                             <span>🏫 {assign.class_name}</span>
@@ -504,8 +513,8 @@ export default function SyllabusTrackerPage() {
                       ← Back to Assigned Subjects
                     </button>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
-                      <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                        {selectedAssignment.subject}
+                      <h2 style={{ margin: '0 0 0 0', fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-main)' }}>
+                        {formatSubjectDisplay(selectedAssignment)}
                       </h2>
                       <span style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--maroon-900)' }}>
                         ({selectedAssignment.class_name} • {selectedAssignment.academic_year} {selectedAssignment.stream})

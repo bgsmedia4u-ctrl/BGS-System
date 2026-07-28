@@ -33,7 +33,7 @@ export default function TimetablePage({ isAdmin = false }) {
   // Filters (for Admin to view specific class matrices)
   const [stream, setStream] = useState('Science');
   const [year, setYear] = useState('1st Year');
-  const [cls, setCls] = useState('Class A');
+  const [cls, setCls] = useState('1st FTB');
 
   // Dynamic Options from DB
   const [departments, setDepartments] = useState([]);
@@ -46,7 +46,7 @@ export default function TimetablePage({ isAdmin = false }) {
   const [formSubject, setFormSubject] = useState('');
   const [formStream, setFormStream] = useState('Science');
   const [formYear, setFormYear] = useState('1st Year');
-  const [formClass, setFormClass] = useState('Class A');
+  const [formClass, setFormClass] = useState('1st FTB');
   const [formTeacherId, setFormTeacherId] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -121,7 +121,7 @@ export default function TimetablePage({ isAdmin = false }) {
     setFormSubject(isFree ? '' : (entry?.subject || profile?.subject || 'Physics'));
     setFormStream(entry?.stream || (isAdmin ? stream : 'Science'));
     setFormYear(entry?.year || (isAdmin ? year : '1st Year'));
-    setFormClass(entry?.class || (isAdmin ? cls : 'Class A'));
+    setFormClass(entry?.class || (isAdmin ? cls : '1st FTB'));
     setFormTeacherId(entry?.teacher_id || (!isAdmin ? user?.id : (teachers[0]?.id || '')));
     
     setActiveModal({ day, period, entry });
@@ -245,10 +245,15 @@ export default function TimetablePage({ isAdmin = false }) {
                     classes.map(c => <option key={c.name} value={c.name}>{c.name}</option>)
                   ) : (
                     <>
-                      <option value="Class A">Class A</option>
-                      <option value="Class B">Class B</option>
-                      <option value="Section C">Section C</option>
-                      <option value="FTB-1">FTB-1</option>
+                      <option value="1st FTB">1st FTB</option>
+                      <option value="2nd FTB - 1">2nd FTB - 1</option>
+                      <option value="2nd FTB - 2">2nd FTB - 2</option>
+                      <option value="1st Class A">1st Class A</option>
+                      <option value="1st Class B">1st Class B</option>
+                      <option value="2nd Class A">2nd Class A</option>
+                      <option value="2nd Class B">2nd Class B</option>
+                      <option value="1st Inspire">1st Inspire</option>
+                      <option value="2nd Inspire">2nd Inspire</option>
                     </>
                   )}
                 </select>
@@ -444,7 +449,7 @@ export default function TimetablePage({ isAdmin = false }) {
                     type="text" 
                     className="form-input" 
                     value={formClass} 
-                    placeholder="e.g. Class A, Section B, FTB-1..." 
+                    placeholder="e.g. 1st FTB, 2nd FTB - 2, 1st Inspire..." 
                     onChange={e => setFormClass(e.target.value)}
                     style={{ padding: '10px 12px' }}
                   />

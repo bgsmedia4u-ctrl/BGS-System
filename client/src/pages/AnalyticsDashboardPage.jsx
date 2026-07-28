@@ -10,7 +10,7 @@ export default function AnalyticsDashboardPage() {
   const [loading, setLoading] = useState(false);
   const [stream, setStream] = useState('Science');
   const [year, setYear] = useState('1st Year');
-  const [cls, setCls] = useState('Class A');
+  const [cls, setCls] = useState('1st FTB');
   
   // Analytics State
   const [analytics, setAnalytics] = useState(null);
@@ -284,8 +284,17 @@ export default function AnalyticsDashboardPage() {
           <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
             <label className="form-label">Class</label>
             <select className="form-input" value={cls} onChange={e => setCls(e.target.value)}>
-              <option value="Class A">Class A</option>
-              <option value="Class B">Class B</option>
+              <option value="1st FTB">1st FTB</option>
+              <option value="2nd FTB - 1">2nd FTB - 1</option>
+              <option value="2nd FTB - 2">2nd FTB - 2</option>
+              <option value="1st Class A">1st Class A</option>
+              <option value="1st Class B">1st Class B</option>
+              <option value="2nd Class A">2nd Class A</option>
+              <option value="2nd Class B">2nd Class B</option>
+              <option value="1st Inspire">1st Inspire</option>
+              <option value="2nd Inspire">2nd Inspire</option>
+              <option value="Class A">Class A (Legacy)</option>
+              <option value="Class B">Class B (Legacy)</option>
             </select>
           </div>
         </div>

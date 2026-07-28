@@ -222,7 +222,7 @@ export default function Layout({ children }) {
         </nav>
 
         <div className="sidebar-footer">
-          <button className="sidebar-item" onClick={() => { window.location.href = 'mailto:support@bgssidlaghatta.edu'; }} style={{ cursor: 'pointer', width: '100%', background: 'transparent', border: 'none', font: 'inherit', color: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button className="sidebar-item" onClick={() => { window.location.href = 'mailto:shariffmudasirshariff@gmail.com'; }} style={{ cursor: 'pointer', width: '100%', background: 'transparent', border: 'none', font: 'inherit', color: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
             <HelpCircle size={20} /> Support
           </button>
           <div className="sidebar-item" onClick={handleLogout} style={{ cursor: 'pointer', marginTop: 4 }}>
@@ -314,8 +314,18 @@ export default function Layout({ children }) {
         </header>
 
         {/* Page Content */}
-        <main className="page-content">
-          {children}
+        <main className="page-content" style={{ display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 72px)' }}>
+          <div style={{ flex: 1 }}>
+            {children}
+          </div>
+          <footer style={{ marginTop: 40, paddingTop: 20, paddingBottom: 16, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+            <div>
+              <strong>BGS Institutional System</strong> © {new Date().getFullYear()}. All Rights Reserved.
+            </div>
+            <div>
+              Developed by <strong style={{ color: 'var(--text-main)' }}>Mudasir Shariff</strong> • Support: <a href="mailto:shariffmudasirshariff@gmail.com" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>shariffmudasirshariff@gmail.com</a>
+            </div>
+          </footer>
         </main>
       </div>
     </div>

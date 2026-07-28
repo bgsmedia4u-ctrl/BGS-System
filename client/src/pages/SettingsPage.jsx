@@ -37,11 +37,11 @@ const AVAILABLE_YEARS = [
 
 const STANDARD_CLASSES = [
   '1st FTB',
-  '2nd FTB - 1',
-  '2nd FTB - 2',
+  '2nd FTB - 01',
+  '2nd FTB - 02',
   '1st Class A',
-  '1st Class B',
   '2nd Class A',
+  '1st Class B',
   '2nd Class B',
   '1st Inspire',
   '2nd Inspire'
@@ -54,7 +54,7 @@ export default function SettingsPage() {
   const [subject, setSubject] = useState('');
   const [stream, setStream] = useState('Science');
   const [academicYear, setAcademicYear] = useState('1st PUC');
-  const [selectedClasses, setSelectedClasses] = useState(['1st FTB', '2nd FTB - 2']);
+  const [selectedClasses, setSelectedClasses] = useState(['1st FTB', '2nd FTB - 02']);
   const [saving, setSaving] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(true);

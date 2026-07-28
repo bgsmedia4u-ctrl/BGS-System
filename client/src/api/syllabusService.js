@@ -207,7 +207,7 @@ export async function getTeacherAssignments(userId, profileRole) {
             teacher_name: prof.name || 'Assigned Faculty',
             academic_year: '2nd PUC',
             stream: defStream,
-            class_name: '2nd FTB - 2',
+            class_name: '2nd FTB - 02',
             subject: subName,
             created_at: new Date().toISOString()
           });

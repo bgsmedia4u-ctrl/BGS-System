@@ -285,16 +285,14 @@ export default function AnalyticsDashboardPage() {
             <label className="form-label">Class</label>
             <select className="form-input" value={cls} onChange={e => setCls(e.target.value)}>
               <option value="1st FTB">1st FTB</option>
-              <option value="2nd FTB - 1">2nd FTB - 1</option>
-              <option value="2nd FTB - 2">2nd FTB - 2</option>
+              <option value="2nd FTB - 01">2nd FTB - 01</option>
+              <option value="2nd FTB - 02">2nd FTB - 02</option>
               <option value="1st Class A">1st Class A</option>
-              <option value="1st Class B">1st Class B</option>
               <option value="2nd Class A">2nd Class A</option>
+              <option value="1st Class B">1st Class B</option>
               <option value="2nd Class B">2nd Class B</option>
               <option value="1st Inspire">1st Inspire</option>
               <option value="2nd Inspire">2nd Inspire</option>
-              <option value="Class A">Class A (Legacy)</option>
-              <option value="Class B">Class B (Legacy)</option>
             </select>
           </div>
         </div>

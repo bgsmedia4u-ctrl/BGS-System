@@ -246,11 +246,11 @@ export default function TimetablePage({ isAdmin = false }) {
                   ) : (
                     <>
                       <option value="1st FTB">1st FTB</option>
-                      <option value="2nd FTB - 1">2nd FTB - 1</option>
-                      <option value="2nd FTB - 2">2nd FTB - 2</option>
+                      <option value="2nd FTB - 01">2nd FTB - 01</option>
+                      <option value="2nd FTB - 02">2nd FTB - 02</option>
                       <option value="1st Class A">1st Class A</option>
-                      <option value="1st Class B">1st Class B</option>
                       <option value="2nd Class A">2nd Class A</option>
+                      <option value="1st Class B">1st Class B</option>
                       <option value="2nd Class B">2nd Class B</option>
                       <option value="1st Inspire">1st Inspire</option>
                       <option value="2nd Inspire">2nd Inspire</option>
@@ -449,7 +449,7 @@ export default function TimetablePage({ isAdmin = false }) {
                     type="text" 
                     className="form-input" 
                     value={formClass} 
-                    placeholder="e.g. 1st FTB, 2nd FTB - 2, 1st Inspire..." 
+                    placeholder="e.g. 1st FTB, 2nd FTB - 02, 1st Inspire..." 
                     onChange={e => setFormClass(e.target.value)}
                     style={{ padding: '10px 12px' }}
                   />

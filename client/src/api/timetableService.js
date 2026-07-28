@@ -46,7 +46,7 @@ export async function updateTimetableEntry(entryData) {
     const payload = {
       stream: entryData.stream || 'General',
       year: entryData.year || '1st Year',
-      class: entryData.class || 'Section A',
+      class: entryData.class || '1st FTB',
       day_of_week: entryData.day_of_week,
       period: entryData.period,
       subject: entryData.subject || 'Free Hour',

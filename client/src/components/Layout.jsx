@@ -52,13 +52,6 @@ export default function Layout({ children }) {
   }, []);
 
   useEffect(() => {
-    if (profile && profile.role !== 'admin' && !profile.assigned_classes && window.location.pathname !== '/settings') {
-      toast.error('Please complete your profile (Subject & Classes) to continue.', { id: 'force_prof' });
-      navigate('/settings');
-    }
-  }, [profile, navigate]);
-
-  useEffect(() => {
     fetchNotifications();
   }, [user]);
 

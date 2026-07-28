@@ -513,7 +513,7 @@ export default function AdminPortalPage() {
       {/* ── NAVBAR ── */}
       <nav style={s.navbar}>
         <div style={s.brand}>
-          <div style={s.brandIcon}><Shield size={20} /></div>
+          <div style={{ ...s.brandIcon, background: '#fff', padding: 3, overflow: 'hidden' }}><img src="/Logo-removebg-preview.png" alt="BGS Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /></div>
           <div>
             <div style={s.brandText}>BGS Admin Portal</div>
             <div style={{ ...s.brandSub, display: 'none' }} className="admin-nav-sub">Shidlaghatta · Management Access</div>
@@ -540,7 +540,7 @@ export default function AdminPortalPage() {
             <p style={s.pageSubtitle}>Monitor all teachers' weekly submissions, view full reports and download PDFs</p>
           </div>
           <button 
-            style={{ ...s.primaryBtn, background: 'var(--color-gold-500, #c9a227)', color: '#0b1f3a', fontWeight: 700 }}
+            style={{ ...s.primaryBtn, background: 'var(--maroon-900, #7A1A1A)', color: '#fff', fontWeight: 700 }}
             onClick={() => setShowNotifyModal(true)}
           >
             <MessageSquare size={16} /> Send SMS (MSG91)
@@ -551,7 +551,6 @@ export default function AdminPortalPage() {
         <div style={{ ...s.tabBar, overflowX: 'auto', WebkitOverflowScrolling: 'touch', flexWrap: 'nowrap', width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
           <button style={{ ...s.tab(activeTab === 'monitor'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('monitor')}><BarChart2 size={16} style={{marginRight: 6}} /> Weekly Monitor</button>
           <button style={{ ...s.tab(activeTab === 'reports'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('reports')}><ClipboardList size={16} style={{marginRight: 6}} /> All Reports</button>
-          <button style={{ ...s.tab(false), whiteSpace: 'nowrap', minHeight: 44, background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE', fontWeight: 700 }} onClick={() => navigate('/syllabus')}><BookOpenCheck size={16} style={{marginRight: 6}} /> Assign Subjects & Syllabus</button>
           <button style={{ ...s.tab(activeTab === 'teachers'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('teachers')}><Users size={16} style={{marginRight: 6}} /> Teacher Profiles</button>
           <button style={{ ...s.tab(activeTab === 'announcements'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('announcements')}><Megaphone size={16} style={{marginRight: 6}} /> Announcements</button>
           <button style={{ ...s.tab(activeTab === 'meetings'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('meetings')}><Calendar size={16} style={{marginRight: 6}} /> Meetings</button>

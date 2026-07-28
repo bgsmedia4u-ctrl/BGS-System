@@ -75,7 +75,7 @@ function App() {
           <Route path="/academic" element={<AdminRoute><AcademicManagementPage /></AdminRoute>} />
           <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />
           <Route path="/admin/timetable" element={<AdminRoute><TimetablePage isAdmin={true} /></AdminRoute>} />
-
+          <Route path="/admin/tasks" element={<AdminRoute><TasksPage isAdmin={true} /></AdminRoute>} />
           {/* Separate Standalone Admin Portal */}
           <Route path="/admin-portal" element={<AdminRoute><AdminPortalPage /></AdminRoute>} />
           

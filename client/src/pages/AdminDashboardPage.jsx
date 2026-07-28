@@ -1,4 +1,5 @@
-﻿import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '../api/supabase';
 import Layout from '../components/Layout';
 import { 
   Users, 
@@ -7,7 +8,15 @@ import {
   MoreHorizontal,
   FileText,
   CalendarDays,
-  Wrench
+  Wrench,
+  UserCheck,
+  Clock,
+  Calendar,
+  Filter,
+  Mail,
+  Phone,
+  AlertCircle,
+  Shield
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -35,25 +44,85 @@ const absentees = [
   { id: 'M-62359', name: 'Marcus Chen', grade: '8-C', parent: '555-0844', status: 'Sick Leave', initials: 'MC' },
 ];
 
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const TEACHING_PERIODS = [
+  '1st Period (9:45 - 10:45 AM)',
+  '2nd Period (10:45 - 11:45 AM)',
+  '3rd Period (11:45 AM - 12:45 PM)',
+  '4th Period (1:30 - 2:30 PM)',
+  '5th Period (2:30 - 3:30 PM)'
+];
+
 export default function AdminDashboardPage() {
   const [selectedDate] = useState('October 24, 2024');
 
+  // Free Teachers State
+  const [selectedDay, setSelectedDay] = useState(() => {
+    const dayIndex = new Date().getDay();
+    if (dayIndex >= 1 && dayIndex <= 6) return DAYS[dayIndex - 1];
+    return 'Monday';
+  });
+  const [freeTeachers, setFreeTeachers] = useState([]);
+  const [freeTimetable, setFreeTimetable] = useState([]);
+  const [freeLoading, setFreeLoading] = useState(true);
+  const [filterSubject, setFilterSubject] = useState('All');
+
+  useEffect(() => {
+    fetchFreeTeacherData();
+  }, []);
+
+  async function fetchFreeTeacherData() {
+    setFreeLoading(true);
+    try {
+      const [profilesRes, timetableRes] = await Promise.all([
+        supabase.from('profiles').select('*').in('role', ['teacher', 'admin']),
+        supabase.from('timetable').select('*')
+      ]);
+      const teacherList = (profilesRes.data || []).filter(t => t.role === 'teacher' || t.subject);
+      setFreeTeachers(teacherList);
+      setFreeTimetable(timetableRes.data || []);
+    } catch (e) {
+      console.error('Error fetching free teacher data:', e);
+    } finally {
+      setFreeLoading(false);
+    }
+  }
+
+  const getFreeTeachersForPeriod = (periodStr) => {
+    const basePeriod = periodStr.split(' ')[0] + ' ' + periodStr.split(' ')[1];
+    const busyTeacherIds = new Set(
+      freeTimetable
+        .filter(t => t.day_of_week === selectedDay && 
+          (t.period === periodStr || t.period?.startsWith(basePeriod)) && 
+          t.subject !== 'Free Hour' && 
+          t.subject !== 'Preparation Time')
+        .map(t => t.teacher_id)
+    );
+    return freeTeachers.filter(t => {
+      const isFree = !busyTeacherIds.has(t.id);
+      const matchesSubj = filterSubject === 'All' || (t.subject && t.subject.toLowerCase() === filterSubject.toLowerCase());
+      return isFree && matchesSubj;
+    });
+  };
+
+  const subjectsList = ['All', ...new Set(freeTeachers.map(t => t.subject).filter(Boolean))];
+
   return (
     <Layout>
-      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div className="dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--maroon-900)' }}>Dashboard</h1>
           <p style={{ color: 'var(--text-muted)' }}>{selectedDate}</p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 24 }}>
+      <div className="admin-dashboard-grid" style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
         
         {/* Main Column */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 24, minWidth: 0 }}>
           
           {/* Top Metrics Cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div className="metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {/* Total Students */}
             <div style={{ background: 'var(--bg-surface)', padding: 20, borderRadius: 16, border: '1px solid var(--border-color)', position: 'relative' }}>
               <div style={{ background: '#FCEFEF', color: 'var(--maroon-900)', width: 40, height: 40, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
@@ -99,7 +168,7 @@ export default function AdminDashboardPage() {
 
           {/* Attendance Trends */}
           <div style={{ background: 'var(--bg-surface)', padding: 24, borderRadius: 16, border: '1px solid var(--border-color)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
               <div>
                 <h2 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--maroon-900)', marginBottom: 4 }}>Attendance Trends</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Daily overview of student presence</p>
@@ -136,7 +205,7 @@ export default function AdminDashboardPage() {
 
           {/* Current Absentees */}
           <div style={{ background: 'var(--bg-surface)', padding: '24px 0', borderRadius: 16, border: '1px solid var(--border-color)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, padding: '0 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, padding: '0 24px', flexWrap: 'wrap', gap: 8 }}>
               <div>
                 <h2 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--maroon-900)', marginBottom: 4 }}>Current Absentees</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Students marked absent today</p>
@@ -146,54 +215,56 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', background: '#FAFAFA' }}>
-                  <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>STUDENT PROFILE</th>
-                  <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>GRADE/SECTION</th>
-                  <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>PARENT CONTACT</th>
-                  <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>STATUS</th>
-                </tr>
-              </thead>
-              <tbody>
-                {absentees.map((abs, i) => (
-                  <tr key={i} style={{ borderBottom: i !== absentees.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                    <td style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#FCEFEF', color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600 }}>
-                        {abs.initials}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600, color: 'var(--maroon-900)' }}>{abs.name}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ID: {abs.id}</div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '16px 24px', color: 'var(--maroon-900)', fontWeight: 500 }}>{abs.grade}</td>
-                    <td style={{ padding: '16px 24px', color: 'var(--text-main)' }}>{abs.parent}</td>
-                    <td style={{ padding: '16px 24px' }}>
-                      <span style={{ 
-                        padding: '4px 8px', 
-                        borderRadius: 12, 
-                        fontSize: '0.75rem', 
-                        fontWeight: 600,
-                        background: abs.status === 'Unexcused' ? '#FEE2E2' : '#FEF3C7',
-                        color: abs.status === 'Unexcused' ? '#991B1B' : '#92400E',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 6
-                      }}>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: abs.status === 'Unexcused' ? '#EF4444' : '#F59E0B' }}></div>
-                        {abs.status}
-                      </span>
-                    </td>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 550 }}>
+                <thead>
+                  <tr style={{ borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', background: '#FAFAFA' }}>
+                    <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>STUDENT PROFILE</th>
+                    <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>GRADE/SECTION</th>
+                    <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>PARENT CONTACT</th>
+                    <th style={{ textAlign: 'left', padding: '12px 24px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>STATUS</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {absentees.map((abs, i) => (
+                    <tr key={i} style={{ borderBottom: i !== absentees.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                      <td style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#FCEFEF', color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, flexShrink: 0 }}>
+                          {abs.initials}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 600, color: 'var(--maroon-900)' }}>{abs.name}</div>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ID: {abs.id}</div>
+                        </div>
+                      </td>
+                      <td style={{ padding: '16px 24px', color: 'var(--maroon-900)', fontWeight: 500 }}>{abs.grade}</td>
+                      <td style={{ padding: '16px 24px', color: 'var(--text-main)' }}>{abs.parent}</td>
+                      <td style={{ padding: '16px 24px' }}>
+                        <span style={{ 
+                          padding: '4px 8px', 
+                          borderRadius: 12, 
+                          fontSize: '0.75rem', 
+                          fontWeight: 600,
+                          background: abs.status === 'Unexcused' ? '#FEE2E2' : '#FEF3C7',
+                          color: abs.status === 'Unexcused' ? '#991B1B' : '#92400E',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 6
+                        }}>
+                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: abs.status === 'Unexcused' ? '#EF4444' : '#F59E0B' }}></div>
+                          {abs.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
         {/* Right Column */}
-        <div style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="admin-right-col" style={{ width: 320, display: 'flex', flexDirection: 'column', gap: 24, flexShrink: 0 }}>
           
           {/* Urgent Actions */}
           <div style={{ background: 'var(--bg-surface)', padding: 24, borderRadius: 16, border: '1px solid var(--border-color)' }}>
@@ -307,6 +378,143 @@ export default function AdminDashboardPage() {
 
         </div>
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          FREE TEACHERS SECTION - Embedded in Admin Dashboard
+      ═══════════════════════════════════════════════════════════════ */}
+      <div style={{ marginTop: 32 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: '#FCEFEF', color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <UserCheck size={24} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--maroon-900)', margin: 0 }}>Free Teachers Now</h2>
+              <p style={{ margin: 0, fontSize: '0.88rem', color: 'var(--text-muted)' }}>Real-time faculty availability based on timetable</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Day Selector + Subject Filter */}
+        <div className="card" style={{ padding: 18, marginBottom: 20, display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Calendar size={16} color="var(--maroon-900)" />
+            <span style={{ fontWeight: 600, color: 'var(--maroon-900)', fontSize: '0.9rem', marginRight: 4 }}>Day:</span>
+            {DAYS.map(day => (
+              <button
+                key={day}
+                onClick={() => setSelectedDay(day)}
+                style={{
+                  padding: '6px 14px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: selectedDay === day ? 'var(--maroon-900)' : 'var(--bg-surface-hover)',
+                  color: selectedDay === day ? '#fff' : 'var(--text-main)',
+                  fontWeight: selectedDay === day ? 600 : 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  fontSize: '0.85rem'
+                }}
+              >
+                {day.slice(0, 3)}
+              </button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Filter size={14} color="var(--text-muted)" />
+            <select
+              value={filterSubject}
+              onChange={e => setFilterSubject(e.target.value)}
+              style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: '#fff', fontSize: '0.85rem', fontWeight: 500 }}
+            >
+              {subjectsList.map(sub => (
+                <option key={sub} value={sub}>{sub}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Free Teachers Grid */}
+        {freeLoading ? (
+          <div style={{ padding: 40, textAlign: 'center' }}>
+            <div className="spinner" style={{ margin: '0 auto' }}></div>
+            <p style={{ marginTop: 12, color: 'var(--text-muted)' }}>Analyzing timetable...</p>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+            {TEACHING_PERIODS.map((periodStr) => {
+              const freeList = getFreeTeachersForPeriod(periodStr);
+              return (
+                <div key={periodStr} className="card" style={{ border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', height: '100%', padding: 18 }}>
+                  <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: 12, marginBottom: 14, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: 8, background: '#FCEFEF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--maroon-900)' }}>
+                        <Clock size={16} />
+                      </div>
+                      <div>
+                        <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)' }}>{periodStr.split(' (')[0]}</h3>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          {periodStr.includes('(') ? periodStr.split(' (')[1].replace(')', '') : ''}
+                        </div>
+                      </div>
+                    </div>
+                    <span style={{ background: freeList.length > 0 ? '#D1FAE5' : '#FEF3C7', color: freeList.length > 0 ? '#065F46' : '#92400E', padding: '3px 8px', borderRadius: 12, fontSize: '0.72rem', fontWeight: 700 }}>
+                      {freeList.length} Free
+                    </span>
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    {freeList.length > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {freeList.slice(0, 5).map((t, i) => (
+                          <div key={t.id || i} style={{ padding: '8px 10px', borderRadius: 8, background: 'var(--bg-surface-hover)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--maroon-900)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.8rem', flexShrink: 0 }}>
+                                {t.name ? t.name.charAt(0).toUpperCase() : 'T'}
+                              </div>
+                              <div>
+                                <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '0.88rem' }}>{t.name || 'Faculty'}</div>
+                                <div style={{ fontSize: '0.72rem', color: 'var(--gold-600)', fontWeight: 600 }}>{t.subject || 'General'}</div>
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: 4 }}>
+                              {t.phone && (
+                                <a href={`tel:${t.phone}`} style={{ padding: 5, background: '#fff', borderRadius: 4, color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', border: '1px solid var(--border-color)' }}>
+                                  <Phone size={12} />
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        {freeList.length > 5 && (
+                          <div style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 500, paddingTop: 4 }}>
+                            +{freeList.length - 5} more teachers
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: 'center', padding: '20px 10px', color: 'var(--text-muted)' }}>
+                        <AlertCircle size={22} style={{ opacity: 0.4, margin: '0 auto 6px auto' }} />
+                        <div style={{ fontSize: '0.82rem', fontWeight: 500 }}>No teachers free</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .admin-dashboard-grid { flex-direction: column !important; }
+          .admin-right-col { width: 100% !important; }
+        }
+        @media (max-width: 640px) {
+          .metrics-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+      `}</style>
     </Layout>
   );
 }

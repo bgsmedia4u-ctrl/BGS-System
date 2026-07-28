@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../api/supabase';
+import toast from 'react-hot-toast';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -121,18 +122,13 @@ export default function Layout({ children }) {
                 <Users size={20} /> Personnel
               </NavLink>
 
+              <NavLink to="/admin/tasks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+                <CheckSquare size={20} /> Event Tasks
+              </NavLink>
+
               <div className="sidebar-menu-label" style={{ marginTop: 18 }}>Others</div>
               <NavLink to="/admin-portal" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <LayoutDashboard size={20} /> Dashboard
-              </NavLink>
-              <NavLink to="/transportation" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <Bus size={20} /> Transportation
-              </NavLink>
-              <NavLink to="/alumni" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <GraduationCap size={20} /> Alumni
-              </NavLink>
-              <NavLink to="/free-teachers" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <UserCheck size={20} /> Free Teachers
               </NavLink>
             </>
           ) : (
@@ -142,7 +138,7 @@ export default function Layout({ children }) {
                 <LayoutDashboard size={20} /> Dashboard
               </NavLink>
               <NavLink to="/tasks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <CheckSquare size={20} /> Tasks
+                <CheckSquare size={20} /> Event Tasks
               </NavLink>
               <NavLink to="/timetable" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <Calendar size={20} /> Timetable
@@ -178,7 +174,7 @@ export default function Layout({ children }) {
         </nav>
 
         <div className="sidebar-footer">
-          <div className="sidebar-item" style={{ cursor: 'pointer' }}>
+          <div className="sidebar-item" onClick={() => { window.location.href = 'mailto:support@bgssidlaghatta.edu'; toast.success('Support: support@bgssidlaghatta.edu | Phone: +91 8152-222333'); }} style={{ cursor: 'pointer' }}>
             <HelpCircle size={20} /> Support
           </div>
           <div className="sidebar-item" onClick={handleLogout} style={{ cursor: 'pointer', marginTop: 4 }}>

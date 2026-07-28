@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Shield, AlertTriangle } from 'lucide-react';
@@ -54,16 +54,18 @@ export default function AdminLoginPage() {
         boxShadow: '0 25px 60px rgba(0,0,0,0.05)',
         position: 'relative',
       }}>
-        {/* Shield icon */}
+        {/* BGS Logo */}
         <div style={{
-          width: 72, height: 72, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #7A1A1A, #A82424)',
+          width: 80, height: 80, borderRadius: '50%',
+          background: '#ffffff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           margin: '0 auto 24px',
-          boxShadow: '0 8px 24px rgba(168,36,36,0.3)',
-          color: '#fff',
+          boxShadow: '0 8px 24px rgba(168,36,36,0.2)',
+          border: '2px solid rgba(122,26,26,0.15)',
+          padding: 6,
+          overflow: 'hidden',
         }}>
-          <Shield size={36} />
+          <img src="/Logo-removebg-preview.png" alt="BGS Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
 
         <h1 style={{ color: '#1A1515', fontSize: 26, fontWeight: 700, textAlign: 'center', margin: '0 0 6px' }}>

@@ -1,7 +1,8 @@
 import { supabase } from './supabase';
 
-// Uses the current session's user ID automatically enforced by RLS, 
-// but we pass teacherId for explicitness in the query.
+// ─── FETCH TASKS ───
+
+// Fetch tasks for a specific teacher (teacher view)
 export async function getTasks(teacherId) {
   try {
     const { data, error } = await supabase
@@ -21,11 +22,60 @@ export async function getTasks(teacherId) {
   }
 }
 
-export async function createTask(teacherId, title, deadline) {
+// Fetch ALL tasks across all teachers (admin view)
+export async function getAllTasks() {
+  try {
+    const { data, error } = await supabase
+      .from('teacher_tasks')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('All tasks query failed:', error.message);
+      return [];
+    }
+    return data || [];
+  } catch (err) {
+    console.error('All tasks fetch error:', err);
+    return [];
+  }
+}
+
+// Fetch all teacher profiles for dropdown
+export async function getAllTeacherProfiles() {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, name, email, role, subject')
+      .order('name', { ascending: true });
+
+    if (error) {
+      console.error('Profiles query failed:', error.message);
+      return [];
+    }
+    return (data || []).filter(p => p.name);
+  } catch (err) {
+    console.error('Profiles fetch error:', err);
+    return [];
+  }
+}
+
+// ─── CREATE TASK (Admin only) ───
+export async function createTask(assignedBy, teacherId, title, description, deadline, priority) {
   const { data, error } = await supabase
     .from('teacher_tasks')
     .insert([
-      { teacher_id: teacherId, title, deadline, status: 'todo' }
+      { 
+        teacher_id: teacherId, 
+        title, 
+        description: description || '',
+        deadline: deadline || null, 
+        priority: priority || 'medium',
+        status: 'todo',
+        assigned_by: assignedBy,
+        remarks: '',
+        updated_at: new Date().toISOString()
+      }
     ])
     .select()
     .single();
@@ -34,12 +84,15 @@ export async function createTask(teacherId, title, deadline) {
   return data;
 }
 
-export async function updateTask(taskId, teacherId, updates) {
+// ─── UPDATE TASK (Both admin and teacher) ───
+export async function updateTask(taskId, updates) {
   const { data, error } = await supabase
     .from('teacher_tasks')
-    .update(updates)
+    .update({ 
+      ...updates, 
+      updated_at: new Date().toISOString() 
+    })
     .eq('id', taskId)
-    .eq('teacher_id', teacherId) // Double safeguard, though RLS handles it
     .select()
     .single();
 
@@ -47,12 +100,12 @@ export async function updateTask(taskId, teacherId, updates) {
   return data;
 }
 
-export async function deleteTask(taskId, teacherId) {
+// ─── DELETE TASK (Admin only) ───
+export async function deleteTask(taskId) {
   const { error } = await supabase
     .from('teacher_tasks')
     .delete()
-    .eq('id', taskId)
-    .eq('teacher_id', teacherId);
+    .eq('id', taskId);
 
   if (error) throw error;
   return true;

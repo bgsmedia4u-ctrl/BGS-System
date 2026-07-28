@@ -401,7 +401,7 @@ export default function SyllabusTrackerPage() {
                         <select 
                           id="quick-year"
                           defaultValue="1st PUC"
-                          style={{ ...s.input, flex: '1 1 110px' }}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border-color)', fontSize: 14, background: '#fff', color: 'var(--text-main)', flex: '1 1 110px' }}
                         >
                           <option value="1st PUC">1st PUC</option>
                           <option value="2nd PUC">2nd PUC</option>
@@ -409,7 +409,7 @@ export default function SyllabusTrackerPage() {
                         <select 
                           id="quick-stream"
                           defaultValue="Science"
-                          style={{ ...s.input, flex: '1 1 120px' }}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border-color)', fontSize: 14, background: '#fff', color: 'var(--text-main)', flex: '1 1 120px' }}
                         >
                           <option value="Science">Science</option>
                           <option value="Commerce">Commerce</option>
@@ -417,7 +417,7 @@ export default function SyllabusTrackerPage() {
                         <select 
                           id="quick-subject"
                           defaultValue={user?.user_metadata?.subject || "Physics"}
-                          style={{ ...s.input, flex: '2 1 150px' }}
+                          style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border-color)', fontSize: 14, background: '#fff', color: 'var(--text-main)', flex: '2 1 150px' }}
                         >
                           {masterStructure.subjects?.map(sub => (
                             <option key={sub} value={sub}>{sub}</option>
@@ -448,7 +448,7 @@ export default function SyllabusTrackerPage() {
                             setWorkspaceLoading(false);
                           }
                         }}
-                        style={{ ...s.btnPrimary, width: '100%', justifyContent: 'center', height: 42, fontSize: 14 }}
+                        style={{ background: 'var(--maroon-900)', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8, width: '100%', justifyContent: 'center', height: 42, fontSize: 14 }}
                       >
                         Activate Course Tracker
                       </button>

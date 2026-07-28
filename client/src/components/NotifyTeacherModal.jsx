@@ -109,7 +109,7 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
       backdropFilter: 'blur(4px)',
       display: 'flex',
       alignItems: 'center',
@@ -118,37 +118,42 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
       padding: 20
     }}>
       <div style={{
-        background: 'var(--surface-card, #121c2d)',
-        border: '1px solid var(--border-color, #23344e)',
-        borderRadius: 12,
+        background: '#ffffff',
+        border: '1px solid #e2e8f0',
+        borderRadius: 16,
         width: '100%',
         maxWidth: 750,
         maxHeight: '90vh',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
-        color: '#fff'
+        boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+        color: '#1a1515'
       }}>
         {/* Header */}
         <div style={{
           padding: '18px 24px',
-          borderBottom: '1px solid var(--border-color, #23344e)',
+          borderBottom: '1px solid #e2e8f0',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center'
+          alignItems: 'center',
+          background: '#fdf8f8'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <MessageSquare style={{ color: 'var(--color-gold-500, #c9a227)' }} size={22} />
-            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 600 }}>Teacher SMS Notification (MSG91)</h3>
+            <div style={{ width: 36, height: 36, borderRadius: 8, background: '#FCEFEF', color: 'var(--maroon-900, #7A1A1A)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <MessageSquare size={20} />
+            </div>
+            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: 'var(--maroon-900, #7A1A1A)' }}>Teacher SMS Notification</h3>
           </div>
           <button 
             onClick={onClose}
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#8b9bb4',
+              color: '#94a3b8',
               cursor: 'pointer',
-              padding: 4
+              padding: 4,
+              borderRadius: 6,
+              transition: 'all 0.2s'
             }}
           >
             <X size={20} />
@@ -158,8 +163,8 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
         {/* Sub-tabs */}
         <div style={{
           display: 'flex',
-          borderBottom: '1px solid var(--border-color, #23344e)',
-          background: 'rgba(0,0,0,0.2)'
+          borderBottom: '1px solid #e2e8f0',
+          background: '#fafafa'
         }}>
           <button
             onClick={() => setActiveSubTab('compose')}
@@ -167,18 +172,20 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
               flex: 1,
               padding: '12px 16px',
               border: 'none',
-              background: activeSubTab === 'compose' ? 'transparent' : 'transparent',
-              borderBottom: activeSubTab === 'compose' ? '2px solid var(--color-gold-500, #c9a227)' : '2px solid transparent',
-              color: activeSubTab === 'compose' ? 'var(--color-gold-500, #c9a227)' : '#8b9bb4',
+              background: 'transparent',
+              borderBottom: activeSubTab === 'compose' ? '2px solid var(--maroon-900, #7A1A1A)' : '2px solid transparent',
+              color: activeSubTab === 'compose' ? 'var(--maroon-900, #7A1A1A)' : '#94a3b8',
               fontWeight: 600,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8
+              gap: 8,
+              fontSize: 14,
+              transition: 'all 0.2s'
             }}
           >
-            <Send size={16} /> Send SMS
+            <Send size={16} /> Compose SMS
           </button>
           <button
             onClick={() => setActiveSubTab('history')}
@@ -186,15 +193,17 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
               flex: 1,
               padding: '12px 16px',
               border: 'none',
-              background: activeSubTab === 'history' ? 'transparent' : 'transparent',
-              borderBottom: activeSubTab === 'history' ? '2px solid var(--color-gold-500, #c9a227)' : '2px solid transparent',
-              color: activeSubTab === 'history' ? 'var(--color-gold-500, #c9a227)' : '#8b9bb4',
+              background: 'transparent',
+              borderBottom: activeSubTab === 'history' ? '2px solid var(--maroon-900, #7A1A1A)' : '2px solid transparent',
+              color: activeSubTab === 'history' ? 'var(--maroon-900, #7A1A1A)' : '#94a3b8',
               fontWeight: 600,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 8
+              gap: 8,
+              fontSize: 14,
+              transition: 'all 0.2s'
             }}
           >
             <Clock size={16} /> Sent Log ({logs.length})
@@ -207,7 +216,7 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
             <form onSubmit={handleSendSms} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               {/* Template Picker */}
               <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#a0aec0', marginBottom: 6 }}>
+                <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>
                   Select DLT Approved Template
                 </label>
                 <select
@@ -216,11 +225,12 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
                   style={{
                     width: '100%',
                     padding: '10px 14px',
-                    borderRadius: 6,
-                    background: '#0d1522',
-                    border: '1px solid #23344e',
-                    color: '#fff',
-                    outline: 'none'
+                    borderRadius: 8,
+                    background: '#f9fafb',
+                    border: '1px solid #e2e8f0',
+                    color: '#1a1515',
+                    outline: 'none',
+                    fontSize: 14
                   }}
                 >
                   {templates.map(t => (
@@ -232,12 +242,13 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
                 {currentTemplate && (
                   <div style={{
                     marginTop: 8,
-                    padding: 10,
-                    borderRadius: 6,
-                    background: 'rgba(201, 162, 39, 0.1)',
-                    border: '1px dashed rgba(201, 162, 39, 0.3)',
-                    fontSize: 12,
-                    color: '#f5e9c8'
+                    padding: 12,
+                    borderRadius: 8,
+                    background: '#fdf8f8',
+                    border: '1px dashed rgba(122, 26, 26, 0.25)',
+                    fontSize: 13,
+                    color: '#7A1A1A',
+                    lineHeight: 1.5
                   }}>
                     <strong>Template Preview:</strong> {currentTemplate.body_preview}
                   </div>
@@ -247,7 +258,7 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
               {/* Dynamic Variables */}
               {currentTemplate && currentTemplate.variable_count > 1 && (
                 <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#a0aec0', marginBottom: 6 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#64748b', marginBottom: 6 }}>
                     Notice Message / Variable ({currentTemplate.variable_names?.[1] || 'Notice Text'})
                   </label>
                   <textarea
@@ -258,12 +269,13 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
                     style={{
                       width: '100%',
                       padding: '10px 14px',
-                      borderRadius: 6,
-                      background: '#0d1522',
-                      border: '1px solid #23344e',
-                      color: '#fff',
+                      borderRadius: 8,
+                      background: '#f9fafb',
+                      border: '1px solid #e2e8f0',
+                      color: '#1a1515',
                       outline: 'none',
-                      resize: 'vertical'
+                      resize: 'vertical',
+                      fontSize: 14
                     }}
                   />
                 </div>
@@ -272,14 +284,15 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
               {/* Teacher Recipients */}
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <label style={{ fontSize: 13, fontWeight: 600, color: '#a0aec0' }}>
+                  <label style={{ fontSize: 13, fontWeight: 600, color: '#64748b' }}>
                     Recipients ({selectedTeacherIds.length} selected)
                   </label>
-                  <label style={{ fontSize: 12, color: 'var(--color-gold-500, #c9a227)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <label style={{ fontSize: 12, color: 'var(--maroon-900, #7A1A1A)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 600 }}>
                     <input 
                       type="checkbox" 
                       onChange={handleSelectAllTeachers}
                       checked={teachers.length > 0 && selectedTeacherIds.length === teachers.length}
+                      style={{ accentColor: 'var(--maroon-900, #7A1A1A)' }}
                     />
                     Select All Teachers
                   </label>
@@ -288,23 +301,24 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
                 <div style={{
                   maxHeight: 180,
                   overflowY: 'auto',
-                  border: '1px solid #23344e',
-                  borderRadius: 6,
-                  background: '#0d1522',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  background: '#f9fafb',
                   padding: 10,
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 8
+                  gap: 6
                 }}>
                   {teachers.map(t => (
-                    <label key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13, padding: '4px 6px', borderRadius: 4 }}>
+                    <label key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', fontSize: 13, padding: '6px 8px', borderRadius: 6, background: selectedTeacherIds.includes(t.id) ? '#FCEFEF' : 'transparent', transition: 'all 0.15s' }}>
                       <input 
                         type="checkbox"
                         checked={selectedTeacherIds.includes(t.id)}
                         onChange={() => handleTeacherToggle(t.id)}
+                        style={{ accentColor: 'var(--maroon-900, #7A1A1A)' }}
                       />
-                      <span>{t.name}</span>
-                      <span style={{ color: '#718096', fontSize: 12 }}>({t.phone || 'No phone'})</span>
+                      <span style={{ fontWeight: 500, color: '#1a1515' }}>{t.name}</span>
+                      <span style={{ color: '#94a3b8', fontSize: 12 }}>({t.phone || 'No phone'})</span>
                     </label>
                   ))}
                 </div>
@@ -317,11 +331,13 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
                   onClick={onClose}
                   style={{
                     padding: '10px 18px',
-                    borderRadius: 6,
-                    border: '1px solid #23344e',
-                    background: 'transparent',
-                    color: '#fff',
-                    cursor: 'pointer'
+                    borderRadius: 8,
+                    border: '1px solid #e2e8f0',
+                    background: '#fff',
+                    color: '#64748b',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    fontSize: 14
                   }}
                 >
                   Cancel
@@ -331,15 +347,18 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
                   disabled={sending}
                   style={{
                     padding: '10px 22px',
-                    borderRadius: 6,
+                    borderRadius: 8,
                     border: 'none',
-                    background: 'var(--color-gold-500, #c9a227)',
-                    color: '#0b1f3a',
+                    background: 'var(--maroon-900, #7A1A1A)',
+                    color: '#fff',
                     fontWeight: 700,
                     cursor: sending ? 'wait' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8
+                    gap: 8,
+                    fontSize: 14,
+                    boxShadow: '0 2px 8px rgba(122,26,26,0.25)',
+                    transition: 'all 0.2s'
                   }}
                 >
                   <Send size={16} /> {sending ? 'Sending...' : 'Send SMS via MSG91'}
@@ -350,43 +369,45 @@ export default function NotifyTeacherModal({ isOpen, onClose }) {
             /* History Subtab */
             <div>
               {logs.length === 0 ? (
-                <div style={{ padding: 40, textAlign: 'center', color: '#718096' }}>
+                <div style={{ padding: 40, textAlign: 'center', color: '#94a3b8' }}>
                   No SMS notifications sent yet.
                 </div>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #23344e', color: '#a0aec0', textAlign: 'left' }}>
-                      <th style={{ padding: '8px 12px' }}>Date</th>
-                      <th style={{ padding: '8px 12px' }}>Recipient</th>
-                      <th style={{ padding: '8px 12px' }}>Template</th>
-                      <th style={{ padding: '8px 12px' }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {logs.map(log => (
-                      <tr key={log.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '8px 12px', color: '#a0aec0' }}>
-                          {new Date(log.created_at).toLocaleString()}
-                        </td>
-                        <td style={{ padding: '8px 12px' }}>{log.recipient_phone}</td>
-                        <td style={{ padding: '8px 12px', color: '#c9a227' }}>{log.template_id}</td>
-                        <td style={{ padding: '8px 12px' }}>
-                          <span style={{
-                            padding: '2px 8px',
-                            borderRadius: 4,
-                            fontSize: 11,
-                            fontWeight: 600,
-                            background: log.status === 'sent' ? 'rgba(30, 125, 50, 0.2)' : 'rgba(179, 38, 30, 0.2)',
-                            color: log.status === 'sent' ? '#48bb78' : '#f56565'
-                          }}>
-                            {log.status}
-                          </span>
-                        </td>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 500 }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #e2e8f0', color: '#64748b', textAlign: 'left' }}>
+                        <th style={{ padding: '10px 12px', fontWeight: 600 }}>Date</th>
+                        <th style={{ padding: '10px 12px', fontWeight: 600 }}>Recipient</th>
+                        <th style={{ padding: '10px 12px', fontWeight: 600 }}>Template</th>
+                        <th style={{ padding: '10px 12px', fontWeight: 600 }}>Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {logs.map(log => (
+                        <tr key={log.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                          <td style={{ padding: '10px 12px', color: '#64748b' }}>
+                            {new Date(log.created_at).toLocaleString()}
+                          </td>
+                          <td style={{ padding: '10px 12px', fontWeight: 500 }}>{log.recipient_phone}</td>
+                          <td style={{ padding: '10px 12px', color: 'var(--maroon-900, #7A1A1A)', fontWeight: 500 }}>{log.template_id}</td>
+                          <td style={{ padding: '10px 12px' }}>
+                            <span style={{
+                              padding: '3px 10px',
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 600,
+                              background: log.status === 'sent' ? '#D1FAE5' : '#FEE2E2',
+                              color: log.status === 'sent' ? '#065F46' : '#991B1B'
+                            }}>
+                              {log.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               )}
             </div>
           )}

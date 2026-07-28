@@ -46,7 +46,8 @@ export async function getAllTeacherProfiles() {
   try {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, name, email, role, subject')
+      .select('id, name, role, subject')
+      .eq('role', 'teacher')
       .order('name', { ascending: true });
 
     if (error) {

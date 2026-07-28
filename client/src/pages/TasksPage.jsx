@@ -1,9 +1,23 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getTasks, getAllTasks, getAllTeacherProfiles, createTask, updateTask, deleteTask } from '../api/taskService';
 import Layout from '../components/Layout';
 import { CheckSquare, Plus, Check, Clock, Trash2, Target, User, ChevronDown, ChevronUp, MessageSquare, AlertTriangle, Search, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
+
+function parseLocalDate(dateStr) {
+  if (!dateStr) return null;
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+function isTaskOverdue(task) {
+  if (!task?.deadline || task.status === 'done') return false;
+  const deadlineDate = parseLocalDate(task.deadline);
+  if (!deadlineDate || isNaN(deadlineDate.getTime())) return false;
+  deadlineDate.setHours(23, 59, 59, 999);
+  return deadlineDate < new Date();
+}
 
 const PRIORITY_CONFIG = {
   urgent: { label: 'Urgent', bg: '#FEE2E2', color: '#991B1B', dot: '#EF4444' },
@@ -38,6 +52,44 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
   // Teacher: Update remarks modal
   const [editingTask, setEditingTask] = useState(null);
   const [editRemarks, setEditRemarks] = useState('');
+  const modalTriggerRef = useRef(null);
+  const modalRef = useRef(null);
+
+  const closeModal = () => {
+    setEditingTask(null);
+    setEditRemarks('');
+    if (modalTriggerRef.current) {
+      modalTriggerRef.current.focus();
+    }
+  };
+
+  useEffect(() => {
+    if (!editingTask) return;
+    const modalEl = modalRef.current;
+    if (modalEl) {
+      const focusable = modalEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length > 0) focusable[0].focus();
+    }
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      } else if (e.key === 'Tab' && modalRef.current) {
+        const focusable = modalRef.current.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (focusable.length === 0) return;
+        const firstElement = focusable[0];
+        const lastElement = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [editingTask]);
 
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
@@ -124,8 +176,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
     try {
       await updateTask(editingTask.id, { remarks: editRemarks });
       setTasks(tasks.map(t => t.id === editingTask.id ? { ...t, remarks: editRemarks } : t));
-      setEditingTask(null);
-      setEditRemarks('');
+      closeModal();
       toast.success('Remarks updated');
     } catch (err) {
       console.error(err);
@@ -183,7 +234,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
   // ═══════════ RENDER ═══════════
   return (
     <Layout>
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+      <div className="page-header tasks-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
         <div>
           <h1 className="page-title">
             <Target size={28} style={{ display: 'inline', verticalAlign: 'bottom', marginRight: 8, color: 'var(--accent)' }}/>
@@ -214,11 +265,11 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
               <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: 'var(--maroon-900)' }}>Assign New Task to Teacher</h3>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 16 }}>
+            <div className="tasks-form-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16, marginBottom: 16 }}>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label className="form-label" style={{ fontWeight: 600, fontSize: 13 }}>Select Teacher *</label>
                 <select className="form-input" value={assignTeacherId} onChange={e => setAssignTeacherId(e.target.value)} required>
-                  {teachers.filter(t => t.role === 'teacher' || t.role !== 'admin').map(t => (
+                  {teachers.filter(t => t.role === 'teacher').map(t => (
                     <option key={t.id} value={t.id}>{t.name} ({t.subject || 'General'})</option>
                   ))}
                 </select>
@@ -258,7 +309,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
 
         {/* ═══ FILTERS ═══ */}
         {isAdmin && (
-          <div className="card" style={{ padding: 16, marginBottom: 24, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div className="card tasks-filters" style={{ padding: 16, marginBottom: 24, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: '1 1 200px', minWidth: 160 }}>
               <Search size={16} color="var(--text-muted)" />
               <input
@@ -304,7 +355,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
           /* ═══ ADMIN VIEW: Tasks Grouped by Teacher ═══ */
           <div>
             {/* Summary Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, marginBottom: 24 }}>
+            <div className="tasks-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, marginBottom: 24 }}>
               {columns.map(col => {
                 const count = filteredTasks.filter(t => t.status === col.id).length;
                 return (
@@ -342,7 +393,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
                 return (
                   <div key={teacherId} className="card" style={{ marginBottom: 16, padding: 0, overflow: 'hidden' }}>
                     {/* Teacher Header */}
-                    <div style={{ padding: '16px 20px', background: 'var(--bg-surface-hover)', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                    <div className="teacher-task-group-header" style={{ padding: '16px 20px', background: 'var(--bg-surface-hover)', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'var(--maroon-900)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.9rem', flexShrink: 0 }}>
                           {teacherName.charAt(0).toUpperCase()}
@@ -362,12 +413,12 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
 
                     {/* Task Cards */}
                     <div style={{ padding: 16 }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+                      <div className="admin-tasks-card-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
                         {teacherTasks.map(task => {
                           const prio = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium;
                           const stat = STATUS_CONFIG[task.status] || STATUS_CONFIG.todo;
                           const isExpanded = expandedTaskId === task.id;
-                          const isOverdue = task.deadline && new Date(task.deadline) < new Date() && task.status !== 'done';
+                          const isOverdue = isTaskOverdue(task);
 
                           return (
                             <div key={task.id} style={{
@@ -401,7 +452,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
 
                               {task.deadline && (
                                 <div style={{ fontSize: 12, marginTop: 8, color: isOverdue ? '#EF4444' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: isOverdue ? 600 : 400 }}>
-                                  <Clock size={12} /> Due: {new Date(task.deadline).toLocaleDateString()}
+                                  <Clock size={12} /> Due: {parseLocalDate(task.deadline).toLocaleDateString()}
                                   {isOverdue && <AlertTriangle size={12} style={{ marginLeft: 4 }} />}
                                 </div>
                               )}
@@ -453,7 +504,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                       {colTasks.map(task => {
                         const prio = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium;
-                        const isOverdue = task.deadline && new Date(task.deadline) < new Date() && task.status !== 'done';
+                        const isOverdue = isTaskOverdue(task);
 
                         return (
                           <div key={task.id} className="card" style={{
@@ -478,7 +529,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
 
                             {task.deadline && (
                               <div style={{ fontSize: 12, marginTop: 8, color: isOverdue ? '#EF4444' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: isOverdue ? 600 : 400 }}>
-                                <Clock size={12} /> Due: {new Date(task.deadline).toLocaleDateString()}
+                                <Clock size={12} /> Due: {parseLocalDate(task.deadline).toLocaleDateString()}
                                 {isOverdue && <AlertTriangle size={12} />}
                               </div>
                             )}
@@ -509,7 +560,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
                               <button
                                 className="btn btn-ghost"
                                 style={{ padding: '6px', fontSize: 12, color: 'var(--maroon-900)', minWidth: 70 }}
-                                onClick={() => { setEditingTask(task); setEditRemarks(task.remarks || ''); }}
+                                onClick={(e) => { modalTriggerRef.current = e.currentTarget; setEditingTask(task); setEditRemarks(task.remarks || ''); }}
                               >
                                 <MessageSquare size={12} style={{ marginRight: 4 }} /> Remarks
                               </button>
@@ -541,7 +592,12 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
 
       {/* ═══ REMARKS MODAL (Teacher) ═══ */}
       {editingTask && (
-        <div style={{
+        <div 
+          ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Update Remarks"
+          style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -556,7 +612,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
                 <MessageSquare size={18} style={{ verticalAlign: 'bottom', marginRight: 8 }} />
                 Update Remarks
               </h3>
-              <button onClick={() => setEditingTask(null)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>✕</button>
+              <button aria-label="Close modal" onClick={closeModal} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#94a3b8' }}>✕</button>
             </div>
             <div style={{ marginBottom: 12 }}>
               <div style={{ fontWeight: 600, fontSize: '0.92rem', color: 'var(--text-main)' }}>{editingTask.title}</div>
@@ -576,7 +632,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
               }}
             />
             <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', marginTop: 16 }}>
-              <button onClick={() => setEditingTask(null)} style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid var(--border-color)', background: '#fff', cursor: 'pointer', fontWeight: 600, color: '#64748b' }}>
+              <button onClick={closeModal} style={{ padding: '10px 18px', borderRadius: 8, border: '1px solid var(--border-color)', background: '#fff', cursor: 'pointer', fontWeight: 600, color: '#64748b' }}>
                 Cancel
               </button>
               <button onClick={handleSaveRemarks} style={{ padding: '10px 20px', borderRadius: 8, border: 'none', background: 'var(--maroon-900)', color: '#fff', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(122,26,26,0.25)' }}>
@@ -586,6 +642,23 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
           </div>
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .tasks-page-header { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
+          .tasks-page-header .btn { width: 100% !important; justify-content: center !important; }
+          .tasks-form-grid { grid-template-columns: 1fr !important; }
+          .tasks-filters { flex-direction: column !important; align-items: stretch !important; }
+          .tasks-filters > div, .tasks-filters > select { width: 100% !important; min-width: 0 !important; flex: 1 1 100% !important; }
+          .tasks-stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .admin-tasks-card-grid { grid-template-columns: 1fr !important; }
+          .tasks-kanban { grid-template-columns: 1fr !important; }
+          .teacher-task-group-header { flex-direction: column !important; align-items: flex-start !important; }
+        }
+        @media (max-width: 480px) {
+          .tasks-stats-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </Layout>
   );
 }

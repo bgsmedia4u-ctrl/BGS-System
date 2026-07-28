@@ -323,7 +323,7 @@ export default function SyllabusTrackerPage() {
               className={`btn ${activeTab === 'principal_dashboard' ? 'btn-primary' : 'btn-ghost'}`}
               style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem' }}
             >
-              <BarChart3 size={16} /> Principal Dashboard
+              <BarChart3 size={16} /> Monitor Teacher Progress
             </button>
           )}
 
@@ -333,7 +333,7 @@ export default function SyllabusTrackerPage() {
               className={`btn ${activeTab === 'admin_panel' ? 'btn-primary' : 'btn-ghost'}`}
               style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem' }}
             >
-              <Settings size={16} /> Admin Management
+              <Settings size={16} /> Curriculum Registry
             </button>
           )}
 
@@ -683,10 +683,10 @@ export default function SyllabusTrackerPage() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 16 }}>
               <div>
                 <h2 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                  Consolidated Faculty Progress Dashboard
+                  Individual Teacher Progress & Syllabus Monitor
                 </h2>
                 <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                  Real-time visibility into every teacher's syllabus coverage across academic years, streams, and classes.
+                  Real-time monitoring into every individual teacher's syllabus progress across academic years, streams, and classes configured in their Profile.
                 </p>
               </div>
 
@@ -919,112 +919,30 @@ export default function SyllabusTrackerPage() {
         )}
 
         {/* ═════════════════════════════════════════════════════════════════════
-            TAB 3: ADMIN MANAGEMENT (SUBJECT ASSIGNMENTS & SYLLABUS IMPORT)
+            TAB 3: CURRICULUM REGISTRY & MASTER SYLLABUS LIBRARY
         ═════════════════════════════════════════════════════════════════════ */}
         {activeTab === 'admin_panel' && isAdmin && (
           <div>
             <div style={{ marginBottom: 28 }}>
               <h2 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                Admin Subject & Syllabus Configuration
+                Curriculum Registry & Master Library
               </h2>
               <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                Assign specific courses to teachers and manage institution curriculum parameters. Each assignment maintains completely independent student/chapter progress.
+                Teachers select their subject, stream, 1st/2nd academic year, and classes directly in their Profile settings. Admin monitors and oversees all active syllabus records here.
               </p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 28 }}>
               
-              {/* Box 1: Assign Subject to Teacher */}
-              <form className="card" onSubmit={handleAssignSubject} style={{ padding: 24, background: 'var(--bg-surface)', border: '1px solid var(--border-color)' }}>
-                <h3 style={{ margin: '0 0 16px 0', fontSize: '1.15rem', fontWeight: 700, color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <Plus size={20} style={{ color: 'var(--accent)' }} /> Assign Course to Teacher
+              {/* Profile Integration Banner */}
+              <div className="card" style={{ padding: 22, background: '#F0FDF4', border: '1px solid #BBF7D0' }}>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#166534', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <ShieldCheck size={22} style={{ color: '#16A34A' }} /> Self-Service Teacher Profile & Syllabus Tracking Active
                 </h3>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label" style={{ fontWeight: 600 }}>Select Teacher</label>
-                    <select 
-                      className="form-input" 
-                      value={assignTeacherId} 
-                      onChange={e => setAssignTeacherId(e.target.value)}
-                      style={{ padding: '10px 12px', fontWeight: 600 }}
-                    >
-                      <option value="">-- Choose Faculty Member --</option>
-                      {allProfiles.map(p => (
-                        <option key={p.id} value={p.id}>
-                          {p.name} {p.subject ? `(${p.subject})` : ''} [{p.role}]
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label" style={{ fontWeight: 600 }}>Academic Year</label>
-                    <select className="form-input" value={assignYear} onChange={e => setAssignYear(e.target.value)} style={{ padding: '10px 12px' }}>
-                      {masterStructure.years.map(y => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label" style={{ fontWeight: 600 }}>Stream</label>
-                    <select className="form-input" value={assignStream} onChange={e => setAssignStream(e.target.value)} style={{ padding: '10px 12px' }}>
-                      {masterStructure.streams.map(s => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                      <option value="General">General / Other</option>
-                    </select>
-                  </div>
-
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label" style={{ fontWeight: 600 }}>Class / Section Name</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      value={assignClass} 
-                      placeholder="e.g. I PUC Science A, Section B..." 
-                      onChange={e => setAssignClass(e.target.value)}
-                      style={{ padding: '10px 12px' }}
-                    />
-                  </div>
-
-                  <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label" style={{ fontWeight: 600 }}>Subject</label>
-                    <select 
-                      className="form-input" 
-                      value={assignSubject} 
-                      onChange={e => { setAssignSubject(e.target.value); setCustomSubject(''); }}
-                      style={{ padding: '10px 12px', fontWeight: 600, color: 'var(--maroon-900)' }}
-                    >
-                      {availableSubjectsForStream.map(sub => (
-                        <option key={sub} value={sub}>{sub}</option>
-                      ))}
-                      <option value="CUSTOM_SUBJECT">-- Enter Custom Subject --</option>
-                    </select>
-                  </div>
-                </div>
-
-                {assignSubject === 'CUSTOM_SUBJECT' && (
-                  <div className="form-group" style={{ marginTop: 16, marginBottom: 0 }}>
-                    <label className="form-label" style={{ fontWeight: 600 }}>Custom Subject Name</label>
-                    <input 
-                      type="text" 
-                      className="form-input" 
-                      value={customSubject} 
-                      placeholder="Enter new academic subject title..."
-                      onChange={e => setCustomSubject(e.target.value)}
-                      style={{ padding: '10px 12px' }}
-                    />
-                  </div>
-                )}
-
-                <div style={{ marginTop: 20, textAlign: 'right' }}>
-                  <button type="submit" className="btn btn-primary" style={{ padding: '10px 24px', fontWeight: 700, borderRadius: 10, background: 'var(--maroon-900)', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                    + Assign Subject to Faculty
-                  </button>
-                </div>
-              </form>
+                <p style={{ margin: '6px 0 0 0', fontSize: '0.92rem', color: '#15803D', lineHeight: 1.5 }}>
+                  In accordance with institutional requirements, administrators do not manually assign subjects and syllabi. Teachers connect directly via their <strong>Profile Configuration</strong> by selecting their Subject, Stream, Academic Year (1st/2nd Year), and 2 or more classes. Once saved, their selections immediately reflect in the Syllabus Tracker and individual teacher monitoring dashboard.
+                </p>
+              </div>
 
               {/* Box 2: Active Faculty Assignments Registry */}
               <div className="card" style={{ padding: 24, border: '1px solid var(--border-color)' }}>

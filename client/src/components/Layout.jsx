@@ -174,9 +174,9 @@ export default function Layout({ children }) {
         </nav>
 
         <div className="sidebar-footer">
-          <div className="sidebar-item" onClick={() => { window.location.href = 'mailto:support@bgssidlaghatta.edu'; toast.success('Support: support@bgssidlaghatta.edu | Phone: +91 8152-222333'); }} style={{ cursor: 'pointer' }}>
+          <button className="sidebar-item" onClick={() => { window.location.href = 'mailto:support@bgssidlaghatta.edu'; }} style={{ cursor: 'pointer', width: '100%', background: 'transparent', border: 'none', font: 'inherit', color: 'inherit', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 12 }}>
             <HelpCircle size={20} /> Support
-          </div>
+          </button>
           <div className="sidebar-item" onClick={handleLogout} style={{ cursor: 'pointer', marginTop: 4 }}>
             <LogOut size={20} /> Logout
           </div>

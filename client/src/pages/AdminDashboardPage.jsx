@@ -68,6 +68,7 @@ export default function AdminDashboardPage() {
   const [freeTeachers, setFreeTeachers] = useState([]);
   const [freeTimetable, setFreeTimetable] = useState([]);
   const [freeLoading, setFreeLoading] = useState(true);
+  const [freeError, setFreeError] = useState(null);
   const [filterSubject, setFilterSubject] = useState('All');
 
   useEffect(() => {
@@ -76,16 +77,20 @@ export default function AdminDashboardPage() {
 
   async function fetchFreeTeacherData() {
     setFreeLoading(true);
+    setFreeError(null);
     try {
       const [profilesRes, timetableRes] = await Promise.all([
         supabase.from('profiles').select('*').in('role', ['teacher', 'admin']),
         supabase.from('timetable').select('*')
       ]);
+      if (profilesRes.error) throw profilesRes.error;
+      if (timetableRes.error) throw timetableRes.error;
       const teacherList = (profilesRes.data || []).filter(t => t.role === 'teacher' || t.subject);
       setFreeTeachers(teacherList);
       setFreeTimetable(timetableRes.data || []);
     } catch (e) {
       console.error('Error fetching free teacher data:', e);
+      setFreeError(e.message || 'Failed to analyze timetable data');
     } finally {
       setFreeLoading(false);
     }
@@ -460,13 +465,19 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Free Teachers Grid */}
-        {freeLoading ? (
+        {freeError ? (
+          <div className="card" style={{ padding: 40, textAlign: 'center', color: '#991B1B', background: '#FEE2E2', border: '1px solid #FCA5A5' }}>
+            <AlertCircle size={28} style={{ margin: '0 auto 8px' }} />
+            <div style={{ fontWeight: 600 }}>Failed to load free teachers</div>
+            <div style={{ fontSize: '0.85rem', marginTop: 4 }}>{freeError}</div>
+          </div>
+        ) : freeLoading ? (
           <div style={{ padding: 40, textAlign: 'center' }}>
             <div className="spinner" style={{ margin: '0 auto' }}></div>
             <p style={{ marginTop: 12, color: 'var(--text-muted)' }}>Analyzing timetable...</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+          <div className="free-teachers-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
             {TEACHING_PERIODS.map((periodStr) => {
               const freeList = getFreeTeachersForPeriod(periodStr);
               return (
@@ -538,6 +549,7 @@ export default function AdminDashboardPage() {
         }
         @media (max-width: 640px) {
           .metrics-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .free-teachers-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </Layout>

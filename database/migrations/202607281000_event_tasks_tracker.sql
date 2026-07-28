@@ -53,32 +53,27 @@ ALTER TABLE public.teacher_tasks ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view relevant tasks" ON public.teacher_tasks
     FOR SELECT USING (
         auth.uid() = teacher_id OR
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.role() = 'authenticated'
+        public.is_admin()
     );
 
 -- INSERT: Only admins can create tasks (assign to teachers)
 CREATE POLICY "Admins can create tasks" ON public.teacher_tasks
     FOR INSERT WITH CHECK (
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.role() = 'authenticated'
+        public.is_admin()
     );
 
 -- UPDATE: Teachers can update their own task status/remarks; Admins can update any task
 CREATE POLICY "Users can update relevant tasks" ON public.teacher_tasks
     FOR UPDATE USING (
         auth.uid() = teacher_id OR
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.role() = 'authenticated'
+        public.is_admin()
     ) WITH CHECK (
         auth.uid() = teacher_id OR
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.role() = 'authenticated'
+        public.is_admin()
     );
 
 -- DELETE: Only admins can delete tasks
 CREATE POLICY "Admins can delete tasks" ON public.teacher_tasks
     FOR DELETE USING (
-        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-        auth.role() = 'authenticated'
+        public.is_admin()
     );

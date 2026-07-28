@@ -22,11 +22,40 @@ const AVAILABLE_SUBJECTS = [
   'Administration & Operations'
 ];
 
+const AVAILABLE_STREAMS = [
+  'Science',
+  'Commerce',
+  'Arts',
+  'General / Vocational'
+];
+
+const AVAILABLE_YEARS = [
+  '1st PUC',
+  '2nd PUC',
+  'Both 1st & 2nd PUC'
+];
+
+const STANDARD_CLASSES = [
+  'Section A',
+  'Section B',
+  'Section C',
+  'Section D',
+  'Section E',
+  'Section F',
+  'Class 11 A',
+  'Class 11 B',
+  'Class 12 A',
+  'Class 12 B'
+];
+
 export default function SettingsPage() {
   const { user, profile, refreshProfile } = useAuth();
   
   const [displayName, setDisplayName] = useState('');
   const [subject, setSubject] = useState('');
+  const [stream, setStream] = useState('Science');
+  const [academicYear, setAcademicYear] = useState('1st PUC');
+  const [selectedClasses, setSelectedClasses] = useState(['Section A', 'Section B']);
   const [saving, setSaving] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [smsNotifications, setSmsNotifications] = useState(true);
@@ -35,16 +64,43 @@ export default function SettingsPage() {
     if (profile) {
       setDisplayName(profile.name || user?.user_metadata?.full_name || '');
       setSubject(profile.subject || profile.department || 'Physics');
+      setStream(profile.stream || 'Science');
+      setAcademicYear(profile.academic_year || '1st PUC');
+      if (profile.assigned_classes) {
+        setSelectedClasses(profile.assigned_classes.split(',').map(c => c.trim()).filter(Boolean));
+      }
     } else if (user) {
       setDisplayName(user.user_metadata?.full_name || user.email?.split('@')[0] || '');
       setSubject('Physics');
     }
+
+    // Load actual assigned syllabus classes from teacher_subject_assignments
+    async function loadSyllabusConfig() {
+      if (!user?.id) return;
+      try {
+        const { data } = await supabase.from('teacher_subject_assignments').select('*').eq('teacher_id', user.id);
+        if (data && data.length > 0) {
+          setStream(data[0].stream || 'Science');
+          const years = [...new Set(data.map(d => d.academic_year))];
+          if (years.length > 1) setAcademicYear('Both 1st & 2nd PUC');
+          else setAcademicYear(years[0] || '1st PUC');
+          const classes = [...new Set(data.map(d => d.class_name))];
+          if (classes.length > 0) setSelectedClasses(classes);
+        }
+      } catch (err) {
+        console.warn('Could not load syllabus assignments in settings', err);
+      }
+    }
+    loadSyllabusConfig();
   }, [profile, user]);
 
   async function handleSaveProfile(e) {
     e.preventDefault();
     if (!displayName.trim()) {
       return toast.error('Display name cannot be empty');
+    }
+    if (selectedClasses.length < 2 && profile?.role !== 'admin') {
+      return toast.error('Please select at least 2 or more classes/sections for syllabus tracking.');
     }
 
     setSaving(true);
@@ -59,7 +115,10 @@ export default function SettingsPage() {
       // 2. Update supabase profiles table
       const updateData = {
         name: displayName.trim(),
-        subject: subject
+        subject: subject,
+        stream: stream,
+        academic_year: academicYear,
+        assigned_classes: selectedClasses.join(', ')
       };
 
       // Also update department if subject is administrative
@@ -78,12 +137,37 @@ export default function SettingsPage() {
         console.warn('Profile DB update:', error.message);
       }
 
-      // 3. Trigger context refresh
+      // 3. Sync directly to teacher_subject_assignments table so it immediately reflects on Syllabus Tracker!
+      if (user?.id) {
+        try {
+          await supabase.from('teacher_subject_assignments').delete().eq('teacher_id', user.id);
+          const yearsToAssign = academicYear === 'Both 1st & 2nd PUC' ? ['1st PUC', '2nd PUC'] : [academicYear];
+          const assignmentRows = [];
+          yearsToAssign.forEach(yr => {
+            selectedClasses.forEach(clsName => {
+              assignmentRows.push({
+                teacher_id: user.id,
+                academic_year: yr,
+                stream: stream,
+                class_name: clsName,
+                subject: subject
+              });
+            });
+          });
+          if (assignmentRows.length > 0) {
+            await supabase.from('teacher_subject_assignments').insert(assignmentRows);
+          }
+        } catch (syncErr) {
+          console.warn('Error syncing syllabus assignments:', syncErr);
+        }
+      }
+
+      // 4. Trigger context refresh
       if (refreshProfile) {
         await refreshProfile();
       }
 
-      toast.success('Settings and display profile successfully updated!');
+      toast.success('Profile and Syllabus Tracker courses saved successfully!');
     } catch (err) {
       console.error(err);
       toast.error('Failed to save settings: ' + (err.message || 'Network error'));
@@ -100,7 +184,7 @@ export default function SettingsPage() {
             <Settings size={28} style={{ display: 'inline', verticalAlign: 'bottom', marginRight: 10, color: 'var(--maroon-900)' }} />
             Account & System Settings
           </h1>
-          <p className="page-subtitle">Configure personal profile credentials, assigned teaching subjects, and institutional legal agreements</p>
+          <p className="page-subtitle">Configure personal profile credentials, assigned teaching subjects, streams, classes, and institutional agreements</p>
         </div>
       </div>
 
@@ -112,8 +196,8 @@ export default function SettingsPage() {
               <User size={22} />
             </div>
             <div>
-              <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>Profile Configuration</h2>
-              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Update your public display identity across weekly reports and timetables</span>
+              <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: 'var(--text-main)' }}>Profile & Syllabus Configuration</h2>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Configure your teaching subject, stream, year, and classes for Syllabus Tracker integration</span>
             </div>
           </div>
 
@@ -133,13 +217,13 @@ export default function SettingsPage() {
                 />
               </div>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginTop: 6 }}>
-                This name will be displayed on all attendance registries, marks entry sheets, and parent notifications.
+                This name will be displayed on all attendance registries, syllabus monitors, and reports.
               </span>
             </div>
 
             <div>
               <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
-                Primary Subject / Department Designation
+                Primary Subject / Department Designation *
               </label>
               <select
                 value={subject}
@@ -151,7 +235,83 @@ export default function SettingsPage() {
                 ))}
               </select>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginTop: 6 }}>
-                Determines default course filtering on Syllabus Tracker and Free-Period teacher discovery.
+                Determines curriculum modules and chapters on Syllabus Tracker.
+              </span>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
+                Academic Stream *
+              </label>
+              <select
+                value={stream}
+                onChange={(e) => setStream(e.target.value)}
+                style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color)', fontSize: '0.95rem', background: '#fff', fontWeight: 500 }}
+              >
+                {AVAILABLE_STREAMS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginTop: 6 }}>
+                Associates your profile with specific stream curricula (Science, Commerce, Arts).
+              </span>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
+                Academic Year / Grade (1year / 2nd year) *
+              </label>
+              <select
+                value={academicYear}
+                onChange={(e) => setAcademicYear(e.target.value)}
+                style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1px solid var(--border-color)', fontSize: '0.95rem', background: '#fff', fontWeight: 500 }}
+              >
+                {AVAILABLE_YEARS.map((y) => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block', marginTop: 6 }}>
+                Select whether you teach 1st Year (1st PUC), 2nd Year (2nd PUC), or Both.
+              </span>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 8 }}>
+                Assigned Classes / Sections (Select 2 or more) *
+              </label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 4 }}>
+                {STANDARD_CLASSES.map(cls => {
+                  const isSelected = selectedClasses.includes(cls);
+                  return (
+                    <button
+                      type="button"
+                      key={cls}
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedClasses(selectedClasses.filter(c => c !== cls));
+                        } else {
+                          setSelectedClasses([...selectedClasses, cls]);
+                        }
+                      }}
+                      style={{
+                        padding: '8px 14px',
+                        borderRadius: 20,
+                        border: isSelected ? '1px solid var(--maroon-900)' : '1px solid var(--border-color)',
+                        background: isSelected ? '#FCEFEF' : '#F9FAFB',
+                        color: isSelected ? 'var(--maroon-900)' : 'var(--text-main)',
+                        fontWeight: isSelected ? 700 : 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        fontSize: '0.88rem'
+                      }}
+                    >
+                      {isSelected ? '✓ ' : '+ '}{cls}
+                    </button>
+                  );
+                })}
+              </div>
+              <span style={{ fontSize: '0.82rem', color: selectedClasses.length < 2 ? '#DC2626' : '#15803D', fontWeight: selectedClasses.length < 2 ? 600 : 500, display: 'block', marginTop: 8 }}>
+                {selectedClasses.length < 2 ? '⚠️ Please select at least 2 or more classes/sections to enable syllabus tracking.' : `✓ ${selectedClasses.length} classes selected. Progress will be monitored individually per class.`}
               </span>
             </div>
 
@@ -189,7 +349,7 @@ export default function SettingsPage() {
               }}
             >
               {saving ? <div className="spinner" style={{ width: 18, height: 18, border: '2px solid #fff', borderTopColor: 'transparent' }} /> : <Save size={18} />}
-              <span>{saving ? 'Saving Profile...' : 'Save Changes'}</span>
+              <span>{saving ? 'Saving & Syncing Syllabus...' : 'Save Profile & Syllabus Configuration'}</span>
             </button>
           </form>
         </div>

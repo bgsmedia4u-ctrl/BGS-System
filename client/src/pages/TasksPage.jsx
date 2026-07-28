@@ -489,101 +489,103 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
         ) : (
           /* ═══ TEACHER VIEW: Kanban Board ═══ */
           <div>
-            <div className="tasks-kanban" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
-              {columns.map(col => {
-                const colTasks = filteredTasks.filter(t => t.status === col.id);
-                return (
-                  <div key={col.id} className="card" style={{ padding: 16, background: 'var(--bg-surface-hover)', border: 'none' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, padding: '6px 12px', background: col.bg, color: col.color, borderRadius: 20, width: 'fit-content', fontWeight: 600, fontSize: '0.88rem' }}>
-                      {col.icon} {col.label}
-                      <span style={{ marginLeft: 8, background: 'rgba(255,255,255,0.6)', padding: '2px 8px', borderRadius: 10, fontSize: 12 }}>
-                        {colTasks.length}
-                      </span>
-                    </div>
+            {filteredTasks.length === 0 ? (
+              <div className="card" style={{ padding: '60px 24px', textAlign: 'center', marginTop: 12, border: '2px dashed var(--border-color)', borderRadius: 20, background: '#fff' }}>
+                <Target size={56} style={{ color: 'var(--accent)', opacity: 0.8, margin: '0 auto 16px' }} />
+                <h3 style={{ margin: '0 0 10px', color: 'var(--text-main)', fontSize: '1.4rem', fontWeight: 700 }}>No Tasks Assigned</h3>
+                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '1.05rem', lineHeight: 1.6 }}>Your admin hasn't assigned any tasks yet.<br />Check back here once new assignments arrive!</p>
+              </div>
+            ) : (
+              <div className="tasks-kanban" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
+                {columns.map(col => {
+                  const colTasks = filteredTasks.filter(t => t.status === col.id);
+                  return (
+                    <div key={col.id} className="card" style={{ padding: 20, background: 'var(--bg-surface-hover)', border: '1px solid var(--border-color)', borderRadius: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18, padding: '8px 16px', background: col.bg, color: col.color, borderRadius: 24, width: 'fit-content', fontWeight: 700, fontSize: '1rem' }}>
+                        {col.icon} {col.label}
+                        <span style={{ marginLeft: 8, background: 'rgba(255,255,255,0.8)', padding: '2px 10px', borderRadius: 12, fontSize: 13, color: col.color }}>
+                          {colTasks.length}
+                        </span>
+                      </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      {colTasks.map(task => {
-                        const prio = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium;
-                        const isOverdue = isTaskOverdue(task);
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                        {colTasks.map(task => {
+                          const prio = PRIORITY_CONFIG[task.priority] || PRIORITY_CONFIG.medium;
+                          const isOverdue = isTaskOverdue(task);
 
-                        return (
-                          <div key={task.id} className="card" style={{
-                            padding: 16,
-                            marginBottom: 0,
-                            cursor: 'default',
-                            borderLeft: `4px solid ${prio.dot}`,
-                            background: isOverdue ? '#FFF5F5' : '#fff'
-                          }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
-                              <div style={{ fontWeight: 600, fontSize: '0.9rem', color: task.status === 'done' ? 'var(--text-muted)' : 'var(--text-main)', textDecoration: task.status === 'done' ? 'line-through' : 'none', wordBreak: 'break-word', flex: 1 }}>
-                                {task.title}
+                          return (
+                            <div key={task.id} className="card" style={{
+                              padding: 20,
+                              marginBottom: 0,
+                              cursor: 'default',
+                              borderLeft: `5px solid ${prio.dot}`,
+                              background: isOverdue ? '#FFF5F5' : '#fff',
+                              borderRadius: 14,
+                              boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
+                            }}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+                                <div style={{ fontWeight: 700, fontSize: '1.1rem', color: task.status === 'done' ? 'var(--text-muted)' : 'var(--text-main)', textDecoration: task.status === 'done' ? 'line-through' : 'none', wordBreak: 'break-word', flex: 1 }}>
+                                  {task.title}
+                                </div>
+                                <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 700, background: prio.bg, color: prio.color, flexShrink: 0 }}>{prio.label}</span>
                               </div>
-                              <span style={{ padding: '2px 6px', borderRadius: 4, fontSize: 10, fontWeight: 700, background: prio.bg, color: prio.color, flexShrink: 0 }}>{prio.label}</span>
+
+                              {task.description && (
+                                <div style={{ fontSize: 14, marginTop: 10, color: 'var(--text-muted)', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                  {task.description}
+                                </div>
+                              )}
+
+                              {task.deadline && (
+                                <div style={{ fontSize: 13, marginTop: 12, color: isOverdue ? '#EF4444' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6, fontWeight: isOverdue ? 700 : 500 }}>
+                                  <Clock size={15} /> Due: {parseLocalDate(task.deadline).toLocaleDateString()}
+                                  {isOverdue && <AlertTriangle size={15} />}
+                                </div>
+                              )}
+
+                              {task.remarks && (
+                                <div style={{ fontSize: 13, marginTop: 12, padding: '8px 12px', background: '#D1FAE5', borderRadius: 8, color: '#065F46', lineHeight: 1.5 }}>
+                                  <strong>Your Remarks:</strong> {task.remarks}
+                                </div>
+                              )}
+
+                              {/* Status buttons + Remarks */}
+                              <div style={{ display: 'flex', gap: 8, marginTop: 18, flexWrap: 'wrap' }}>
+                                {col.id !== 'todo' && (
+                                  <button className="btn btn-ghost" style={{ flex: 1, padding: '8px 12px', fontSize: 13, minWidth: 80, fontWeight: 600, height: 38 }} onClick={() => handleStatusChange(task, 'todo')}>
+                                    To Do
+                                  </button>
+                                )}
+                                {col.id !== 'in_progress' && (
+                                  <button className="btn btn-ghost" style={{ flex: 1, padding: '8px 12px', fontSize: 13, color: '#92400E', borderColor: '#FEF3C7', minWidth: 80, fontWeight: 600, height: 38 }} onClick={() => handleStatusChange(task, 'in_progress')}>
+                                    Start
+                                  </button>
+                                )}
+                                {col.id !== 'done' && (
+                                  <button className="btn btn-ghost" style={{ flex: 1, padding: '8px 12px', fontSize: 13, color: '#065F46', borderColor: '#D1FAE5', minWidth: 80, fontWeight: 600, height: 38 }} onClick={() => handleStatusChange(task, 'done')}>
+                                    Complete
+                                  </button>
+                                )}
+                                <button
+                                  className="btn btn-primary"
+                                  style={{ flex: 1, padding: '8px 12px', fontSize: 13, minWidth: 95, background: 'var(--maroon-900)', color: '#fff', fontWeight: 600, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                                  onClick={(e) => { modalTriggerRef.current = e.currentTarget; setEditingTask(task); setEditRemarks(task.remarks || ''); }}
+                                >
+                                  <MessageSquare size={14} /> Remarks
+                                </button>
+                              </div>
                             </div>
-
-                            {task.description && (
-                              <div style={{ fontSize: 12, marginTop: 8, color: 'var(--text-muted)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                {task.description}
-                              </div>
-                            )}
-
-                            {task.deadline && (
-                              <div style={{ fontSize: 12, marginTop: 8, color: isOverdue ? '#EF4444' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: isOverdue ? 600 : 400 }}>
-                                <Clock size={12} /> Due: {parseLocalDate(task.deadline).toLocaleDateString()}
-                                {isOverdue && <AlertTriangle size={12} />}
-                              </div>
-                            )}
-
-                            {task.remarks && (
-                              <div style={{ fontSize: 12, marginTop: 8, padding: '6px 10px', background: '#D1FAE5', borderRadius: 6, color: '#065F46' }}>
-                                <strong>Your Remarks:</strong> {task.remarks}
-                              </div>
-                            )}
-
-                            {/* Status buttons + Remarks */}
-                            <div style={{ display: 'flex', gap: 6, marginTop: 14, flexWrap: 'wrap' }}>
-                              {col.id !== 'todo' && (
-                                <button className="btn btn-ghost" style={{ flex: 1, padding: '6px', fontSize: 12, minWidth: 70 }} onClick={() => handleStatusChange(task, 'todo')}>
-                                  To Do
-                                </button>
-                              )}
-                              {col.id !== 'in_progress' && (
-                                <button className="btn btn-ghost" style={{ flex: 1, padding: '6px', fontSize: 12, color: '#92400E', borderColor: '#FEF3C7', minWidth: 70 }} onClick={() => handleStatusChange(task, 'in_progress')}>
-                                  Start
-                                </button>
-                              )}
-                              {col.id !== 'done' && (
-                                <button className="btn btn-ghost" style={{ flex: 1, padding: '6px', fontSize: 12, color: '#065F46', borderColor: '#D1FAE5', minWidth: 70 }} onClick={() => handleStatusChange(task, 'done')}>
-                                  Complete
-                                </button>
-                              )}
-                              <button
-                                className="btn btn-ghost"
-                                style={{ padding: '6px', fontSize: 12, color: 'var(--maroon-900)', minWidth: 70 }}
-                                onClick={(e) => { modalTriggerRef.current = e.currentTarget; setEditingTask(task); setEditRemarks(task.remarks || ''); }}
-                              >
-                                <MessageSquare size={12} style={{ marginRight: 4 }} /> Remarks
-                              </button>
-                            </div>
+                          );
+                        })}
+                        {colTasks.length === 0 && (
+                          <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--text-muted)', fontSize: 14, border: '2px dashed var(--border-color)', borderRadius: 12 }}>
+                            No tasks here
                           </div>
-                        );
-                      })}
-                      {colTasks.length === 0 && (
-                        <div style={{ textAlign: 'center', padding: '24px 0', color: 'var(--text-muted)', fontSize: 13, border: '2px dashed var(--border-color)', borderRadius: 12 }}>
-                          No tasks here
-                        </div>
-                      )}
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {filteredTasks.length === 0 && (
-              <div className="card" style={{ padding: 40, textAlign: 'center', marginTop: 24, border: '2px dashed var(--border-color)' }}>
-                <Target size={40} style={{ color: 'var(--text-muted)', opacity: 0.4, margin: '0 auto 12px' }} />
-                <h3 style={{ margin: '0 0 8px', color: 'var(--text-main)' }}>No Tasks Assigned</h3>
-                <p style={{ color: 'var(--text-muted)', margin: 0 }}>Your admin hasn't assigned any tasks yet. Check back later.</p>
+                  );
+                })}
               </div>
             )}
           </div>

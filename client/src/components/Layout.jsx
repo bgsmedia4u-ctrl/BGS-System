@@ -91,16 +91,11 @@ export default function Layout({ children }) {
 
   return (
     <div className="app-layout">
-      {/* Mobile Menu Button */}
-      <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)} aria-label="Open navigation menu">
-        <Menu size={24} />
-      </button>
-
       {/* Mobile Sidebar Overlay */}
       <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
 
       {/* Left Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} onClick={() => { if (window.innerWidth <= 768) setSidebarOpen(false); }}>
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} onClick={() => { if (window.innerWidth <= 1024) setSidebarOpen(false); }}>
         <div className="sidebar-header" style={{ position: 'relative' }}>
           {sidebarOpen && (
             <button
@@ -204,8 +199,17 @@ export default function Layout({ children }) {
       {/* Main Content Area */}
       <div className="main-content">
         {/* Top Header */}
-        <header className="top-header" style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 28px' }}>
-          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: 24, position: 'relative' }}>
+        <header className="top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 28px' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <button 
+              className="mobile-menu-btn" 
+              onClick={() => setSidebarOpen(true)} 
+              aria-label="Open navigation menu"
+            >
+              <Menu size={24} />
+            </button>
+          </div>
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: 24, position: 'relative', marginLeft: 'auto' }}>
             {/* Notification Bell */}
             <div style={{ position: 'relative' }}>
               <button 

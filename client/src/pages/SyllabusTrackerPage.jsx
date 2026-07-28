@@ -330,7 +330,7 @@ export default function SyllabusTrackerPage() {
             <button
               onClick={() => { setActiveTab('principal_dashboard'); setSelectedAssignment(null); }}
               className={`btn ${activeTab === 'principal_dashboard' ? 'btn-primary' : 'btn-ghost'}`}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem', color: activeTab === 'principal_dashboard' ? '#ffffff' : 'var(--text-main)', backgroundColor: activeTab === 'principal_dashboard' ? 'var(--maroon-900, #731313)' : 'transparent' }}
             >
               <BarChart3 size={16} /> Monitor Teacher Progress
             </button>
@@ -340,7 +340,7 @@ export default function SyllabusTrackerPage() {
             <button
               onClick={() => { setActiveTab('admin_panel'); setSelectedAssignment(null); }}
               className={`btn ${activeTab === 'admin_panel' ? 'btn-primary' : 'btn-ghost'}`}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem' }}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem', color: activeTab === 'admin_panel' ? '#ffffff' : 'var(--text-main)', backgroundColor: activeTab === 'admin_panel' ? 'var(--maroon-900, #731313)' : 'transparent' }}
             >
               <Settings size={16} /> Curriculum Registry
             </button>
@@ -349,7 +349,7 @@ export default function SyllabusTrackerPage() {
           <button
             onClick={() => { setActiveTab('my_workspace'); setSelectedAssignment(null); loadMyWorkspace(); }}
             className={`btn ${activeTab === 'my_workspace' ? 'btn-primary' : 'btn-ghost'}`}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem', color: '#ffffff', backgroundColor: activeTab === 'my_workspace' ? 'var(--primary, #3B82F6)' : 'transparent' }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', fontSize: '0.88rem', color: activeTab === 'my_workspace' ? '#ffffff' : 'var(--text-main)', backgroundColor: activeTab === 'my_workspace' ? 'var(--maroon-900, #731313)' : 'transparent', fontWeight: activeTab === 'my_workspace' ? 700 : 500 }}
           >
             <UserCheck size={16} /> Teacher Panel (My Subjects)
           </button>

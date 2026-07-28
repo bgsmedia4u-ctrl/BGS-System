@@ -318,7 +318,7 @@ export default function Layout({ children }) {
           <div style={{ flex: 1 }}>
             {children}
           </div>
-          <footer style={{ marginTop: 40, paddingTop: 20, paddingBottom: 16, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+          <footer style={{ marginTop: 40, paddingTop: 20, paddingBottom: 16, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, fontSize: '0.86rem', color: 'var(--text-main, #3F2314)' }}>
             <div>
               <strong>BGS Institutional System</strong> © {new Date().getFullYear()}. All Rights Reserved.
             </div>

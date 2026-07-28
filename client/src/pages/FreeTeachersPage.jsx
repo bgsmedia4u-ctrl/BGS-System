@@ -141,7 +141,7 @@ export default function FreeTeachersPage() {
             <p style={{ marginTop: 16, color: 'var(--text-muted)' }}>Analyzing timetable slots and faculty schedules...</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: 20 }}>
             {TEACHING_PERIODS.map((periodStr) => {
               const freeList = getFreeTeachersForPeriod(periodStr);
               return (

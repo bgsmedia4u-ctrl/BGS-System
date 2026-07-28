@@ -24,7 +24,8 @@ import {
   CheckCircle,
   Clock,
   ExternalLink,
-  X
+  X,
+  Menu
 } from 'lucide-react';
 import '../layout.css';
 
@@ -35,6 +36,7 @@ export default function Layout({ children }) {
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     fetchNotifications();
@@ -89,9 +91,25 @@ export default function Layout({ children }) {
 
   return (
     <div className="app-layout">
+      {/* Mobile Menu Button */}
+      <button className="mobile-menu-btn" onClick={() => setSidebarOpen(true)} aria-label="Open navigation menu">
+        <Menu size={24} />
+      </button>
+
+      {/* Mobile Sidebar Overlay */}
+      <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
+
       {/* Left Sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-header">
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`} onClick={() => { if (window.innerWidth <= 768) setSidebarOpen(false); }}>
+        <div className="sidebar-header" style={{ position: 'relative' }}>
+          {sidebarOpen && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setSidebarOpen(false); }}
+              style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff', padding: '6px', borderRadius: '50%', cursor: 'pointer', display: 'flex' }}
+            >
+              <X size={18} />
+            </button>
+          )}
           <div style={{ width: '68px', height: '68px', margin: '0 auto 12px auto', borderRadius: '50%', overflow: 'hidden', background: '#ffffff', border: '2px solid rgba(255, 255, 255, 0.25)', boxShadow: '0 4px 12px rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4px' }}>
             <img src="/Logo-removebg-preview.png" alt="BGS Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>

@@ -184,3 +184,44 @@
   padding: 0 40px 40px;
   overflow-y: auto;
 }
+
+/* ─── Mobile Layout Responsive Overrides ─── */
+@media (max-width: 768px) {
+  html, body, #root, .app-layout {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+  .main-content {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    flex: 1 1 100% !important;
+  }
+  .top-header {
+    padding: 0 16px !important;
+    height: 64px !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    box-sizing: border-box;
+  }
+  .page-content {
+    padding: 0 12px 30px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box;
+  }
+  .search-bar {
+    width: 100% !important;
+    max-width: 200px !important;
+  }
+  .header-actions {
+    gap: 12px !important;
+  }
+  .user-info {
+    display: none !important;
+  }
+}

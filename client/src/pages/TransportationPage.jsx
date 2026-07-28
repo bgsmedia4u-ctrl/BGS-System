@@ -68,7 +68,7 @@ export default function TransportationPage() {
             <p style={{ marginTop: 16, color: 'var(--text-muted)' }}>Loading transport telemetry and routes...</p>
           </div>
         ) : filteredRoutes.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: 20 }}>
             {filteredRoutes.map((r, i) => (
               <div key={r.id || i} className="card" style={{ border: '1px solid var(--border-color)', padding: 22, borderRadius: 14 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>

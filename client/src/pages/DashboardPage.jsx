@@ -206,7 +206,7 @@ export default function DashboardPage() {
         )}
 
         {/* Top Widgets Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 24, marginBottom: 32 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 24, marginBottom: 32 }}>
           
           {/* Class/Attendance Overview Card */}
           <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -292,7 +292,7 @@ export default function DashboardPage() {
           <h2 style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-main)', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
             <GraduationCap size={22} style={{ color: 'var(--accent)' }} /> Teacher Portal Quick Actions
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: 16 }}>
             <Link to="/attendance" className="card" style={{ textDecoration: 'none', padding: 20, display: 'flex', alignItems: 'center', gap: 16, transition: 'all var(--transition)', border: '1px solid var(--border-color)' }}>
               <div style={{ width: 48, height: 48, borderRadius: 12, background: 'rgba(16, 185, 129, 0.15)', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Users size={24} />

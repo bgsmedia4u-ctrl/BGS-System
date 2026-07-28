@@ -68,7 +68,7 @@ export default function AlumniPage() {
             <p style={{ marginTop: 16, color: 'var(--text-muted)' }}>Querying graduate registries...</p>
           </div>
         ) : filteredAlumni.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
             {filteredAlumni.map((a, i) => (
               <div key={a.id || i} className="card" style={{ border: '1px solid var(--border-color)', padding: 22, borderRadius: 14 }}>
                 <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 16 }}>

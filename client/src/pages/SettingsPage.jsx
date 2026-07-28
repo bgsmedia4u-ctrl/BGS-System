@@ -188,9 +188,9 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="page-body fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 24 }}>
+      <div className="page-body fade-in" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))', gap: 24 }}>
         {/* Profile Modification Section */}
-        <div className="card" style={{ border: '1px solid var(--border-color)', padding: 28, borderRadius: 16, height: 'fit-content' }}>
+        <div className="card" style={{ border: '1px solid var(--border-color)', padding: 22, borderRadius: 16, height: 'fit-content', boxSizing: 'border-box', width: '100%', maxWidth: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid var(--border-color)', paddingBottom: 16, marginBottom: 24 }}>
             <div style={{ width: 44, height: 44, borderRadius: 12, background: '#FCEFEF', color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <User size={22} />

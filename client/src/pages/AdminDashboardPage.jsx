@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../api/supabase';
 import Layout from '../components/Layout';
 import { 
@@ -16,7 +17,9 @@ import {
   Mail,
   Phone,
   AlertCircle,
-  Shield
+  Shield,
+  CheckSquare,
+  Target
 } from 'lucide-react';
 import { 
   AreaChart, 
@@ -113,6 +116,28 @@ export default function AdminDashboardPage() {
         <div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--maroon-900)' }}>Dashboard</h1>
           <p style={{ color: 'var(--text-muted)' }}>{selectedDate}</p>
+        </div>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <Link
+            to="/admin/tasks"
+            style={{
+              background: 'var(--maroon-900, #7A1A1A)',
+              color: '#fff',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: 600,
+              fontSize: '0.92rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 12px rgba(122,26,26,0.25)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <CheckSquare size={18} />
+            Assign Event Tasks to Teachers
+          </Link>
         </div>
       </div>
 

@@ -27,7 +27,7 @@ export default function StudentManagementPage() {
     setLoading(false);
   }
 
-  const filteredStudents = students.filter(s => s.name?.toLowerCase().includes(searchTerm.toLowerCase()) || s.roll_no?.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredStudents = students.filter(s => s.name?.toLowerCase().includes(searchTerm.toLowerCase()) || s.roll_number?.toString().toLowerCase().includes(searchTerm.toLowerCase()));
 
   const renderDirectory = () => (
     <div style={{ background: 'var(--bg-surface)', padding: 24, borderRadius: 16, border: '1px solid var(--border-color)' }}>
@@ -59,7 +59,7 @@ export default function StudentManagementPage() {
           {filteredStudents.length > 0 ? (
             filteredStudents.map((stu, i) => (
               <tr key={stu.id || i} style={{ borderBottom: '1px solid var(--border-color)' }}>
-                <td style={{ padding: '16px', fontWeight: 600 }}>{stu.roll_no || stu.id?.substring(0, 8)}</td>
+                <td style={{ padding: '16px', fontWeight: 600 }}>{stu.roll_number || stu.id?.substring(0, 8)}</td>
                 <td style={{ padding: '16px', color: 'var(--maroon-900)', fontWeight: 500 }}>{stu.name}</td>
                 <td style={{ padding: '16px' }}>{stu.year} {stu.stream}</td>
                 <td style={{ padding: '16px' }}>{stu.class}</td>

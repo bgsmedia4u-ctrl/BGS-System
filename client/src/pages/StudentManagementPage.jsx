@@ -27,7 +27,11 @@ export default function StudentManagementPage() {
     setLoading(false);
   }
 
-  const filteredStudents = students.filter(s => s.name?.toLowerCase().includes(searchTerm.toLowerCase()) || s.roll_number?.toString().toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredStudents = students.filter(s => {
+    const searchLower = searchTerm.toLowerCase();
+    const visibleIdentifier = (s.roll_number || s.id?.substring(0, 8))?.toString().toLowerCase();
+    return s.name?.toLowerCase().includes(searchLower) || visibleIdentifier?.includes(searchLower);
+  });
 
   const renderDirectory = () => (
     <div style={{ background: 'var(--bg-surface)', padding: 24, borderRadius: 16, border: '1px solid var(--border-color)' }}>

@@ -11,9 +11,7 @@ export async function submitLeaveRequest(data) {
         reason: data.reason,
         substitute_teacher_id: data.substitute_teacher_id || null
       }
-    ])
-    .select()
-    .single();
+    ]);
 
   if (error) throw error;
   return res;
@@ -22,30 +20,55 @@ export async function submitLeaveRequest(data) {
 export async function getTeacherLeaves(teacherId) {
   const { data, error } = await supabase
     .from('leave_requests')
-    .select(`
-      *,
-      substitute:substitute_teacher_id ( id, raw_user_meta_data )
-    `)
+    .select('*')
     .or(`teacher_id.eq.${teacherId},substitute_teacher_id.eq.${teacherId}`)
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data;
+  return await attachProfiles(data);
 }
 
 export async function getAllPendingLeaves() {
   const { data, error } = await supabase
     .from('leave_requests')
-    .select(`
-      *,
-      teacher:teacher_id ( id, raw_user_meta_data ),
-      substitute:substitute_teacher_id ( id, raw_user_meta_data )
-    `)
+    .select('*')
     .eq('status', 'pending')
     .order('created_at', { ascending: false });
 
   if (error) throw error;
-  return data;
+  return await attachProfiles(data);
+}
+
+async function attachProfiles(leaves) {
+  if (!leaves || leaves.length === 0) return leaves;
+
+  const profileIds = new Set();
+  leaves.forEach(l => {
+    if (l.teacher_id) profileIds.add(l.teacher_id);
+    if (l.substitute_teacher_id) profileIds.add(l.substitute_teacher_id);
+  });
+
+  const idsArray = Array.from(profileIds);
+  if (idsArray.length === 0) return leaves;
+
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('id, name')
+    .in('id', idsArray);
+
+  const profileMap = {};
+  if (profiles) {
+    profiles.forEach(p => {
+      // Create a mock raw_user_meta_data object to match the component's expectations
+      profileMap[p.id] = { id: p.id, raw_user_meta_data: { full_name: p.name, name: p.name } };
+    });
+  }
+
+  return leaves.map(l => ({
+    ...l,
+    teacher: l.teacher_id ? profileMap[l.teacher_id] : null,
+    substitute: l.substitute_teacher_id ? profileMap[l.substitute_teacher_id] : null
+  }));
 }
 
 // Structured for future email hook injection
@@ -68,3 +91,4 @@ export async function updateLeaveStatus(leaveId, status, substituteId = null) {
   
   return data;
 }
+

@@ -53,7 +53,6 @@ export default function AcademicManagementPage() {
         supabase.from('subjects').select('*, courses(name, departments(name))').eq('institution_id', instId),
         supabase.from('teacher_assignments').select(`
           *,
-          teacher:profiles!teacher_id(name),
           subject:subjects(name),
           class:classes(name),
           academic_year:academic_years(name)
@@ -66,8 +65,18 @@ export default function AcademicManagementPage() {
       setDepartments(deptRes.data || []);
       setCourses(courseRes.data || []);
       setSubjects(subjRes.data || []);
-      setAssignments(assignRes.data || []);
-      setTeachers(teachersRes || []);
+      
+      const teachersData = teachersRes || [];
+      const assignmentsData = (assignRes.data || []).map(assign => {
+        const teacher = teachersData.find(t => t.id === assign.teacher_id);
+        return {
+          ...assign,
+          teacher: teacher ? { name: teacher.name } : null
+        };
+      });
+
+      setAssignments(assignmentsData);
+      setTeachers(teachersData);
       setClasses(classRes.data || []);
       setAcademicYears(yearRes.data || []);
     } catch (err) {
@@ -138,13 +147,20 @@ export default function AcademicManagementPage() {
         }
       ]).select(`
         *,
-        teacher:profiles!teacher_id(name),
         subject:subjects(name),
         class:classes(name),
         academic_year:academic_years(name)
       `).single();
+      
       if (error) throw error;
-      setAssignments([...assignments, data]);
+
+      const teacher = teachers.find(t => t.id === data.teacher_id);
+      const newAssignment = {
+        ...data,
+        teacher: teacher ? { name: teacher.name } : null
+      };
+
+      setAssignments([...assignments, newAssignment]);
       toast.success('Assignment added');
     } catch (err) {
       toast.error(err.message);

@@ -22,6 +22,7 @@ import SyllabusTrackerPage from './pages/SyllabusTrackerPage';
 import TimetablePage from './pages/TimetablePage';
 import TasksPage from './pages/TasksPage';
 import StudentManagementPage from './pages/StudentManagementPage';
+import StudentProfilePage from './pages/StudentProfilePage';
 import StaffManagementPage from './pages/StaffManagementPage';
 import AcademicManagementPage from './pages/AcademicManagementPage';
 import SettingsPage from './pages/SettingsPage';
@@ -58,6 +59,7 @@ function App() {
           
           {/* Protected Teacher Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/student/:id" element={<ProtectedRoute allowAdmin={true}><StudentProfilePage /></ProtectedRoute>} />
           <Route path="/report/:dateParam?" element={<ProtectedRoute><ReportFormPage /></ProtectedRoute>} />
           <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />
           <Route path="/marks" element={<ProtectedRoute><MarksPage /></ProtectedRoute>} />

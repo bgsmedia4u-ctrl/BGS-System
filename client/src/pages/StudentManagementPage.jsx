@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { supabase } from '../api/supabase';
 import { Users, BookOpen, FileText, CheckCircle, Search, UserPlus, Filter } from 'lucide-react';
@@ -11,6 +12,7 @@ export default function StudentManagementPage() {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -62,7 +64,7 @@ export default function StudentManagementPage() {
         <tbody>
           {filteredStudents.length > 0 ? (
             filteredStudents.map((stu, i) => (
-              <tr key={stu.id || i} style={{ borderBottom: '1px solid var(--border-color)' }}>
+              <tr key={stu.id || i} onClick={() => stu.id && navigate(`/student/${stu.id}`)} style={{ borderBottom: '1px solid var(--border-color)', cursor: 'pointer' }} className="hover-row">
                 <td style={{ padding: '16px', fontWeight: 600 }}>{stu.roll_number || stu.id?.substring(0, 8)}</td>
                 <td style={{ padding: '16px', color: 'var(--maroon-900)', fontWeight: 500 }}>{stu.name}</td>
                 <td style={{ padding: '16px' }}>{stu.year} {stu.stream}</td>

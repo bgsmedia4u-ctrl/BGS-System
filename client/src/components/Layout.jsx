@@ -261,7 +261,7 @@ export default function Layout({ children }) {
 
               {/* Notifications Dropdown */}
               {showNotifMenu && (
-                <div style={{ position: 'absolute', right: 0, top: '44px', width: 380, background: '#fff', border: '1px solid var(--border-color)', borderRadius: 14, boxShadow: '0 10px 25px rgba(0,0,0,0.15)', zIndex: 1000, overflow: 'hidden' }}>
+                <div className="notification-dropdown">
                   <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-surface-hover)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ fontWeight: 700, color: 'var(--maroon-900)', display: 'flex', alignItems: 'center', gap: 8 }}>
                       <Bell size={16} /> Institutional Notifications

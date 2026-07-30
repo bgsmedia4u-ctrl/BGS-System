@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import { getClassOptions, getStudentsByBatch } from '../api/marksService';
@@ -34,6 +35,7 @@ export default function AttendancePage() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const loadData = async () => {
     setLoading(true);
@@ -205,7 +207,13 @@ export default function AttendancePage() {
                     onClick={() => toggleAbsent(st.id)}
                   >
                     <div className="attendance-tile-roll">{st.roll_number || '-'}</div>
-                    <div className="attendance-tile-name">{st.name}</div>
+                    <div 
+                      className="attendance-tile-name" 
+                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                      onClick={(e) => { e.stopPropagation(); navigate(`/student/${st.id}`); }}
+                    >
+                      {st.name}
+                    </div>
                     <div className="attendance-tile-status">
                       {isAbsent ? <XCircle size={18} /> : <CheckCircle size={18} />}
                     </div>

@@ -1757,3 +1757,25 @@ img {
   width: 20px;
   height: 20px;
 }
+
+/* Institutional Notifications Dropdown */
+.notification-dropdown {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  width: 380px;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .notification-dropdown {
+    width: 320px;
+    right: -20px;
+    max-width: calc(100vw - 32px);
+  }
+}

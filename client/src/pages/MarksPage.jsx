@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../api/supabase';
 import Layout from '../components/Layout';
@@ -350,6 +351,7 @@ function EnterMarksView({ tests, students }) {
   const [markData, setMarkData] = useState({}); // { studentId: { subjectName: value, is_absent: boolean } }
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   const selectedTest = tests.find(t => t.id === selectedTestId);
 
@@ -481,7 +483,12 @@ function EnterMarksView({ tests, students }) {
                   return (
                     <tr key={st.id} className={isAbsent ? 'row-absent' : ''}>
                       <td style={{ color: 'var(--text-muted)' }}>{st.roll_number || '-'}</td>
-                      <td style={{ fontWeight: 500 }}>{st.name}</td>
+                      <td 
+                        style={{ fontWeight: 500, cursor: 'pointer', color: 'var(--maroon-900)', textDecoration: 'underline' }}
+                        onClick={() => navigate(`/student/${st.id}`)}
+                      >
+                        {st.name}
+                      </td>
                       <td style={{ textAlign: 'center' }}>
                         <input 
                           type="checkbox" 
@@ -528,6 +535,7 @@ function PrintResultsView({ tests, students, stream, year, cls }) {
   const [selectedTestId, setSelectedTestId] = useState('');
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const selectedTest = tests.find(t => t.id === selectedTestId);
   const totalMaxMarks = selectedTest?.subjects.reduce((sum, sub) => sum + Number(sub.maxMarks), 0) || 0;
@@ -640,7 +648,12 @@ function PrintResultsView({ tests, students, stream, year, cls }) {
                     <tr key={st.id}>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--gold-500)' }}>{rank}</td>
                       <td style={{ color: 'var(--text-muted)' }}>{st.roll_number || '-'}</td>
-                      <td style={{ fontWeight: 500 }}>{st.name}</td>
+                      <td 
+                        style={{ fontWeight: 500, cursor: 'pointer', color: 'var(--maroon-900)', textDecoration: 'underline' }}
+                        onClick={() => navigate(`/student/${st.id}`)}
+                      >
+                        {st.name}
+                      </td>
                       
                       {selectedTest.subjects.map(sub => {
                         let cellContent = '-';

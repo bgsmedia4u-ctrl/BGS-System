@@ -817,16 +817,20 @@ img {
 }
 
 .spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--border);
-  border-top-color: var(--gold-500);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  width: 80px;
+  height: 80px;
+  background-image: url('/loading-character.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0 auto;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
 }
 
 /* â”€â”€â”€ Empty State â”€â”€â”€ */

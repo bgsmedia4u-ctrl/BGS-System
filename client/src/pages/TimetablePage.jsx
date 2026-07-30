@@ -265,7 +265,7 @@ export default function TimetablePage({ isAdmin = false }) {
         {/* Timetable Grid */}
         <div className="card" style={{ padding: 0, overflow: 'hidden', borderRadius: 14, boxShadow: '0 4px 20px rgba(0,0,0,0.04)', border: '1px solid var(--border-color)' }}>
           {loading ? (
-             <div style={{ padding: 60, textAlign: 'center' }}><div className="spinner" style={{ margin: '0 auto' }}></div><p style={{ marginTop: 14, color: 'var(--text-muted)' }}>Loading schedule...</p></div>
+             <div style={{ padding: 60, textAlign: 'center' }}><div className="spinner" style={{ margin: '0 auto' }}></div><div className="loading-spinner"><div className="spinner"></div></div></div>
           ) : (
             <div className="table-responsive">
               <table className="table" style={{ minWidth: 900, borderCollapse: 'collapse', width: '100%' }}>

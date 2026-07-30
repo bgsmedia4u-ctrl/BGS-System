@@ -32,6 +32,7 @@ function normalizeProfile(personOrProfile) {
     subject: employee.subject || personOrProfile.subject || null,
     department: employee.department || personOrProfile.department || null,
     staff_type: employee.staff_type || personOrProfile.staff_type || 'teaching',
+    institution_id: employee.institution_id || personOrProfile.institution_id || null,
     created_at: personOrProfile.created_at,
     updated_at: personOrProfile.updated_at,
     // Preserve raw joins if present (e.g. weekly_reports)
@@ -58,7 +59,12 @@ export async function getProfileByUserId(userId) {
     );
 
     if (!personError && hasLinkedEmployee) {
-      return normalizeProfile(personData);
+      const prof = normalizeProfile(personData);
+      if (prof && !prof.institution_id) {
+        const { data: inst } = await supabase.from('institutions').select('id').limit(1).maybeSingle();
+        if (inst) prof.institution_id = inst.id;
+      }
+      return prof;
     }
   } catch (err) {
     console.warn('persons query failed, falling back to profiles:', err);
@@ -72,7 +78,12 @@ export async function getProfileByUserId(userId) {
     .maybeSingle();
 
   if (error) throw error;
-  return normalizeProfile(data);
+  const prof = normalizeProfile(data);
+  if (prof && !prof.institution_id) {
+    const { data: inst } = await supabase.from('institutions').select('id').limit(1).maybeSingle();
+    if (inst) prof.institution_id = inst.id;
+  }
+  return prof;
 }
 
 /**

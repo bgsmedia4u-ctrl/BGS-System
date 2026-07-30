@@ -349,7 +349,7 @@ export default function TasksPage({ isAdmin: isAdminProp }) {
         {loading ? (
           <div style={{ padding: 60, textAlign: 'center' }}>
             <div className="spinner" style={{ margin: '0 auto' }}></div>
-            <p style={{ marginTop: 12, color: 'var(--text-muted)' }}>Loading tasks...</p>
+            <div className="loading-spinner"><div className="spinner"></div></div>
           </div>
         ) : isAdmin ? (
           /* ═══ ADMIN VIEW: Tasks Grouped by Teacher ═══ */

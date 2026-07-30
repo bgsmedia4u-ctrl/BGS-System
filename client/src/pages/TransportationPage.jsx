@@ -65,7 +65,7 @@ export default function TransportationPage() {
         {loading ? (
           <div style={{ padding: 60, textAlign: 'center' }}>
             <div className="spinner" style={{ margin: '0 auto' }}></div>
-            <p style={{ marginTop: 16, color: 'var(--text-muted)' }}>Loading transport telemetry and routes...</p>
+            <div className="loading-spinner"><div className="spinner"></div></div>
           </div>
         ) : filteredRoutes.length > 0 ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: 20 }}>

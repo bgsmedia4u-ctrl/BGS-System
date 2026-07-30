@@ -380,7 +380,7 @@ export default function SyllabusTrackerPage() {
                 {workspaceLoading ? (
                   <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
                     <RefreshCw size={28} style={{ animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
-                    <p style={{ fontWeight: 500 }}>Loading your assigned syllabus courses...</p>
+                    <div className="loading-spinner"><div className="spinner"></div></div>
                   </div>
                 ) : myAssignments.length === 0 ? (
                   <div className="card" style={{ padding: '40px 24px', textAlign: 'center', background: 'var(--bg-surface)', border: '1px dashed var(--border-color)' }}>
@@ -546,7 +546,7 @@ export default function SyllabusTrackerPage() {
                 {workspaceLoading ? (
                   <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-secondary)' }}>
                     <RefreshCw size={28} style={{ animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
-                    <p style={{ fontWeight: 500 }}>Loading chapter checklist...</p>
+                    <div className="loading-spinner"><div className="spinner"></div></div>
                   </div>
                 ) : chapterProgressList.length === 0 ? (
                   <div className="card" style={{ padding: '50px 24px', textAlign: 'center' }}>
@@ -962,7 +962,7 @@ export default function SyllabusTrackerPage() {
                 {adminLoading ? (
                   <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-secondary)' }}>
                     <RefreshCw size={24} style={{ animation: 'spin 1s linear infinite', margin: '0 auto 8px' }} />
-                    <p>Loading registry...</p>
+                    <div className="loading-spinner"><div className="spinner"></div></div>
                   </div>
                 ) : allAssignments.length === 0 ? (
                   <p style={{ color: 'var(--text-secondary)', fontStyle: 'italic' }}>No active teacher course assignments found in database.</p>

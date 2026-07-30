@@ -200,7 +200,7 @@ export default function AcademicManagementPage() {
 
       <div className="page-body">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: 40, color: 'var(--text-secondary)' }}>Loading...</div>
+          <div className="loading-spinner"><div className="spinner"></div></div>
         ) : (
           <>
             {/* DEPARTMENTS TAB */}

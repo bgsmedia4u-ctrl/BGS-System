@@ -623,7 +623,7 @@ export default function AdminPortalPage() {
                 </div>
               </div>
               {monitorLoading ? (
-                <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-muted)' }}>Loading...</div>
+                <div className="loading-spinner"><div className="spinner"></div></div>
               ) : (
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', borderRadius: 10, overflow: 'hidden' }}>

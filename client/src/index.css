@@ -817,20 +817,21 @@ img {
 }
 
 .spinner {
-  width: 80px;
-  height: 80px;
-  background-image: url('/loading-character.png');
+  width: 120px;
+  height: 120px;
+  background-image: url('/slow-network.jpg');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   margin: 0 auto;
   animation: pulse 1.5s ease-in-out infinite;
+  border-radius: 12px;
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(0.95); opacity: 0.8; }
+  0% { transform: scale(0.98); opacity: 0.85; }
+  50% { transform: scale(1.02); opacity: 1; }
+  100% { transform: scale(0.98); opacity: 0.85; }
 }
 
 /* â”€â”€â”€ Empty State â”€â”€â”€ */

@@ -105,8 +105,8 @@ export default function Layout({ children }) {
   if (isOffline) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0B0F19', color: '#F8FAFC', padding: 24, textAlign: 'center' }}>
-        <div style={{ width: 84, height: 84, borderRadius: '50%', background: 'rgba(239, 68, 68, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 24, border: '2px solid rgba(239, 68, 68, 0.4)' }}>
-          <span style={{ fontSize: 42 }}>📡</span>
+        <div style={{ marginBottom: 24 }}>
+          <img src="/no-network.png" alt="Offline Meme" style={{ width: 220, maxWidth: '100%', borderRadius: 16, border: '4px solid rgba(255,255,255,0.1)' }} />
         </div>
         <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 12 }}>No Network Connection</h1>
         <p style={{ color: '#94A3B8', maxWidth: 440, marginBottom: 28, fontSize: '1.05rem', lineHeight: 1.6 }}>

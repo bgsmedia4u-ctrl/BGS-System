@@ -27,13 +27,17 @@ export default function LeaveManagementPage() {
   }, [user]);
 
   async function fetchLeaves() {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const data = await getTeacherLeaves(user.id);
+      const data = await getTeacherLeaves(user?.id);
       setLeaves(data || []);
     } catch (err) {
       console.error(err);
-      toast.error('Failed to load leave history');
+      toast.error(`Failed to load leave history: ${err.message || err.details || JSON.stringify(err)}`);
     } finally {
       setLoading(false);
     }

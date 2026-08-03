@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { pdfService } from '../api/pdfService';
 import toast from 'react-hot-toast';
-import { Shield, BarChart2, ClipboardList, Users, Megaphone, CheckCircle, FileEdit, XCircle, TrendingUp, Phone, Calendar, BookOpen, BookOpenCheck, AlertTriangle, Trash2, Download, Send, Loader, Video, Plus, X, ClipboardCheck, PenLine, MessageSquare, CheckSquare, Target } from 'lucide-react';
+import { Shield, BarChart2, ClipboardList, Users, Megaphone, CheckCircle, FileEdit, XCircle, TrendingUp, Phone, Calendar, BookOpen, BookOpenCheck, AlertTriangle, Trash2, Download, Send, Loader, Video, Plus, X, ClipboardCheck, PenLine, MessageSquare, CheckSquare, Target, UserCheck } from 'lucide-react';
 import NotifyTeacherModal from '../components/NotifyTeacherModal';
 import { getWeekStart, formatDateISO, formatWeekLabel } from '../utils/week';
 import { formatTopics } from '../utils/formatters';
@@ -552,6 +552,7 @@ export default function AdminPortalPage() {
           <button style={{ ...s.tab(activeTab === 'monitor'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('monitor')}><BarChart2 size={16} style={{marginRight: 6}} /> Weekly Monitor</button>
           <button style={{ ...s.tab(activeTab === 'reports'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('reports')}><ClipboardList size={16} style={{marginRight: 6}} /> All Reports</button>
           <button style={{ ...s.tab(false), whiteSpace: 'nowrap', minHeight: 44, background: '#FCEFEF', color: 'var(--maroon-900, #7A1A1A)', border: '1px solid #F5D0D0', fontWeight: 700 }} onClick={() => navigate('/admin/tasks')}><CheckSquare size={16} style={{marginRight: 6}} /> Assign Event Tasks</button>
+          <button style={{ ...s.tab(false), whiteSpace: 'nowrap', minHeight: 44, background: '#E0F2FE', color: '#0369A1', border: '1px solid #BAE6FD', fontWeight: 700 }} onClick={() => navigate('/admin/attendance')}><UserCheck size={16} style={{marginRight: 6}} /> Biometric Attendance</button>
           <button style={{ ...s.tab(activeTab === 'teachers'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('teachers')}><Users size={16} style={{marginRight: 6}} /> Teacher Profiles</button>
           <button style={{ ...s.tab(activeTab === 'announcements'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('announcements')}><Megaphone size={16} style={{marginRight: 6}} /> Announcements</button>
           <button style={{ ...s.tab(activeTab === 'meetings'), whiteSpace: 'nowrap', minHeight: 44 }} onClick={() => setActiveTab('meetings')}><Calendar size={16} style={{marginRight: 6}} /> Meetings</button>

@@ -66,3 +66,34 @@ export function AdminRoute({ children }) {
 
   return children;
 }
+
+export function OfficeRoute({ children }) {
+  const { user, profile, loading, isOffice, isAdmin } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="loading-spinner" style={{ minHeight: '100vh' }}>
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!profile) {
+    return (
+      <div className="loading-spinner" style={{ minHeight: '100vh' }}>
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  // Allow both office and admin to view office pages if needed, or strictly office
+  if (!isOffice && !isAdmin) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+}

@@ -123,6 +123,7 @@ export function AuthProvider({ children }) {
   }
 
   const isAdmin = profile?.role === 'admin';
+  const isOffice = profile?.role === 'office';
 
   return (
     <AuthContext.Provider
@@ -134,6 +135,7 @@ export function AuthProvider({ children }) {
         logout,
         updatePhone,
         isAdmin,
+        isOffice,
         refreshProfile,
         fetchProfile: () => user ? fetchProfile(user) : null,
       }}

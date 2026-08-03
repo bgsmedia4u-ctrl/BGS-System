@@ -1,6 +1,5 @@
 -- Migration: 202607281400_fix_tsa_foreign_key.sql
 -- Description: Fix foreign key constraint violations on teacher_subject_assignments by ensuring all auth users have an existing record in public.profiles.
-
 -- 1. Insert missing profiles from auth.users into public.profiles
 INSERT INTO public.profiles (id, email, name, role, department)
 SELECT 

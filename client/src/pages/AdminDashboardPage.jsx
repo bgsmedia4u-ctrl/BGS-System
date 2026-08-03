@@ -143,6 +143,26 @@ export default function AdminDashboardPage() {
             <CheckSquare size={18} />
             Assign Event Tasks to Teachers
           </Link>
+          <Link
+            to="/admin/attendance"
+            style={{
+              background: '#E0F2FE',
+              color: '#0369A1',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              textDecoration: 'none',
+              fontWeight: 600,
+              fontSize: '0.92rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              boxShadow: '0 4px 12px rgba(3,105,161,0.15)',
+              transition: 'all 0.2s'
+            }}
+          >
+            <UserCheck size={18} />
+            Biometric Attendance
+          </Link>
         </div>
       </div>
 

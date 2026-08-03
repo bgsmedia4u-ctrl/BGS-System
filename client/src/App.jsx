@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
-import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
+import { ProtectedRoute, AdminRoute, OfficeRoute } from './components/ProtectedRoute';
 
 // Pages - Imported statically to eliminate Vite dynamic module loading failures in production
 import LoginPage from './pages/LoginPage';
@@ -31,6 +31,8 @@ import TermsPage from './pages/TermsPage';
 import FreeTeachersPage from './pages/FreeTeachersPage';
 import TransportationPage from './pages/TransportationPage';
 import AlumniPage from './pages/AlumniPage';
+import OfficeDashboardPage from './pages/OfficeDashboardPage';
+import AdminAttendanceDashboard from './pages/AdminAttendanceDashboard';
 
 
 function App() {
@@ -72,6 +74,7 @@ function App() {
           
           {/* Protected Admin Routes (sidebar-based) */}
           <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+          <Route path="/admin/attendance" element={<AdminRoute><AdminAttendanceDashboard /></AdminRoute>} />
           <Route path="/students" element={<AdminRoute><StudentManagementPage /></AdminRoute>} />
           <Route path="/personnel" element={<AdminRoute><StaffManagementPage /></AdminRoute>} />
           <Route path="/academic" element={<AdminRoute><AcademicManagementPage /></AdminRoute>} />
@@ -90,6 +93,9 @@ function App() {
           <Route path="/transportation" element={<AdminRoute><TransportationPage /></AdminRoute>} />
           <Route path="/alumni" element={<AdminRoute><AlumniPage /></AdminRoute>} />
           <Route path="/free-teachers" element={<ProtectedRoute allowAdmin={true}><FreeTeachersPage /></ProtectedRoute>} />
+          
+          {/* Office Dashboard Route */}
+          <Route path="/office" element={<OfficeRoute><OfficeDashboardPage /></OfficeRoute>} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

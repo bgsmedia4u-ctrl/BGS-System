@@ -102,13 +102,19 @@ export default function OfficeDashboardPage() {
         const worksheet = workbook.Sheets[sheetName];
         const rawRows = utils.sheet_to_json(worksheet, { header: 1, raw: true });
         
-        // Find header row by finding the first row with at least 4 valid string columns
+        // Find header row by finding the first row with a known column name
         let headerIdx = 0;
         for (let i = 0; i < Math.min(20, rawRows.length); i++) {
-          const rowText = (rawRows[i] || []).join(' ').toLowerCase();
-          const validCols = (rawRows[i] || []).filter(c => c && String(c).trim().length > 0).length;
+          const rowArr = rawRows[i] || [];
+          const validCols = rowArr.filter(c => c && String(c).trim().length > 0).length;
           
-          if (validCols >= 4 && (rowText.includes('name') || rowText.includes('emp') || rowText.includes('date') || rowText.includes('time') || rowText.includes('in'))) {
+          const hasKnownHeader = rowArr.some(cell => {
+            if (!cell) return false;
+            const c = String(cell).toLowerCase().trim();
+            return ['name', 'emp code', 'employee', 'employee name', 'staff', 'id', 'date', 'check in', 'in time', 'time in', 'check-in'].includes(c);
+          });
+          
+          if (validCols >= 3 && hasKnownHeader) {
             headerIdx = i;
             break;
           }

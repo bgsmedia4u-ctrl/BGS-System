@@ -29,6 +29,11 @@ export function ProtectedRoute({ children, allowAdmin = false }) {
     return <Navigate to="/admin-portal" replace />;
   }
 
+  // Office staff should not access the teacher portal
+  if (profile && profile.role === 'office') {
+    return <Navigate to="/office" replace />;
+  }
+
   // Teachers must not be rejected
   if (profile && profile.role === 'teacher' && profile.status === 'rejected') {
     return <Navigate to="/login" replace />;

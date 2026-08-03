@@ -30,6 +30,8 @@ export default function LoginPage() {
 
   // If logged in and not rejected, redirect
   if (user && profile && (profile.role !== 'teacher' || profile.status !== 'rejected')) {
+    if (profile.role === 'office') return <Navigate to="/office" replace />;
+    if (profile.role === 'admin') return <Navigate to="/admin-portal" replace />;
     return <Navigate to="/dashboard" replace />;
   }
 

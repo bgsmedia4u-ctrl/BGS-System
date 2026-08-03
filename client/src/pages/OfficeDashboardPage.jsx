@@ -100,8 +100,29 @@ export default function OfficeDashboardPage() {
         const workbook = read(data, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const json = utils.sheet_to_json(worksheet, { raw: true });
+        const rawRows = utils.sheet_to_json(worksheet, { header: 1, raw: true });
         
+        // Find header row (usually contains 'name', 'check in', 'date', 'emp', etc.)
+        let headerIdx = 0;
+        for (let i = 0; i < Math.min(20, rawRows.length); i++) {
+          const rowText = (rawRows[i] || []).join(' ').toLowerCase();
+          if ((rowText.includes('name') || rowText.includes('emp')) && (rowText.includes('in') || rowText.includes('out') || rowText.includes('date') || rowText.includes('time'))) {
+            headerIdx = i;
+            break;
+          }
+        }
+
+        const headers = rawRows[headerIdx] || [];
+        const dataRows = rawRows.slice(headerIdx + 1).filter(r => r.length > 0 && r.some(c => c !== undefined && c !== null && c !== ''));
+
+        const json = dataRows.map(rowArr => {
+          let obj = {};
+          headers.forEach((h, i) => {
+            if (h) obj[h.toString().trim()] = rowArr[i];
+          });
+          return obj;
+        });
+
         // Find matching teachers and map data
         const mappedData = json.map((row, index) => {
           // Attempt to find column names dynamically (e.g. Employee Name, name, check in, etc)

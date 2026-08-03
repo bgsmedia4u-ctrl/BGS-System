@@ -102,11 +102,13 @@ export default function OfficeDashboardPage() {
         const worksheet = workbook.Sheets[sheetName];
         const rawRows = utils.sheet_to_json(worksheet, { header: 1, raw: true });
         
-        // Find header row (usually contains 'name', 'check in', 'date', 'emp', etc.)
+        // Find header row by finding the first row with at least 4 valid string columns
         let headerIdx = 0;
         for (let i = 0; i < Math.min(20, rawRows.length); i++) {
           const rowText = (rawRows[i] || []).join(' ').toLowerCase();
-          if ((rowText.includes('name') || rowText.includes('emp')) && (rowText.includes('in') || rowText.includes('out') || rowText.includes('date') || rowText.includes('time'))) {
+          const validCols = (rawRows[i] || []).filter(c => c && String(c).trim().length > 0).length;
+          
+          if (validCols >= 4 && (rowText.includes('name') || rowText.includes('emp') || rowText.includes('date') || rowText.includes('time') || rowText.includes('in'))) {
             headerIdx = i;
             break;
           }

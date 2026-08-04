@@ -115,6 +115,12 @@ export default function AdminAttendanceDashboard() {
     return ['All', ...Array.from(depts)];
   }, [records]);
 
+  const handleCardClick = (status) => {
+    setStatusFilter(status);
+    setDateFilter(format(new Date(), 'yyyy-MM-dd'));
+    document.getElementById('attendance-table')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -132,10 +138,10 @@ export default function AdminAttendanceDashboard() {
 
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricCard title="Total Tracked Today" value={metrics.total} icon={<Users size={24} />} color="text-blue-500" bg="bg-blue-500/10" />
-        <MetricCard title="Present / Late" value={`${metrics.presentPct}%`} icon={<UserCheck size={24} />} color="text-green-500" bg="bg-green-500/10" />
-        <MetricCard title="Late Arrivals" value={metrics.late} icon={<Clock size={24} />} color="text-yellow-500" bg="bg-yellow-500/10" />
-        <MetricCard title="Absent" value={metrics.absent} icon={<UserX size={24} />} color="text-red-500" bg="bg-red-500/10" />
+        <MetricCard title="Total Tracked Today" value={metrics.total} icon={<Users size={24} />} color="text-blue-500" bg="bg-blue-500/10" onClick={() => handleCardClick('All')} />
+        <MetricCard title="Present / Late" value={`${metrics.presentPct}%`} icon={<UserCheck size={24} />} color="text-green-500" bg="bg-green-500/10" onClick={() => handleCardClick('Present')} />
+        <MetricCard title="Late Arrivals" value={metrics.late} icon={<Clock size={24} />} color="text-yellow-500" bg="bg-yellow-500/10" onClick={() => handleCardClick('Late')} />
+        <MetricCard title="Absent" value={metrics.absent} icon={<UserX size={24} />} color="text-red-500" bg="bg-red-500/10" onClick={() => handleCardClick('Absent')} />
       </div>
 
       {/* Charts */}
@@ -191,7 +197,7 @@ export default function AdminAttendanceDashboard() {
       </div>
 
       {/* Logs Table */}
-      <div className="glass-panel rounded-2xl overflow-hidden flex flex-col">
+      <div id="attendance-table" className="glass-panel rounded-2xl overflow-hidden flex flex-col">
         <div className="p-6 border-b border-[var(--border)] flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <h3 className="text-lg font-semibold text-[var(--text-primary)]">Attendance Logs</h3>
           
@@ -292,12 +298,13 @@ export default function AdminAttendanceDashboard() {
   );
 }
 
-function MetricCard({ title, value, icon, color, bg }) {
+function MetricCard({ title, value, icon, color, bg, onClick }) {
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="glass-panel p-6 rounded-2xl flex items-center justify-between"
+      onClick={onClick}
+      className={`glass-panel p-6 rounded-2xl flex items-center justify-between ${onClick ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
     >
       <div>
         <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">{title}</p>

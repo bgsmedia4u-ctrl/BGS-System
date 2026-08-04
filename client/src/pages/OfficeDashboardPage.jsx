@@ -101,12 +101,20 @@ function parseCombinedTimeCell(val) {
   const str = String(val).trim();
   // Try splitting by newline, slash, pipe, or multiple spaces
   const parts = str.split(/[\n\r]+|\/|\||\s{2,}/).map(p => p.trim()).filter(p => p.length > 0);
+  
   if (parts.length >= 2) {
-    return { checkIn: parseTimeStr(parts[0]), checkOut: parseTimeStr(parts[1]) };
+    const t1 = parseTimeStr(parts[0]);
+    const t2 = parseTimeStr(parts[parts.length - 1]); // Use last available if > 2 parts
+    if (t1 && t2 && t1 !== t2) {
+      return { checkIn: t1, checkOut: t2 };
+    }
+    return { checkIn: t1 || t2, checkOut: null };
   }
+  
   if (parts.length === 1) {
     return { checkIn: parseTimeStr(parts[0]), checkOut: null };
   }
+  
   return { checkIn: null, checkOut: null };
 }
 

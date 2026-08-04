@@ -103,7 +103,7 @@ export default function AdminAttendanceDashboard() {
       const matchDate = r.date === dateFilter;
       const matchStatus = statusFilter === 'All' || r.status === statusFilter;
       const matchDept = deptFilter === 'All' || (r.profiles?.department || 'Unknown') === deptFilter;
-      const matchSearch = (r.profiles?.name || '').toLowerCase().includes(searchQuery.toLowerCase());
+      const matchSearch = (r.profiles?.name || r.staff_name || '').toLowerCase().includes(searchQuery.toLowerCase());
       
       // If dateFilter is empty, show all. Otherwise strict match.
       return (!dateFilter || matchDate) && matchStatus && matchDept && matchSearch;
@@ -258,8 +258,8 @@ export default function AdminAttendanceDashboard() {
                     className="hover:bg-[var(--surface-active)] text-[var(--text-primary)]"
                   >
                     <td className="p-4">
-                      <div className="font-medium">{row.profiles?.name}</div>
-                      <div className="text-xs text-[var(--text-secondary)]">{row.profiles?.email}</div>
+                      <div className="font-medium">{row.profiles?.name || row.staff_name || 'Unknown Staff'}</div>
+                      <div className="text-xs text-[var(--text-secondary)]">{row.profiles?.email || 'No Email'}</div>
                     </td>
                     <td className="p-4">{row.profiles?.department || '-'}</td>
                     <td className="p-4">{row.date}</td>

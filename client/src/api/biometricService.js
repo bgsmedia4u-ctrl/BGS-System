@@ -20,7 +20,7 @@ export async function logBiometricUpload(metadata) {
 export async function upsertBiometricRecords(records) {
   const { data, error } = await supabase
     .from('biometric_attendance_records')
-    .upsert(records, { onConflict: 'teacher_id,date' })
+    .upsert(records, { onConflict: 'unique_key' })
     .select();
     
   if (error) throw error;

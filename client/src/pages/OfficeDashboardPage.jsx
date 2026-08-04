@@ -120,16 +120,25 @@ function excelDateToJSDate(serial) {
 // Calculate working hours and late status
 function calculateMetrics(checkIn, checkOut) {
   if (!checkIn && !checkOut) return { workingHours: 0, lateMinutes: 0, status: 'Absent' };
-  if (!checkOut) return { workingHours: 0, lateMinutes: 0, status: checkIn ? 'Present' : 'Absent' };
+  if (!checkIn || !checkOut) return { workingHours: 0, lateMinutes: 0, status: checkIn ? 'Present' : 'Absent' };
 
   const [inH, inM] = checkIn.split(':').map(Number);
   const [outH, outM] = checkOut.split(':').map(Number);
 
   const inTotalM = inH * 60 + inM;
-  const outTotalM = outH * 60 + outM;
+  let outTotalM = outH * 60 + outM;
+
+  // Handle common case: 4:30 entered instead of 16:30 without PM
+  if (outTotalM < inTotalM) {
+    if (outH < 12) {
+      outTotalM += 12 * 60; // Assume PM
+    } else {
+      outTotalM += 24 * 60; // Overnight shift
+    }
+  }
 
   const diffM = outTotalM - inTotalM;
-  const workingHours = diffM > 0 ? parseFloat((diffM / 60).toFixed(2)) : 0;
+  const workingHours = parseFloat((diffM / 60).toFixed(2));
 
   // Late threshold: 9:10 AM
   const lateThreshold = 9 * 60 + 10;
@@ -378,13 +387,15 @@ export default function OfficeDashboardPage() {
     if (parsedData.length === 0) return;
     setIsUploading(true);
 
-    const validRecords = parsedData.filter(d => d.teacher_id);
-    const errorsCount = parsedData.length - validRecords.length;
+    const validRecords = parsedData;
+    const errorsCount = 0; // We now import everyone
 
     try {
       const recordsToInsert = validRecords.map(r => ({
         teacher_id: r.teacher_id,
+        staff_name: r.teacher_name, // Store the raw name if unmatched
         date: r.date,
+        unique_key: `${r.date}_${r.teacher_id || r.teacher_name}`,
         check_in: r.check_in,
         check_out: r.check_out,
         status: r.status,
@@ -400,10 +411,10 @@ export default function OfficeDashboardPage() {
         filename: file.name,
         imported_count: validRecords.length,
         error_count: errorsCount,
-        status: errorsCount > 0 ? 'Completed with errors' : 'Completed'
+        status: 'Completed'
       });
 
-      toast.success(`Imported ${validRecords.length} records! (${errorsCount} unmatched)`);
+      toast.success(`Imported ${validRecords.length} records!`);
       setParsedData([]);
       setFile(null);
     } catch (err) {
@@ -581,7 +592,6 @@ export default function OfficeDashboardPage() {
                     <tr style={{ background: 'var(--bg-surface-hover, #FAFAFA)', borderBottom: '1px solid var(--border)' }}>
                       <th style={thStyle}>#</th>
                       <th style={thStyle}>Name</th>
-                      <th style={thStyle}>Match</th>
                       <th style={thStyle}>Date</th>
                       <th style={thStyle}>Check In</th>
                       <th style={thStyle}>Check Out</th>
@@ -601,17 +611,6 @@ export default function OfficeDashboardPage() {
                       >
                         <td style={tdStyle}>{i + 1}</td>
                         <td style={{ ...tdStyle, fontWeight: 600 }}>{row.teacher_name}</td>
-                        <td style={tdStyle}>
-                          {row.match_status === 'Success' ? (
-                            <span style={badgeStyle('#10B981', 'rgba(16,185,129,0.1)')}>
-                              <CheckCircle size={13} /> Matched
-                            </span>
-                          ) : (
-                            <span style={badgeStyle('#F59E0B', 'rgba(245,158,11,0.1)')}>
-                              <AlertTriangle size={13} /> Not Found
-                            </span>
-                          )}
-                        </td>
                         <td style={tdStyle}>{row.date}</td>
                         <td style={tdStyle}>{row.check_in || '-'}</td>
                         <td style={tdStyle}>{row.check_out || '-'}</td>

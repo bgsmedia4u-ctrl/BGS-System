@@ -257,9 +257,14 @@ export default function OfficeDashboardPage() {
             headers.forEach((h, i) => { if (h) row[h] = rowArr[i]; });
 
             const keys = Object.keys(row);
+            const usedKeys = new Set();
             const getCol = (possibleNames) => {
-              const key = keys.find(k => possibleNames.some(p => k.toLowerCase().includes(p)));
-              return key ? row[key] : null;
+              const key = keys.find(k => !usedKeys.has(k) && possibleNames.some(p => k.toLowerCase().includes(p)));
+              if (key) {
+                usedKeys.add(key);
+                return row[key];
+              }
+              return null;
             };
 
             // Extract name

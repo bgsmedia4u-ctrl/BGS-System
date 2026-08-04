@@ -9,6 +9,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'logo.png'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 5000000
+      },
       manifest: {
         name: 'BGS Teachers Portal',
         short_name: 'BGS Portal',

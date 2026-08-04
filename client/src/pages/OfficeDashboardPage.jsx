@@ -95,12 +95,12 @@ function smartParseTime(val) {
   return parseTimeStr(String(val));
 }
 
-// Parse a cell that may contain BOTH check-in and check-out (e.g. "9:00\n4:30" or "9:00 / 4:30")
+// Parse a cell that may contain BOTH check-in and check-out (e.g. "9:00\n4:30" or "9:00 / 4:30" or "9:00   4:30")
 function parseCombinedTimeCell(val) {
   if (val === null || val === undefined) return { checkIn: null, checkOut: null };
   const str = String(val).trim();
   // Try splitting by newline, slash, pipe, or multiple spaces
-  const parts = str.split(/[\n\r]+|\/|\|/).map(p => p.trim()).filter(p => p.length > 0);
+  const parts = str.split(/[\n\r]+|\/|\||\s{2,}/).map(p => p.trim()).filter(p => p.length > 0);
   if (parts.length >= 2) {
     return { checkIn: parseTimeStr(parts[0]), checkOut: parseTimeStr(parts[1]) };
   }
@@ -275,9 +275,15 @@ export default function OfficeDashboardPage() {
             const rawOut = getCol(['check out', 'out time', 'time out', 'punch out', 'out']);
 
             if (rawIn !== null && rawIn !== undefined) {
-              checkIn = smartParseTime(rawIn);
+              if (typeof rawIn === 'string' && /[\n\r\/\|]|\s{2,}/.test(rawIn)) {
+                const combined = parseCombinedTimeCell(rawIn);
+                checkIn = combined.checkIn;
+                checkOut = combined.checkOut;
+              } else {
+                checkIn = smartParseTime(rawIn);
+              }
             }
-            if (rawOut !== null && rawOut !== undefined) {
+            if (rawOut !== null && rawOut !== undefined && !checkOut) {
               checkOut = smartParseTime(rawOut);
             }
 

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../api/supabase';
 import Layout from '../components/Layout';
 import { 
@@ -57,6 +57,7 @@ const TEACHING_PERIODS = [
 ];
 
 export default function AdminDashboardPage() {
+  const navigate = useNavigate();
   const [selectedDate] = useState('October 24, 2024');
 
   // Free Teachers State
@@ -174,15 +175,19 @@ export default function AdminDashboardPage() {
           {/* Top Metrics Cards */}
           <div className="metrics-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
             {/* Total Students */}
-            <div style={{ background: 'var(--bg-surface)', padding: 20, borderRadius: 16, border: '1px solid var(--border-color)', position: 'relative' }}>
+            <div 
+              onClick={() => navigate('/students')}
+              style={{ background: 'var(--bg-surface)', padding: 20, borderRadius: 16, border: '1px solid var(--border-color)', position: 'relative', cursor: 'pointer', transition: 'transform 0.15s ease' }}
+              title="Click to manage and register students"
+            >
               <div style={{ background: '#FCEFEF', color: 'var(--maroon-900)', width: 40, height: 40, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
                 <Users size={20} />
               </div>
               <div style={{ position: 'absolute', top: 20, right: 20, background: '#D1FAE5', color: '#065F46', padding: '4px 8px', borderRadius: 12, fontSize: '0.75rem', fontWeight: 600 }}>
-                ↑ 12
+                Manage
               </div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: 4 }}>Total Students</div>
-              <div style={{ fontSize: '1.8rem', fontWeight: 600, color: 'var(--maroon-900)' }}>1,248</div>
+              <div style={{ fontSize: '1.8rem', fontWeight: 600, color: 'var(--maroon-900)' }}>Manage Roster →</div>
             </div>
 
             {/* Total Staff */}
@@ -260,9 +265,20 @@ export default function AdminDashboardPage() {
                 <h2 style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--maroon-900)', marginBottom: 4 }}>Current Absentees</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Students marked absent today</p>
               </div>
-              <button style={{ background: '#F5F5F5', border: 'none', padding: '6px 12px', borderRadius: 6, fontSize: '0.85rem', color: 'var(--maroon-900)', fontWeight: 500, cursor: 'pointer' }}>
-                View All List
-              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button 
+                  onClick={() => navigate('/attendance')}
+                  style={{ background: '#FCEFEF', border: '1px solid #F5C6CB', padding: '6px 12px', borderRadius: 6, fontSize: '0.85rem', color: 'var(--maroon-900)', fontWeight: 600, cursor: 'pointer' }}
+                >
+                  Edit Attendance →
+                </button>
+                <button 
+                  onClick={() => navigate('/students')}
+                  style={{ background: '#F5F5F5', border: 'none', padding: '6px 12px', borderRadius: 6, fontSize: '0.85rem', color: 'var(--text-main)', fontWeight: 500, cursor: 'pointer' }}
+                >
+                  View All Students
+                </button>
+              </div>
             </div>
 
             <div style={{ overflowX: 'auto' }}>

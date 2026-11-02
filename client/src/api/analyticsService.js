@@ -45,7 +45,7 @@ export async function getStudentAnalytics(stream, year, cls) {
       ...s,
       totalClasses: 0,
       absentClasses: 0,
-      attendancePercent: 100,
+      attendancePercent: 0,
       tests: []
     };
   });
@@ -213,7 +213,7 @@ export async function getIrregularStudents(threshold = 75) {
 
   const attMap = {};
   students.forEach(s => {
-    attMap[s.id] = { ...s, totalClasses: 0, absentClasses: 0, attendancePercent: 100 };
+    attMap[s.id] = { ...s, totalClasses: 0, absentClasses: 0, attendancePercent: 0 };
   });
 
   (attendance || []).forEach(rec => {

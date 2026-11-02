@@ -155,6 +155,9 @@ export default function Layout({ children }) {
               <NavLink to="/students" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <Users size={20} /> Students
               </NavLink>
+              <NavLink to="/attendance" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+                <UserCheck size={20} /> Attendance
+              </NavLink>
               <NavLink to="/academic" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <BookOpen size={20} /> Academic
               </NavLink>

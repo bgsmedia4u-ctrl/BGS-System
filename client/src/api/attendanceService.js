@@ -25,6 +25,35 @@ export async function getAttendanceRecords(sessionId) {
   return data || [];
 }
 
+export async function getAllAttendanceSessions(limit = 100) {
+  const { data, error } = await supabase
+    .from('attendance_sessions')
+    .select('*, attendance_records(id, student_id, is_absent, remarks)')
+    .order('date', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function deleteAttendanceSession(sessionId) {
+  if (!sessionId) return;
+  
+  // Delete records first
+  await supabase
+    .from('attendance_records')
+    .delete()
+    .eq('session_id', sessionId);
+
+  // Delete session
+  const { error } = await supabase
+    .from('attendance_sessions')
+    .delete()
+    .eq('id', sessionId);
+
+  if (error) throw error;
+}
+
 export async function saveAttendance(stream, year, cls, date, records, userId) {
   // 1. Get or create session
   let session = await getAttendanceSession(stream, year, cls, date);
@@ -40,18 +69,19 @@ export async function saveAttendance(stream, year, cls, date, records, userId) {
       
     if (sessionErr) throw sessionErr;
     session = newSession;
+  } else {
+    // Touch session updated_at
+    try {
+      await supabase
+        .from('attendance_sessions')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', session.id);
+    } catch (e) {
+      // Non-fatal
+    }
   }
 
-  // 2. Upsert records
-  // Delete existing records for this session first
-  const { error: delErr } = await supabase
-    .from('attendance_records')
-    .delete()
-    .eq('session_id', session.id);
-    
-  if (delErr) throw delErr;
-
-  // Insert new records
+  // 2. Prepare records
   const recordsToInsert = records.map(r => ({
     session_id: session.id,
     student_id: r.student_id,
@@ -60,10 +90,24 @@ export async function saveAttendance(stream, year, cls, date, records, userId) {
   }));
 
   if (recordsToInsert.length > 0) {
-    const { error: insertErr } = await supabase
+    const { error: upsertErr } = await supabase
       .from('attendance_records')
-      .insert(recordsToInsert);
+      .upsert(recordsToInsert, { onConflict: 'session_id,student_id' });
       
-    if (insertErr) throw insertErr;
+    if (upsertErr) {
+      console.warn('Upsert attendance fallback to delete-insert:', upsertErr.message);
+      await supabase
+        .from('attendance_records')
+        .delete()
+        .eq('session_id', session.id);
+        
+      const { error: insertErr } = await supabase
+        .from('attendance_records')
+        .insert(recordsToInsert);
+        
+      if (insertErr) throw insertErr;
+    }
   }
+
+  return session;
 }

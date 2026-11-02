@@ -22,9 +22,18 @@
 -- ═══════════════════════════════════════════════════
 -- Source: schema_updates_v2.sql
 
-CREATE TYPE leave_status AS ENUM ('pending', 'approved', 'rejected');
-CREATE TYPE syllabus_status AS ENUM ('not_started', 'in_progress', 'completed');
-CREATE TYPE task_status AS ENUM ('todo', 'in_progress', 'done');
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'leave_status') THEN
+        CREATE TYPE leave_status AS ENUM ('pending', 'approved', 'rejected');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'syllabus_status') THEN
+        CREATE TYPE syllabus_status AS ENUM ('not_started', 'in_progress', 'completed');
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'task_status') THEN
+        CREATE TYPE task_status AS ENUM ('todo', 'in_progress', 'done');
+    END IF;
+END $$;
 
 
 -- ═══════════════════════════════════════════════════
@@ -237,7 +246,13 @@ CREATE TABLE public.students (
     class TEXT NOT NULL,
     roll_number INT,
     parent_phone TEXT,
+    parent_name TEXT,
+    email TEXT,
+    shift TEXT DEFAULT 'Morning Shift',
+    status TEXT DEFAULT 'Active',
+    notes TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT unique_student_batch UNIQUE (stream, year, class, roll_number)
 );
 
@@ -520,6 +535,12 @@ ON public.attendance_sessions FOR INSERT WITH CHECK (auth.role() = 'authenticate
 CREATE POLICY "Allow authenticated users to update attendance sessions"
 ON public.attendance_sessions FOR UPDATE USING (auth.role() = 'authenticated');
 
+CREATE POLICY "Allow authenticated users to delete attendance sessions"
+ON public.attendance_sessions FOR DELETE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Admins have full access to attendance sessions" ON public.attendance_sessions
+    FOR ALL USING (public.is_admin());
+
 -- ─── 14h. Attendance Records ───
 -- Source: attendance_setup.sql
 CREATE POLICY "Allow authenticated users to select attendance records"
@@ -530,6 +551,12 @@ ON public.attendance_records FOR INSERT WITH CHECK (auth.role() = 'authenticated
 
 CREATE POLICY "Allow authenticated users to update attendance records"
 ON public.attendance_records FOR UPDATE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Allow authenticated users to delete attendance records"
+ON public.attendance_records FOR DELETE USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Admins have full access to attendance records" ON public.attendance_records
+    FOR ALL USING (public.is_admin());
 
 -- ─── 14i. Meetings ───
 -- Source: meetings_setup.sql

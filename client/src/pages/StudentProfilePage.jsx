@@ -1,10 +1,43 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { getStudentById, getStudentMarks, getStudentAttendance, getStudentCompliances } from '../api/studentProfileService';
-import { User, BookOpen, Clock, AlertTriangle, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { 
+  getStudentById, 
+  getStudentMarks, 
+  getStudentAttendance, 
+  getStudentCompliances,
+  shiftStudent,
+  removeStudent,
+  getNextAvailableRollNumber,
+  checkRollNumberAvailable
+} from '../api/studentProfileService';
+import { CLASS_OPTIONS } from '../api/marksService';
+import { 
+  User, 
+  BookOpen, 
+  Clock, 
+  AlertTriangle, 
+  ArrowLeft, 
+  ArrowRightLeft, 
+  Trash2, 
+  Phone, 
+  Mail, 
+  Sun, 
+  Moon, 
+  CheckCircle2, 
+  PenLine,
+  X 
+} from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import '../layout.css';
+
+const SHIFT_OPTIONS = [
+  'Morning Shift',
+  'Afternoon Shift',
+  'Evening Shift',
+  'Regular Shift'
+];
 
 export default function StudentProfilePage() {
   const { id } = useParams();
@@ -15,6 +48,22 @@ export default function StudentProfilePage() {
   const [attendance, setAttendance] = useState([]);
   const [compliances, setCompliances] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Shift Modal State
+  const [isShiftOpen, setIsShiftOpen] = useState(false);
+  const [shiftForm, setShiftForm] = useState({
+    targetStream: 'Science',
+    targetYear: '1st Year',
+    targetClass: 'Class A',
+    targetShift: 'Morning Shift',
+    targetRollNumber: ''
+  });
+  const [shiftRollCheck, setShiftRollCheck] = useState({ checking: false, available: true, message: '' });
+  const [shiftSubmitting, setShiftSubmitting] = useState(false);
+
+  // Remove Modal State
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false);
+  const [removeSubmitting, setRemoveSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -40,6 +89,108 @@ export default function StudentProfilePage() {
     if (id) fetchData();
   }, [id]);
 
+  const targetClassOptions = useMemo(() => {
+    const key = `${shiftForm.targetStream}|${shiftForm.targetYear}`;
+    return CLASS_OPTIONS[key] || ['Class A', 'Class B', 'FTB', 'Inspire'];
+  }, [shiftForm.targetStream, shiftForm.targetYear]);
+
+  // Open Shift modal with student's current settings
+  async function openShiftModal() {
+    if (!student) return;
+    const nextRoll = await getNextAvailableRollNumber(student.stream, student.year, student.class);
+
+    setShiftForm({
+      targetStream: student.stream,
+      targetYear: student.year,
+      targetClass: student.class,
+      targetShift: student.shift === 'Morning Shift' ? 'Evening Shift' : 'Morning Shift',
+      targetRollNumber: student.roll_number ? student.roll_number.toString() : nextRoll.toString()
+    });
+
+    setIsShiftOpen(true);
+  }
+
+  // Live roll number check in target batch
+  useEffect(() => {
+    if (!isShiftOpen || !shiftForm.targetRollNumber || !student) {
+      setShiftRollCheck({ checking: false, available: true, message: '' });
+      return;
+    }
+
+    const rollInt = parseInt(shiftForm.targetRollNumber, 10);
+    if (isNaN(rollInt) || rollInt <= 0) {
+      setShiftRollCheck({ checking: false, available: false, message: 'Roll number must be a positive integer.' });
+      return;
+    }
+
+    let isMounted = true;
+    setShiftRollCheck(prev => ({ ...prev, checking: true }));
+
+    const timer = setTimeout(async () => {
+      const isAvailable = await checkRollNumberAvailable(
+        shiftForm.targetStream,
+        shiftForm.targetYear,
+        shiftForm.targetClass,
+        rollInt,
+        student.id
+      );
+
+      if (isMounted) {
+        if (isAvailable) {
+          setShiftRollCheck({ checking: false, available: true, message: `Roll No ${rollInt} is available in destination batch.` });
+        } else {
+          setShiftRollCheck({ checking: false, available: false, message: `Roll No ${rollInt} is already taken in destination batch.` });
+        }
+      }
+    }, 250);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, [shiftForm.targetRollNumber, shiftForm.targetStream, shiftForm.targetYear, shiftForm.targetClass, isShiftOpen, student]);
+
+  async function handleShiftSubmit(e) {
+    e.preventDefault();
+    if (!shiftRollCheck.available) {
+      toast.error('The selected Roll Number is not available');
+      return;
+    }
+
+    setShiftSubmitting(true);
+    try {
+      const updated = await shiftStudent(student.id, {
+        targetStream: shiftForm.targetStream,
+        targetYear: shiftForm.targetYear,
+        targetClass: shiftForm.targetClass,
+        targetShift: shiftForm.targetShift,
+        targetRollNumber: shiftForm.targetRollNumber
+      });
+
+      setStudent(prev => ({ ...prev, ...updated }));
+      toast.success(`Student successfully shifted to ${shiftForm.targetStream} - ${shiftForm.targetClass} (${shiftForm.targetShift})!`);
+      setIsShiftOpen(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || 'Failed to shift student');
+    } finally {
+      setShiftSubmitting(false);
+    }
+  }
+
+  async function handleRemoveSubmit() {
+    setRemoveSubmitting(true);
+    try {
+      await removeStudent(student.id);
+      toast.success(`Student "${student.name}" removed successfully.`);
+      navigate('/students');
+    } catch (err) {
+      console.error(err);
+      toast.error(err.message || 'Failed to remove student');
+      setRemoveSubmitting(false);
+    }
+  }
+
   const attendanceStats = useMemo(() => {
     if (!attendance.length) return { present: 0, absent: 0, percentage: 0 };
     const absent = attendance.filter(a => a.is_absent).length;
@@ -49,15 +200,12 @@ export default function StudentProfilePage() {
   }, [attendance]);
 
   const marksData = useMemo(() => {
-    // Process marks for the chart
-    // A student might have multiple tests, each with a JSON 'marks' object: { "Math": 85, "Science": 90 }
-    // We will calculate a total percentage per test
     return marks.map(entry => {
       const marksObj = entry.marks || {};
       const subjects = Object.keys(marksObj);
       let total = 0;
       subjects.forEach(sub => total += Number(marksObj[sub]) || 0);
-      const maxPossible = subjects.length * 100; // assuming each subject is out of 100 for a simple chart
+      const maxPossible = subjects.length * 100;
       const percentage = maxPossible > 0 ? Math.round((total / maxPossible) * 100) : 0;
       
       return {
@@ -65,7 +213,7 @@ export default function StudentProfilePage() {
         score: percentage,
         date: new Date(entry.tests?.created_at).toLocaleDateString()
       };
-    }).reverse(); // chronological for chart
+    }).reverse();
   }, [marks]);
 
   if (loading) {
@@ -83,35 +231,104 @@ export default function StudentProfilePage() {
       <Layout>
         <div style={{ padding: 24 }}>
           <h2>Student not found</h2>
-          <button onClick={() => navigate(-1)} style={{ marginTop: 16, padding: '8px 16px', borderRadius: 8, cursor: 'pointer' }}>Go Back</button>
+          <button onClick={() => navigate('/students')} style={{ marginTop: 16, padding: '8px 16px', borderRadius: 8, cursor: 'pointer' }}>
+            Go to Student Directory
+          </button>
         </div>
       </Layout>
     );
   }
 
+  const currentShift = student.shift || 'Morning Shift';
+  const isMorning = currentShift === 'Morning Shift';
+
   return (
     <Layout>
       <div style={{ padding: '0 0 24px 0' }}>
         <button 
-          onClick={() => navigate(-1)} 
+          onClick={() => navigate('/students')} 
           style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginBottom: 24, fontSize: '0.9rem', fontWeight: 500 }}
         >
-          <ArrowLeft size={16} /> Back
+          <ArrowLeft size={16} /> Back to Student Directory
         </button>
         
         {/* Header Profile Card */}
-        <div style={{ background: 'var(--bg-surface)', padding: 32, borderRadius: 16, border: '1px solid var(--border-color)', display: 'flex', gap: 24, alignItems: 'center', marginBottom: 24 }}>
-          <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--maroon-900)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 600 }}>
-            {student.name.charAt(0)}
-          </div>
-          <div>
-            <h1 style={{ fontSize: '1.8rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 4 }}>{student.name}</h1>
-            <div style={{ display: 'flex', gap: 16, color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-              <span><strong style={{ color: 'var(--text-main)' }}>Roll No:</strong> {student.roll_number || 'N/A'}</span>
-              <span><strong style={{ color: 'var(--text-main)' }}>Class:</strong> {student.class}</span>
-              <span><strong style={{ color: 'var(--text-main)' }}>Stream:</strong> {student.stream}</span>
-              <span><strong style={{ color: 'var(--text-main)' }}>Year:</strong> {student.year}</span>
+        <div style={{ background: 'var(--bg-surface)', padding: 28, borderRadius: 16, border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24 }}>
+          <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
+            <div style={{ width: 76, height: 76, borderRadius: '50%', background: 'var(--maroon-900)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 700 }}>
+              {student.name.charAt(0)}
             </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <h1 style={{ fontSize: '1.7rem', fontWeight: 700, color: 'var(--maroon-900)', margin: '0 0 4px 0' }}>{student.name}</h1>
+                <span style={{ 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: 4, 
+                  background: isMorning ? '#FEF3C7' : '#EEF2FF', 
+                  color: isMorning ? '#92400E' : '#3730A3', 
+                  padding: '3px 10px', 
+                  borderRadius: 12, 
+                  fontSize: '0.78rem', 
+                  fontWeight: 700 
+                }}>
+                  {isMorning ? <Sun size={12} /> : <Moon size={12} />}
+                  {currentShift}
+                </span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, color: 'var(--text-muted)', fontSize: '0.92rem', marginTop: 4 }}>
+                <span><strong style={{ color: 'var(--text-main)' }}>Roll No:</strong> #{student.roll_number || 'N/A'}</span>
+                <span><strong style={{ color: 'var(--text-main)' }}>Class:</strong> {student.class}</span>
+                <span><strong style={{ color: 'var(--text-main)' }}>Stream:</strong> {student.stream}</span>
+                <span><strong style={{ color: 'var(--text-main)' }}>Year:</strong> {student.year}</span>
+                {student.parent_phone && (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Phone size={13} /> {student.parent_phone}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Admin Management Actions: Shift / Remove */}
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={openShiftModal}
+              style={{
+                background: '#FCEFEF',
+                border: '1px solid #F5C6CB',
+                color: 'var(--maroon-900)',
+                padding: '9px 16px',
+                borderRadius: 8,
+                fontWeight: 600,
+                fontSize: '0.88rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                cursor: 'pointer'
+              }}
+            >
+              <ArrowRightLeft size={16} /> Shift Student
+            </button>
+
+            <button
+              onClick={() => setIsRemoveOpen(true)}
+              style={{
+                background: '#FEE2E2',
+                border: '1px solid #FCA5A5',
+                color: '#DC2626',
+                padding: '9px 16px',
+                borderRadius: 8,
+                fontWeight: 600,
+                fontSize: '0.88rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                cursor: 'pointer'
+              }}
+            >
+              <Trash2 size={16} /> Remove
+            </button>
           </div>
         </div>
 
@@ -133,6 +350,30 @@ export default function StudentProfilePage() {
               <div><strong style={{ color: 'var(--text-main)' }}>Classes Attended:</strong> {attendanceStats.present}</div>
               <div><strong style={{ color: 'var(--text-main)' }}>Classes Missed:</strong> {attendanceStats.absent}</div>
             </div>
+
+            <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                {attendance.length === 0 ? 'Initial attendance is 0% (no sessions recorded)' : `${attendance.length} session(s) recorded`}
+              </span>
+              <button
+                onClick={() => navigate(`/attendance?stream=${student.stream}&year=${student.year}&class=${encodeURIComponent(student.class)}`)}
+                style={{
+                  background: '#FCEFEF',
+                  border: '1px solid #F5C6CB',
+                  color: 'var(--maroon-900)',
+                  padding: '5px 12px',
+                  borderRadius: 6,
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4
+                }}
+              >
+                <PenLine size={13} /> Edit Batch Attendance
+              </button>
+            </div>
           </div>
 
           {/* Compliances Summary */}
@@ -151,7 +392,6 @@ export default function StudentProfilePage() {
                     {c.remark}
                   </li>
                 ))}
-                {compliances.length > 4 && <li style={{ color: 'var(--maroon-900)', cursor: 'pointer', listStyle: 'none', marginLeft: -20, marginTop: 8 }}>View all {compliances.length} remarks...</li>}
               </ul>
             )}
           </div>
@@ -182,6 +422,138 @@ export default function StudentProfilePage() {
             </div>
           )}
         </div>
+
+        {/* Shift Modal */}
+        {isShiftOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+            <div style={{ background: '#fff', width: '100%', maxWidth: 520, borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
+              <div style={{ padding: '20px 24px', background: 'var(--maroon-900)', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>Shift Student: {student.name}</h3>
+                <button onClick={() => setIsShiftOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
+                  <X size={20} />
+                </button>
+              </div>
+
+              <form onSubmit={handleShiftSubmit} style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Stream</label>
+                    <select
+                      value={shiftForm.targetStream}
+                      onChange={e => {
+                        const newStream = e.target.value;
+                        const nextClasses = CLASS_OPTIONS[`${newStream}|${shiftForm.targetYear}`] || ['Class A'];
+                        setShiftForm(prev => ({ ...prev, targetStream: newStream, targetClass: nextClasses[0] }));
+                      }}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
+                    >
+                      <option value="Science">Science</option>
+                      <option value="Commerce">Commerce</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Year</label>
+                    <select
+                      value={shiftForm.targetYear}
+                      onChange={e => {
+                        const newYear = e.target.value;
+                        const nextClasses = CLASS_OPTIONS[`${shiftForm.targetStream}|${newYear}`] || ['Class A'];
+                        setShiftForm(prev => ({ ...prev, targetYear: newYear, targetClass: nextClasses[0] }));
+                      }}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
+                    >
+                      <option value="1st Year">1st Year</option>
+                      <option value="2nd Year">2nd Year</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Class</label>
+                    <select
+                      value={shiftForm.targetClass}
+                      onChange={e => setShiftForm({ ...shiftForm, targetClass: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
+                    >
+                      {targetClassOptions.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Shift</label>
+                    <select
+                      value={shiftForm.targetShift}
+                      onChange={e => setShiftForm({ ...shiftForm, targetShift: e.target.value })}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
+                    >
+                      {SHIFT_OPTIONS.map(s => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Roll Number *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    value={shiftForm.targetRollNumber}
+                    onChange={e => setShiftForm({ ...shiftForm, targetRollNumber: e.target.value })}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: shiftRollCheck.available ? '1px solid var(--border-color)' : '1px solid #EF4444', outline: 'none' }}
+                  />
+                  {shiftRollCheck.message && (
+                    <div style={{ marginTop: 6, fontSize: '0.78rem', color: shiftRollCheck.available ? '#059669' : '#DC2626' }}>
+                      {shiftRollCheck.message}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>
+                  <button type="button" onClick={() => setIsShiftOpen(false)} style={{ background: '#F5F5F5', border: '1px solid var(--border-color)', padding: '10px 18px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={shiftSubmitting || !shiftRollCheck.available} style={{ background: 'var(--maroon-900)', color: '#fff', border: 'none', padding: '10px 22px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
+                    {shiftSubmitting ? 'Shifting...' : 'Confirm Shift'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Remove Modal */}
+        {isRemoveOpen && (
+          <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+            <div style={{ background: '#fff', width: '100%', maxWidth: 420, borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', padding: 24 }}>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#FEE2E2', color: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
+                <Trash2 size={24} />
+              </div>
+
+              <h3 style={{ textAlign: 'center', margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: 700 }}>
+                Remove Student Record?
+              </h3>
+
+              <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 0 20px 0' }}>
+                Are you sure you want to permanently remove <strong>{student.name}</strong> from the database? This action cannot be undone.
+              </p>
+
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                <button type="button" onClick={() => setIsRemoveOpen(false)} style={{ background: '#F5F5F5', border: '1px solid var(--border-color)', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                  Cancel
+                </button>
+                <button type="button" onClick={handleRemoveSubmit} disabled={removeSubmitting} style={{ background: '#DC2626', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', flex: 1 }}>
+                  {removeSubmitting ? 'Removing...' : 'Yes, Remove'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </Layout>

@@ -1022,6 +1022,12 @@ export default function AdminPortalPage() {
               </div>
               <button style={s.primaryBtn} onClick={fetchAttendanceSessions}>Refresh</button>
               <button 
+                style={{ ...s.primaryBtn, background: 'var(--maroon-900, #731313)', color: '#fff', fontWeight: 700 }}
+                onClick={() => navigate(`/attendance?date=${attDateFilter || new Date().toISOString().split('T')[0]}&stream=${attStreamFilter || 'Science'}`)}
+              >
+                <PenLine size={14} style={{ marginRight: 6 }} /> Take / Edit Attendance
+              </button>
+              <button 
                 style={{ ...s.primaryBtn, background: 'var(--color-gold-500, #c9a227)', color: '#0b1f3a', fontWeight: 700 }} 
                 onClick={handleTriggerAbsenceSms}
               >
@@ -1054,6 +1060,7 @@ export default function AdminPortalPage() {
                         <th style={s.th}>Present</th>
                         <th style={s.th}>Absent</th>
                         <th style={s.th}>%</th>
+                        <th style={{...s.th, textAlign: 'right'}}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1076,6 +1083,27 @@ export default function AdminPortalPage() {
                               <span style={{
                                 ...s.badge(pct >= 75 ? 'submitted' : pct >= 50 ? 'draft' : 'missing'),
                               }}>{pct}%</span>
+                            </td>
+                            <td style={{...s.td, textAlign: 'right'}}>
+                              <button
+                                onClick={() => navigate(`/attendance?stream=${ses.stream}&year=${ses.year}&class=${encodeURIComponent(ses.class)}&date=${ses.date}&edit=true`)}
+                                style={{
+                                  background: 'var(--bg-surface-hover)',
+                                  border: '1px solid var(--border)',
+                                  padding: '5px 12px',
+                                  borderRadius: 'var(--radius-md)',
+                                  fontSize: 12,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 6,
+                                  color: 'var(--maroon-900, #731313)'
+                                }}
+                                title="Edit this session's attendance"
+                              >
+                                <PenLine size={13} /> Edit Attendance
+                              </button>
                             </td>
                           </tr>
                         );

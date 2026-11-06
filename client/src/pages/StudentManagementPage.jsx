@@ -423,7 +423,7 @@ export default function StudentManagementPage() {
     setIsRemoveModalOpen(true);
   }
 
-  // Handle Single Student Remove (REMOVE)
+  // Handle Single Student Permanent Delete
   async function handleRemoveConfirm() {
     if (!targetStudent) return;
     try {
@@ -434,16 +434,16 @@ export default function StudentManagementPage() {
         next.delete(targetStudent.id);
         return next;
       });
-      toast.success(`Student "${targetStudent.name}" removed from database.`);
+      toast.success(`Student "${targetStudent.name}" permanently deleted from application.`);
       setIsRemoveModalOpen(false);
       setTargetStudent(null);
     } catch (err) {
       console.error(err);
-      toast.error(err.message || 'Failed to remove student');
+      toast.error(err.message || 'Failed to delete student');
     }
   }
 
-  // Handle Batch Remove (REMOVE)
+  // Handle Batch Permanent Delete
   async function handleBatchRemoveConfirm() {
     const idArray = Array.from(selectedIds);
     if (idArray.length === 0) return;
@@ -451,12 +451,12 @@ export default function StudentManagementPage() {
     try {
       await batchRemoveStudents(idArray);
       setStudents(prev => prev.filter(s => !selectedIds.has(s.id)));
-      toast.success(`Removed ${idArray.length} student records from database.`);
+      toast.success(`Permanently deleted ${idArray.length} student records from application.`);
       setSelectedIds(new Set());
       setIsBatchRemoveModalOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error(err.message || 'Failed to remove selected students');
+      toast.error(err.message || 'Failed to delete selected students');
     }
   }
 
@@ -760,14 +760,14 @@ export default function StudentManagementPage() {
                   onClick={openBatchShiftModal}
                   style={{ background: 'var(--maroon-900)', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}
                 >
-                  <ArrowRightLeft size={15} /> Shift Selected ({selectedIds.size})
+                  <ArrowRightLeft size={15} /> Move Class ({selectedIds.size})
                 </button>
 
                 <button
                   onClick={() => setIsBatchRemoveModalOpen(true)}
                   style={{ background: '#DC2626', color: '#fff', border: 'none', padding: '7px 14px', borderRadius: 8, fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}
                 >
-                  <Trash2 size={15} /> Remove Selected ({selectedIds.size})
+                  <Trash2 size={15} /> Delete Selected ({selectedIds.size})
                 </button>
 
                 <button
@@ -909,18 +909,18 @@ export default function StudentManagementPage() {
 
                               <button
                                 onClick={() => openShiftModal(stu)}
-                                title="Shift / Transfer Student to another Class or Section"
+                                title="Move / Shift Student to Another Class"
                                 style={{ background: '#FCEFEF', border: '1px solid #F5C6CB', color: 'var(--maroon-900)', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
                               >
-                                <ArrowRightLeft size={14} /> Shift
+                                <ArrowRightLeft size={14} /> Move Class
                               </button>
 
                               <button
                                 onClick={() => openRemoveModal(stu)}
-                                title="Remove Student from Database"
-                                style={{ background: '#FEE2E2', border: '1px solid #FCA5A5', color: '#DC2626', padding: '6px 8px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                title="Permanently Delete Student from Application"
+                                style={{ background: '#FEE2E2', border: '1px solid #FCA5A5', color: '#DC2626', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={14} /> Delete
                               </button>
                             </div>
                           </td>
@@ -1285,9 +1285,9 @@ export default function StudentManagementPage() {
             <div style={{ padding: '20px 24px', background: 'var(--maroon-900)', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
                 <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <ArrowRightLeft size={20} /> Shift Student
+                  <ArrowRightLeft size={20} /> Move Student to Another Class
                 </h3>
-                <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', opacity: 0.85 }}>Transfer to new Class, Shift, or Year while preserving all student records</p>
+                <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', opacity: 0.85 }}>Remove student from current class and add to destination class with continuous records</p>
               </div>
               <button onClick={() => setIsShiftModalOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
                 <X size={20} />
@@ -1414,7 +1414,7 @@ export default function StudentManagementPage() {
                     cursor: shiftRollCheck.available ? 'pointer' : 'not-allowed'
                   }}
                 >
-                  {shiftSubmitting ? 'Shifting...' : 'Confirm & Shift Student'}
+                  {shiftSubmitting ? 'Moving Class...' : 'Confirm & Move Class'}
                 </button>
               </div>
             </form>
@@ -1423,15 +1423,17 @@ export default function StudentManagementPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════
-          MODAL 3: BATCH SHIFT STUDENTS
+          MODAL 3: BATCH MOVE STUDENTS TO ANOTHER CLASS
       ═══════════════════════════════════════════════════ */}
       {isBatchShiftModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
           <div style={{ background: '#fff', width: '100%', maxWidth: 520, borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
             <div style={{ padding: '20px 24px', background: 'var(--maroon-900)', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>Batch Shift ({selectedIds.size} Students)</h3>
-                <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', opacity: 0.85 }}>Transfer multiple selected students simultaneously</p>
+                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <ArrowRightLeft size={20} /> Batch Move Students ({selectedIds.size})
+                </h3>
+                <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', opacity: 0.85 }}>Remove students from current classes and enroll them in target class</p>
               </div>
               <button onClick={() => setIsBatchShiftModalOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
                 <X size={20} />
@@ -1440,7 +1442,7 @@ export default function StudentManagementPage() {
 
             <form onSubmit={handleBatchShiftSubmit} style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ background: '#FAFAFA', padding: 12, borderRadius: 8, border: '1px solid var(--border-color)', fontSize: '0.85rem' }}>
-                You have selected <strong>{selectedIds.size} students</strong> to shift. Unique sequential roll numbers will be automatically allocated in the destination class.
+                You have selected <strong>{selectedIds.size} students</strong> to move. Sequential roll numbers will be automatically allocated in destination class.
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -1503,7 +1505,7 @@ export default function StudentManagementPage() {
                   disabled={batchShiftSubmitting}
                   style={{ background: 'var(--maroon-900)', color: '#fff', border: 'none', padding: '10px 22px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
                 >
-                  {batchShiftSubmitting ? 'Shifting Students...' : `Confirm Shift for ${selectedIds.size} Students`}
+                  {batchShiftSubmitting ? 'Moving Students...' : `Confirm & Move ${selectedIds.size} Students`}
                 </button>
               </div>
             </form>
@@ -1512,7 +1514,7 @@ export default function StudentManagementPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════
-          MODAL 4: REMOVE STUDENT (SINGLE)
+          MODAL 4: PERMANENTLY DELETE STUDENT (SINGLE)
       ═══════════════════════════════════════════════════ */}
       {isRemoveModalOpen && targetStudent && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
@@ -1522,15 +1524,15 @@ export default function StudentManagementPage() {
             </div>
 
             <h3 style={{ textAlign: 'center', margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              Remove Student Record?
+              Permanently Delete Student?
             </h3>
 
             <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 0 20px 0' }}>
-              Are you sure you want to permanently remove <strong>{targetStudent.name}</strong> (Roll No: #{targetStudent.roll_number}) from {targetStudent.stream} - {targetStudent.class}?
+              Are you sure you want to permanently delete <strong>{targetStudent.name}</strong> (Roll No: #{targetStudent.roll_number}) from {targetStudent.stream} - {targetStudent.class}?
             </p>
 
             <div style={{ background: '#FFF7ED', border: '1px solid #FFEDD5', padding: 12, borderRadius: 8, fontSize: '0.8rem', color: '#9A3412', marginBottom: 20 }}>
-              ⚠️ <strong>Warning:</strong> Removing this student will also delete their associated test marks and attendance records.
+              ⚠️ <strong>Permanent Action:</strong> This will completely delete the student record along with all test marks and attendance records permanently from the database. This action cannot be undone.
             </div>
 
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
@@ -1546,7 +1548,7 @@ export default function StudentManagementPage() {
                 onClick={handleRemoveConfirm}
                 style={{ background: '#DC2626', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', flex: 1 }}
               >
-                Yes, Remove Student
+                Yes, Permanently Delete
               </button>
             </div>
           </div>
@@ -1554,7 +1556,7 @@ export default function StudentManagementPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════
-          MODAL 5: BATCH REMOVE STUDENTS
+          MODAL 5: BATCH PERMANENTLY DELETE STUDENTS
       ═══════════════════════════════════════════════════ */}
       {isBatchRemoveModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
@@ -1564,12 +1566,16 @@ export default function StudentManagementPage() {
             </div>
 
             <h3 style={{ textAlign: 'center', margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>
-              Remove {selectedIds.size} Students?
+              Permanently Delete {selectedIds.size} Students?
             </h3>
 
             <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 0 20px 0' }}>
-              Are you sure you want to permanently delete {selectedIds.size} selected student records and their associated academic data?
+              Are you sure you want to permanently delete {selectedIds.size} selected student records and all their academic data from the application?
             </p>
+
+            <div style={{ background: '#FFF7ED', border: '1px solid #FFEDD5', padding: 12, borderRadius: 8, fontSize: '0.8rem', color: '#9A3412', marginBottom: 20 }}>
+              ⚠️ <strong>Permanent Action:</strong> All {selectedIds.size} student profiles and all their associated marks and attendance history will be completely erased from the database. This cannot be undone.
+            </div>
 
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
               <button
@@ -1584,7 +1590,7 @@ export default function StudentManagementPage() {
                 onClick={handleBatchRemoveConfirm}
                 style={{ background: '#DC2626', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', flex: 1 }}
               >
-                Confirm Delete ({selectedIds.size})
+                Confirm Permanent Delete ({selectedIds.size})
               </button>
             </div>
           </div>

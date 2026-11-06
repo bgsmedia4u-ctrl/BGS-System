@@ -20,15 +20,26 @@ export async function getStudentsByBatch(stream, year, cls) {
       .select('*')
       .eq('stream', stream)
       .eq('year', year)
-      .eq('class', cls)
-      .order('roll_number', { ascending: true, nullsFirst: false })
-      .order('name', { ascending: true });
+      .eq('class', cls);
 
     if (error) {
       console.error('Students query failed:', error.message);
       return [];
     }
-    return data || [];
+
+    // Natural numeric sort for both seed data and registered students
+    return (data || []).sort((a, b) => {
+      const rollA = parseInt(a.roll_number, 10);
+      const rollB = parseInt(b.roll_number, 10);
+      if (!isNaN(rollA) && !isNaN(rollB)) {
+        if (rollA !== rollB) return rollA - rollB;
+      } else if (!isNaN(rollA)) {
+        return -1;
+      } else if (!isNaN(rollB)) {
+        return 1;
+      }
+      return (a.name || '').localeCompare(b.name || '');
+    });
   } catch (err) {
     console.error('Students fetch error:', err);
     return [];

@@ -76,18 +76,18 @@ export default function AttendancePage() {
         records.forEach(r => {
           nextData[r.student_id] = r.is_absent;
         });
-        // Any newly registered students not in records yet initially start at zero (is_absent: true)
+        // Any newly registered students not in records yet initially start as Present (is_absent: false)
         studentsData.forEach(st => {
           if (nextData[st.id] === undefined) {
-            nextData[st.id] = true;
+            nextData[st.id] = false;
           }
         });
         setIsExistingSession(true);
       } else {
-        // Initial state: EVERYONE'S ATTENDANCE WILL BE ZERO!
-        // is_absent: true for all students -> 0 present, 0% attendance
+        // Initial state: INITIALLY ALL STUDENTS MUST BE PRESENT!
+        // is_absent: false for all students -> all present by default
         studentsData.forEach(st => {
-          nextData[st.id] = true;
+          nextData[st.id] = false;
         });
         setIsExistingSession(false);
       }
@@ -248,27 +248,27 @@ export default function AttendancePage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {isExistingSession ? <PenLine size={18} color="#0369A1" /> : <AlertCircle size={18} color="#92400E" />}
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isExistingSession ? '#0369A1' : '#92400E' }}>
-                    {isExistingSession ? 'Editing Existing Attendance Session' : 'New Session — Initial Attendance is Zero'}
+                  <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isExistingSession ? '#0369A1' : '#065F46' }}>
+                    {isExistingSession ? 'Editing Existing Attendance Session' : 'New Session — All Students Initially Present'}
                   </div>
-                  <div style={{ fontSize: '0.82rem', color: isExistingSession ? '#0c4a6e' : '#78350f' }}>
+                  <div style={{ fontSize: '0.82rem', color: isExistingSession ? '#0c4a6e' : '#064E3B' }}>
                     {isExistingSession 
                       ? 'You are editing saved attendance records. Click any student tile to toggle Present/Absent.' 
-                      : 'Initial attendance starts at 0% (all students initialized as absent). Click tiles or "All Present" to record attendance.'}
+                      : 'All students are marked Present by default. Tap any student tile to mark them Absent, or use "Mark All Absent".'}
                   </div>
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{
-                  background: isExistingSession ? '#0284C7' : '#D97706',
+                  background: isExistingSession ? '#0284C7' : '#059669',
                   color: '#fff',
                   padding: '4px 10px',
                   borderRadius: 20,
                   fontSize: '0.78rem',
                   fontWeight: 700
                 }}>
-                  {isExistingSession ? 'Saved Record' : 'Initial (0% Present)'}
+                  {isExistingSession ? 'Saved Record' : 'Initial (100% Present)'}
                 </span>
               </div>
             </div>
@@ -515,8 +515,8 @@ function BatchSelectView({ stream, setStream, year, setYear, cls, setCls, date, 
           </select>
         </div>
 
-        <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 8, padding: 12, fontSize: '0.82rem', color: '#92400E' }}>
-          ℹ️ <strong>Initial Zero State:</strong> For brand new attendance sessions, all students start with 0% attendance. You can easily mark presence individually or click "Mark All Present".
+        <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 8, padding: 12, fontSize: '0.82rem', color: '#065F46' }}>
+          ℹ️ <strong>Initial State:</strong> For new attendance sessions, all students start marked Present (100%) by default. You can easily mark absentees by tapping individual student tiles.
         </div>
 
         <button 

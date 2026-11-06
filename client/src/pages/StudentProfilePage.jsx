@@ -186,17 +186,17 @@ export default function StudentProfilePage() {
     setRemoveSubmitting(true);
     try {
       await removeStudent(student.id);
-      toast.success(`Student "${student.name}" removed successfully.`);
+      toast.success(`Student "${student.name}" permanently deleted from application.`);
       navigate('/students');
     } catch (err) {
       console.error(err);
-      toast.error(err.message || 'Failed to remove student');
+      toast.error(err.message || 'Failed to permanently delete student');
       setRemoveSubmitting(false);
     }
   }
 
   const attendanceStats = useMemo(() => {
-    if (!attendance.length) return { present: 0, absent: 0, percentage: 0 };
+    if (!attendance.length) return { present: 0, absent: 0, percentage: 100 };
     const absent = attendance.filter(a => a.is_absent).length;
     const present = attendance.length - absent;
     const percentage = Math.round((present / attendance.length) * 100);
@@ -289,7 +289,7 @@ export default function StudentProfilePage() {
             </div>
           </div>
 
-          {/* Admin Management Actions: Shift / Remove */}
+          {/* Admin Management Actions: Move Class / Permanent Delete */}
           <div style={{ display: 'flex', gap: 10 }}>
             <button
               onClick={openShiftModal}
@@ -307,7 +307,7 @@ export default function StudentProfilePage() {
                 cursor: 'pointer'
               }}
             >
-              <ArrowRightLeft size={16} /> Shift Student
+              <ArrowRightLeft size={16} /> Move Class
             </button>
 
             <button
@@ -326,7 +326,7 @@ export default function StudentProfilePage() {
                 cursor: 'pointer'
               }}
             >
-              <Trash2 size={16} /> Remove
+              <Trash2 size={16} /> Delete Student
             </button>
           </div>
         </div>
@@ -352,7 +352,7 @@ export default function StudentProfilePage() {
 
             <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                {attendance.length === 0 ? 'Initial attendance is 0% (no sessions recorded)' : `${attendance.length} session(s) recorded`}
+                {attendance.length === 0 ? 'Baseline attendance is 100% (all students present by default)' : `${attendance.length} session(s) recorded`}
               </span>
               <button
                 onClick={() => navigate(`/attendance?stream=${student.stream}&year=${student.year}&class=${encodeURIComponent(student.class)}`)}
@@ -476,12 +476,17 @@ export default function StudentProfilePage() {
           )}
         </div>
 
-        {/* Shift Modal */}
+        {/* Move Class Modal */}
         {isShiftOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
             <div style={{ background: '#fff', width: '100%', maxWidth: 520, borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.2)' }}>
               <div style={{ padding: '20px 24px', background: 'var(--maroon-900)', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>Shift Student: {student.name}</h3>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <ArrowRightLeft size={20} /> Move Student to Another Class
+                  </h3>
+                  <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', opacity: 0.85 }}>Transfer {student.name} to target class while preserving all marks & attendance</p>
+                </div>
                 <button onClick={() => setIsShiftOpen(false)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
                   <X size={20} />
                 </button>
@@ -495,7 +500,7 @@ export default function StudentProfilePage() {
                       value={shiftForm.targetStream}
                       onChange={e => {
                         const newStream = e.target.value;
-                        const nextClasses = CLASS_OPTIONS[`${newStream}|${shiftForm.targetYear}`] || ['Class A'];
+                        const nextClasses = CLASS_OPTIONS[`${newStream}|${shiftForm.targetYear}`] || ['FTB - 1'];
                         setShiftForm(prev => ({ ...prev, targetStream: newStream, targetClass: nextClasses[0] }));
                       }}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
@@ -511,7 +516,7 @@ export default function StudentProfilePage() {
                       value={shiftForm.targetYear}
                       onChange={e => {
                         const newYear = e.target.value;
-                        const nextClasses = CLASS_OPTIONS[`${shiftForm.targetStream}|${newYear}`] || ['Class A'];
+                        const nextClasses = CLASS_OPTIONS[`${shiftForm.targetStream}|${newYear}`] || ['FTB - 1'];
                         setShiftForm(prev => ({ ...prev, targetYear: newYear, targetClass: nextClasses[0] }));
                       }}
                       style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
@@ -557,7 +562,7 @@ export default function StudentProfilePage() {
                     Cancel
                   </button>
                   <button type="submit" disabled={shiftSubmitting || !shiftRollCheck.available} style={{ background: 'var(--maroon-900)', color: '#fff', border: 'none', padding: '10px 22px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>
-                    {shiftSubmitting ? 'Shifting...' : 'Confirm Shift'}
+                    {shiftSubmitting ? 'Moving Class...' : 'Confirm Move Class'}
                   </button>
                 </div>
               </form>
@@ -565,28 +570,32 @@ export default function StudentProfilePage() {
           </div>
         )}
 
-        {/* Remove Modal */}
+        {/* Permanently Delete Modal */}
         {isRemoveOpen && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
-            <div style={{ background: '#fff', width: '100%', maxWidth: 420, borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', padding: 24 }}>
+            <div style={{ background: '#fff', width: '100%', maxWidth: 440, borderRadius: 16, overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', padding: 24 }}>
               <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#FEE2E2', color: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
                 <Trash2 size={24} />
               </div>
 
               <h3 style={{ textAlign: 'center', margin: '0 0 8px 0', fontSize: '1.25rem', fontWeight: 700 }}>
-                Remove Student Record?
+                Permanently Delete Student?
               </h3>
 
               <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 0 20px 0' }}>
-                Are you sure you want to permanently remove <strong>{student.name}</strong> from the database? This action cannot be undone.
+                Are you sure you want to permanently delete <strong>{student.name}</strong> (Roll No: #{student.roll_number}) from the application?
               </p>
+
+              <div style={{ background: '#FFF7ED', border: '1px solid #FFEDD5', padding: 12, borderRadius: 8, fontSize: '0.8rem', color: '#9A3412', marginBottom: 20 }}>
+                ⚠️ <strong>Permanent Action:</strong> This will completely delete the student record along with all their test marks and attendance records permanently from the database. This action cannot be undone.
+              </div>
 
               <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
                 <button type="button" onClick={() => setIsRemoveOpen(false)} style={{ background: '#F5F5F5', border: '1px solid var(--border-color)', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', flex: 1 }}>
                   Cancel
                 </button>
                 <button type="button" onClick={handleRemoveSubmit} disabled={removeSubmitting} style={{ background: '#DC2626', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: 8, fontWeight: 600, cursor: 'pointer', flex: 1 }}>
-                  {removeSubmitting ? 'Removing...' : 'Yes, Remove'}
+                  {removeSubmitting ? 'Deleting...' : 'Yes, Permanently Delete'}
                 </button>
               </div>
             </div>

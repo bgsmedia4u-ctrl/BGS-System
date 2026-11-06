@@ -19,10 +19,25 @@ export async function getAllStudents() {
     .select('*')
     .order('stream', { ascending: true })
     .order('year', { ascending: true })
-    .order('class', { ascending: true })
-    .order('roll_number', { ascending: true, nullsFirst: false });
+    .order('class', { ascending: true });
   if (error) throw error;
-  return data || [];
+
+  // Natural numeric sort by roll number so seeded students and registered students sort identically (1, 2, ... 10)
+  return (data || []).sort((a, b) => {
+    if (a.stream !== b.stream) return (a.stream || '').localeCompare(b.stream || '');
+    if (a.year !== b.year) return (a.year || '').localeCompare(b.year || '');
+    if (a.class !== b.class) return (a.class || '').localeCompare(b.class || '');
+    const rollA = parseInt(a.roll_number, 10);
+    const rollB = parseInt(b.roll_number, 10);
+    if (!isNaN(rollA) && !isNaN(rollB)) {
+      if (rollA !== rollB) return rollA - rollB;
+    } else if (!isNaN(rollA)) {
+      return -1;
+    } else if (!isNaN(rollB)) {
+      return 1;
+    }
+    return (a.name || '').localeCompare(b.name || '');
+  });
 }
 
 // ─── Query Student Marks with Test Metadata ───
@@ -97,8 +112,7 @@ export async function checkRollNumberAvailable(stream, year, cls, rollNumber, ex
       .select('id, name, roll_number')
       .eq('stream', stream)
       .eq('year', year)
-      .eq('class', cls)
-      .eq('roll_number', rollInt);
+      .eq('class', cls);
 
     if (excludeStudentId) {
       query = query.neq('id', excludeStudentId);
@@ -109,7 +123,9 @@ export async function checkRollNumberAvailable(stream, year, cls, rollNumber, ex
       console.warn('Check roll number query failed:', error.message);
       return true;
     }
-    return (data || []).length === 0;
+    // Match numerically to guarantee parity across string (seeds) and integer (registered) roll numbers
+    const exists = (data || []).some(s => parseInt(s.roll_number, 10) === rollInt);
+    return !exists;
   } catch (err) {
     return true;
   }
@@ -367,30 +383,63 @@ export async function batchShiftStudents(studentIds, { targetStream, targetYear,
   return shiftedResults;
 }
 
-// ─── Remove Student (REMOVE) ───
-export async function removeStudent(studentId) {
-  const { data, error } = await supabase
-    .from('students')
-    .delete()
-    .eq('id', studentId)
-    .select();
+// ─── Permanent Student Deletion (DELETE) ───
+// Permanently deletes student from the application and cleans up child records
+export async function deleteStudentPermanently(studentId) {
+  if (!studentId) return null;
 
-  if (error) throw error;
-  return data;
+  try {
+    // Proactively clean up dependent rows to prevent foreign key blocks
+    await Promise.allSettled([
+      supabase.from('mark_entries').delete().eq('student_id', studentId),
+      supabase.from('attendance_records').delete().eq('student_id', studentId),
+      supabase.from('student_transport_assignments').delete().eq('student_id', studentId),
+      supabase.from('transport_fees').delete().eq('student_id', studentId)
+    ]);
+
+    const { data, error } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', studentId)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Failed to permanently delete student:', err);
+    throw err;
+  }
 }
 
-// ─── Batch Remove Students ───
-export async function batchRemoveStudents(studentIds) {
+// ─── Batch Permanent Student Deletion ───
+export async function batchDeleteStudentsPermanently(studentIds) {
   if (!studentIds || studentIds.length === 0) return [];
-  const { data, error } = await supabase
-    .from('students')
-    .delete()
-    .in('id', studentIds)
-    .select();
 
-  if (error) throw error;
-  return data;
+  try {
+    await Promise.allSettled([
+      supabase.from('mark_entries').delete().in('student_id', studentIds),
+      supabase.from('attendance_records').delete().in('student_id', studentIds),
+      supabase.from('student_transport_assignments').delete().in('student_id', studentIds),
+      supabase.from('transport_fees').delete().in('student_id', studentIds)
+    ]);
+
+    const { data, error } = await supabase
+      .from('students')
+      .delete()
+      .in('id', studentIds)
+      .select();
+
+    if (error) throw error;
+    return data;
+  } catch (err) {
+    console.error('Failed to batch permanently delete students:', err);
+    throw err;
+  }
 }
+
+// Backwards-compatible aliases
+export const removeStudent = deleteStudentPermanently;
+export const batchRemoveStudents = batchDeleteStudentsPermanently;
 
 // ─── Admissions Helpers ───
 export async function getAdmissions() {

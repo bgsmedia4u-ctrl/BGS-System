@@ -38,7 +38,7 @@ INSERT INTO public.students (name, roll_number, stream, year, class) VALUES
 ('Mutahar Fathima', '35', 'Commerce', '1st Year', 'Class B'),
 ('Mahin Kousar', '36', 'Commerce', '1st Year', 'Class B'),
 ('Mohammad Fazil Khan', '37', 'Commerce', '1st Year', 'Class B'),
-('M. Afzan Ulla Sharif', '38', 'Commerce', '1st Year', 'Class B'),
+('Mohammad Afzan Ulla Sharif', '38', 'Commerce', '1st Year', 'Class B'),
 ('Mohammad Sadiq', '39', 'Commerce', '1st Year', 'Class B'),
 ('Mohammad Ghouse Pasha', '40', 'Commerce', '1st Year', 'Class B'),
 ('Madhusudhan R', '41', 'Commerce', '1st Year', 'Class B'),

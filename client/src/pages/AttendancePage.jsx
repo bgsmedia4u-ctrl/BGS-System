@@ -129,7 +129,7 @@ export default function AttendancePage() {
     try {
       const recordsToSave = students.map(st => ({
         student_id: st.id,
-        is_absent: attendanceData[st.id] !== undefined ? attendanceData[st.id] : true
+        is_absent: Boolean(attendanceData[st.id])
       }));
       await saveAttendance(stream, year, cls, date, recordsToSave, user?.id);
       setIsExistingSession(true);
@@ -142,7 +142,7 @@ export default function AttendancePage() {
     }
   };
 
-  const absentCount = Object.values(attendanceData).filter(Boolean).length;
+  const absentCount = students.filter(st => Boolean(attendanceData[st.id])).length;
   const presentCount = students.length - absentCount;
   const attendancePercentage = students.length > 0 ? Math.round((presentCount / students.length) * 100) : 0;
 
@@ -235,8 +235,8 @@ export default function AttendancePage() {
             
             {/* Status Information Banner */}
             <div style={{
-              background: isExistingSession ? '#F0F9FF' : '#FEF3C7',
-              border: `1px solid ${isExistingSession ? '#BAE6FD' : '#FDE68A'}`,
+              background: isExistingSession ? '#F0F9FF' : '#ECFDF5',
+              border: `1px solid ${isExistingSession ? '#BAE6FD' : '#A7F3D0'}`,
               borderRadius: 12,
               padding: '12px 18px',
               display: 'flex',
@@ -246,15 +246,15 @@ export default function AttendancePage() {
               gap: 12
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                {isExistingSession ? <PenLine size={18} color="#0369A1" /> : <AlertCircle size={18} color="#92400E" />}
+                {isExistingSession ? <PenLine size={18} color="#0369A1" /> : <UserCheck size={18} color="#059669" />}
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isExistingSession ? '#0369A1' : '#065F46' }}>
-                    {isExistingSession ? 'Editing Existing Attendance Session' : 'New Session — All Students Initially Present'}
+                    {isExistingSession ? 'Editing Existing Attendance Session' : 'Taking Attendance — All Students Initially Present'}
                   </div>
-                  <div style={{ fontSize: '0.82rem', color: isExistingSession ? '#0c4a6e' : '#064E3B' }}>
+                  <div style={{ fontSize: '0.82rem', color: isExistingSession ? '#0c4a6e' : '#047857' }}>
                     {isExistingSession 
                       ? 'You are editing saved attendance records. Click any student tile to toggle Present/Absent.' 
-                      : 'All students are marked Present by default. Tap any student tile to mark them Absent, or use "Mark All Absent".'}
+                      : 'All students are in Present state by default. Simply click on any student who is Absent.'}
                   </div>
                 </div>
               </div>
@@ -268,7 +268,7 @@ export default function AttendancePage() {
                   fontSize: '0.78rem',
                   fontWeight: 700
                 }}>
-                  {isExistingSession ? 'Saved Record' : 'Initial (100% Present)'}
+                  {isExistingSession ? 'Saved Record' : 'Initial: All Present'}
                 </span>
               </div>
             </div>
@@ -332,10 +332,10 @@ export default function AttendancePage() {
                   type="button"
                   className="btn btn-sm btn-ghost" 
                   onClick={markAllAbsent} 
-                  title="Reset to Zero (All Absent)" 
+                  title="Mark All Students Absent" 
                   style={{ color: '#DC2626', background: '#FEF2F2', border: '1px solid #FECACA', padding: '8px 14px', borderRadius: 8, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}
                 >
-                  <XCircle size={16} /> Reset to Zero (All Absent)
+                  <XCircle size={16} /> Mark All Absent
                 </button>
               </div>
             </div>
@@ -343,50 +343,58 @@ export default function AttendancePage() {
             {/* ── Student Tiles ── */}
             <div className="attendance-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 12 }}>
               {filteredStudents.map(st => {
-                const isAbsent = attendanceData[st.id] !== undefined ? attendanceData[st.id] : true;
+                const isAbsent = Boolean(attendanceData[st.id]);
                 return (
                   <div 
                     key={st.id}
                     className={`attendance-tile ${isAbsent ? 'absent' : 'present'}`}
                     onClick={() => toggleAbsent(st.id)}
+                    title={isAbsent ? 'Absent — Click to mark Present' : 'Present — Click to mark Absent'}
                     style={{
                       background: isAbsent ? '#FFF5F5' : '#F0FDF4',
                       border: `2px solid ${isAbsent ? '#FCA5A5' : '#86EFAC'}`,
                       borderRadius: 12,
-                      padding: 14,
+                      padding: '14px 16px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+                      boxShadow: isAbsent ? '0 2px 6px rgba(220, 38, 38, 0.12)' : '0 1px 3px rgba(0,0,0,0.03)',
+                      userSelect: 'none'
                     }}
                   >
                     <div>
                       <div className="attendance-tile-roll" style={{ fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                        #{st.roll_number || 'N/A'}
+                        Roll #{st.roll_number || 'N/A'}
                       </div>
                       <div 
                         className="attendance-tile-name" 
-                        style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.95rem', marginTop: 2 }}
-                        onClick={(e) => { e.stopPropagation(); navigate(`/student/${st.id}`); }}
-                        title="Click to view student profile"
+                        style={{ fontWeight: 700, color: 'var(--text-main)', fontSize: '0.98rem', marginTop: 2 }}
                       >
                         {st.name}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: isAbsent ? '#DC2626' : '#16A34A', fontWeight: 600, marginTop: 4 }}>
-                        {isAbsent ? '✗ Absent (0)' : '✓ Present (1)'}
+                      <div style={{ fontSize: '0.76rem', color: isAbsent ? '#DC2626' : '#16A34A', fontWeight: 700, marginTop: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {isAbsent ? (
+                          <span style={{ background: '#FEE2E2', color: '#DC2626', padding: '2px 8px', borderRadius: 6 }}>
+                            ✗ Absent
+                          </span>
+                        ) : (
+                          <span style={{ background: '#DCFCE7', color: '#16A34A', padding: '2px 8px', borderRadius: 6 }}>
+                            ✓ Present
+                          </span>
+                        )}
                       </div>
                     </div>
 
                     <div className="attendance-tile-status">
                       {isAbsent ? (
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#FEE2E2', color: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <XCircle size={20} />
+                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#FEE2E2', color: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <XCircle size={22} />
                         </div>
                       ) : (
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#DCFCE7', color: '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <CheckCircle size={20} />
+                        <div style={{ width: 34, height: 34, borderRadius: '50%', background: '#DCFCE7', color: '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <CheckCircle size={22} />
                         </div>
                       )}
                     </div>
@@ -515,8 +523,8 @@ function BatchSelectView({ stream, setStream, year, setYear, cls, setCls, date, 
           </select>
         </div>
 
-        <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 8, padding: 12, fontSize: '0.82rem', color: '#065F46' }}>
-          ℹ️ <strong>Initial State:</strong> For new attendance sessions, all students start marked Present (100%) by default. You can easily mark absentees by tapping individual student tiles.
+        <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 8, padding: 12, fontSize: '0.84rem', color: '#065F46' }}>
+          ℹ️ <strong>Taking Attendance:</strong> All students start in <strong>Present</strong> state by default. When the sheet opens, simply tap the students who are <strong>Absent</strong>.
         </div>
 
         <button 

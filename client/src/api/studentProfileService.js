@@ -166,10 +166,8 @@ export async function registerStudent(studentData) {
     class: studentData.class,
     roll_number: rollInt,
     parent_phone: studentData.parent_phone?.trim() || null,
-    shift: studentData.shift || 'Morning Shift',
     status: studentData.status || 'Active',
     parent_name: studentData.parent_name?.trim() || null,
-    email: studentData.email?.trim() || null,
     notes: studentData.notes?.trim() || null
   };
 
@@ -308,7 +306,6 @@ export async function shiftStudent(studentId, { targetStream, targetYear, target
     stream: targetStream,
     year: targetYear,
     class: targetClass,
-    shift: targetShift || 'Morning Shift',
     roll_number: finalRollNumber,
     updated_at: new Date().toISOString()
   };

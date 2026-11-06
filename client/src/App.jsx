@@ -59,12 +59,12 @@ function App() {
           <Route path="/admin-login" element={<AdminLoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           
-          {/* Protected Teacher Routes */}
+          {/* Protected Teacher & Admin Shared Academic Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/student/:id" element={<ProtectedRoute allowAdmin={true}><StudentProfilePage /></ProtectedRoute>} />
           <Route path="/report/:dateParam?" element={<ProtectedRoute><ReportFormPage /></ProtectedRoute>} />
-          <Route path="/attendance" element={<ProtectedRoute><AttendancePage /></ProtectedRoute>} />
-          <Route path="/marks" element={<ProtectedRoute><MarksPage /></ProtectedRoute>} />
+          <Route path="/attendance" element={<ProtectedRoute allowAdmin={true}><AttendancePage /></ProtectedRoute>} />
+          <Route path="/marks" element={<ProtectedRoute allowAdmin={true}><MarksPage /></ProtectedRoute>} />
           <Route path="/meetings" element={<ProtectedRoute><TeacherMeetingsPage /></ProtectedRoute>} />
           <Route path="/analytics" element={<ProtectedRoute><AnalyticsDashboardPage /></ProtectedRoute>} />
           <Route path="/leave" element={<ProtectedRoute><LeaveManagementPage /></ProtectedRoute>} />

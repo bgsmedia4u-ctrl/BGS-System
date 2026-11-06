@@ -12,6 +12,7 @@ import {
   getNextAvailableRollNumber,
   checkRollNumberAvailable
 } from '../api/studentProfileService';
+import { toggleAttendanceRecord } from '../api/attendanceService';
 import { CLASS_OPTIONS } from '../api/marksService';
 import { 
   User, 
@@ -22,22 +23,12 @@ import {
   ArrowRightLeft, 
   Trash2, 
   Phone, 
-  Mail, 
-  Sun, 
-  Moon, 
   CheckCircle2, 
   PenLine,
   X 
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import '../layout.css';
-
-const SHIFT_OPTIONS = [
-  'Morning Shift',
-  'Afternoon Shift',
-  'Evening Shift',
-  'Regular Shift'
-];
 
 export default function StudentProfilePage() {
   const { id } = useParams();
@@ -55,11 +46,11 @@ export default function StudentProfilePage() {
     targetStream: 'Science',
     targetYear: '1st Year',
     targetClass: 'Class A',
-    targetShift: 'Morning Shift',
     targetRollNumber: ''
   });
   const [shiftRollCheck, setShiftRollCheck] = useState({ checking: false, available: true, message: '' });
   const [shiftSubmitting, setShiftSubmitting] = useState(false);
+  const [attUpdatingId, setAttUpdatingId] = useState(null);
 
   // Remove Modal State
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
@@ -103,11 +94,25 @@ export default function StudentProfilePage() {
       targetStream: student.stream,
       targetYear: student.year,
       targetClass: student.class,
-      targetShift: student.shift === 'Morning Shift' ? 'Evening Shift' : 'Morning Shift',
       targetRollNumber: student.roll_number ? student.roll_number.toString() : nextRoll.toString()
     });
 
     setIsShiftOpen(true);
+  }
+
+  // Quick toggle attendance status for a session record
+  async function handleToggleAttendance(record) {
+    setAttUpdatingId(record.id);
+    try {
+      const updated = await toggleAttendanceRecord(record.id, record.is_absent);
+      setAttendance(prev => prev.map(r => r.id === record.id ? { ...r, is_absent: updated.is_absent } : r));
+      toast.success(`Attendance updated to ${updated.is_absent ? 'Absent' : 'Present'}`);
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update attendance status');
+    } finally {
+      setAttUpdatingId(null);
+    }
   }
 
   // Live roll number check in target batch
@@ -163,12 +168,11 @@ export default function StudentProfilePage() {
         targetStream: shiftForm.targetStream,
         targetYear: shiftForm.targetYear,
         targetClass: shiftForm.targetClass,
-        targetShift: shiftForm.targetShift,
         targetRollNumber: shiftForm.targetRollNumber
       });
 
       setStudent(prev => ({ ...prev, ...updated }));
-      toast.success(`Student successfully shifted to ${shiftForm.targetStream} - ${shiftForm.targetClass} (${shiftForm.targetShift})!`);
+      toast.success(`Student successfully shifted to ${shiftForm.targetStream} - ${shiftForm.targetClass}!`);
       setIsShiftOpen(false);
     } catch (err) {
       console.error(err);
@@ -239,9 +243,6 @@ export default function StudentProfilePage() {
     );
   }
 
-  const currentShift = student.shift || 'Morning Shift';
-  const isMorning = currentShift === 'Morning Shift';
-
   return (
     <Layout>
       <div style={{ padding: '0 0 24px 0' }}>
@@ -264,16 +265,14 @@ export default function StudentProfilePage() {
                 <span style={{ 
                   display: 'inline-flex', 
                   alignItems: 'center', 
-                  gap: 4, 
-                  background: isMorning ? '#FEF3C7' : '#EEF2FF', 
-                  color: isMorning ? '#92400E' : '#3730A3', 
+                  background: '#ECFDF5', 
+                  color: '#065F46', 
                   padding: '3px 10px', 
                   borderRadius: 12, 
                   fontSize: '0.78rem', 
                   fontWeight: 700 
                 }}>
-                  {isMorning ? <Sun size={12} /> : <Moon size={12} />}
-                  {currentShift}
+                  {student.status || 'Active'}
                 </span>
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, color: 'var(--text-muted)', fontSize: '0.92rem', marginTop: 4 }}>
@@ -374,6 +373,60 @@ export default function StudentProfilePage() {
                 <PenLine size={13} /> Edit Batch Attendance
               </button>
             </div>
+
+            {/* Individual Attendance Sessions Log with Admin Quick-Toggle */}
+            <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border-color)' }}>
+              <div style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--maroon-900)', marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>Recorded Sessions</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-muted)' }}>Admin can click status to edit</span>
+              </div>
+              {attendance.length === 0 ? (
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                  No sessions recorded yet. Initial attendance baseline is 0%.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 180, overflowY: 'auto', paddingRight: 4 }}>
+                  {attendance.slice(0, 10).map((r) => {
+                    const sessionDate = r.attendance_sessions?.date || 'Recorded Date';
+                    const isAbsent = r.is_absent;
+                    return (
+                      <div key={r.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FAFAFA', padding: '6px 10px', borderRadius: 6, fontSize: '0.82rem', border: '1px solid var(--border-color)' }}>
+                        <span style={{ fontWeight: 500 }}>{sessionDate}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <button
+                            onClick={() => handleToggleAttendance(r)}
+                            disabled={attUpdatingId === r.id}
+                            style={{
+                              border: 'none',
+                              borderRadius: 12,
+                              padding: '2px 8px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              background: isAbsent ? '#FEE2E2' : '#DCFCE7',
+                              color: isAbsent ? '#DC2626' : '#16A34A',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 4
+                            }}
+                            title="Click to toggle Present / Absent"
+                          >
+                            {isAbsent ? '✗ Absent' : '✓ Present'}
+                          </button>
+                          <button
+                            onClick={() => navigate(`/attendance?stream=${r.attendance_sessions?.stream || student.stream}&year=${r.attendance_sessions?.year || student.year}&class=${encodeURIComponent(r.attendance_sessions?.class || student.class)}&date=${sessionDate}&edit=true`)}
+                            style={{ background: 'none', border: 'none', color: 'var(--maroon-900)', cursor: 'pointer', padding: 2 }}
+                            title="Open Full Session Editor"
+                          >
+                            <PenLine size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Compliances Summary */}
@@ -469,32 +522,17 @@ export default function StudentProfilePage() {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Class</label>
-                    <select
-                      value={shiftForm.targetClass}
-                      onChange={e => setShiftForm({ ...shiftForm, targetClass: e.target.value })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
-                    >
-                      {targetClassOptions.map(c => (
-                        <option key={c} value={c}>{c}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Shift</label>
-                    <select
-                      value={shiftForm.targetShift}
-                      onChange={e => setShiftForm({ ...shiftForm, targetShift: e.target.value })}
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
-                    >
-                      {SHIFT_OPTIONS.map(s => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Class / Section</label>
+                  <select
+                    value={shiftForm.targetClass}
+                    onChange={e => setShiftForm({ ...shiftForm, targetClass: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
+                  >
+                    {targetClassOptions.map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>

@@ -44,13 +44,6 @@ import {
 } from 'lucide-react';
 import '../layout.css';
 
-const SHIFT_OPTIONS = [
-  'Morning Shift',
-  'Afternoon Shift',
-  'Evening Shift',
-  'Regular Shift'
-];
-
 export default function StudentManagementPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('directory'); // 'directory' | 'admissions' | 'classes'
@@ -63,7 +56,6 @@ export default function StudentManagementPage() {
   const [filterStream, setFilterStream] = useState('ALL');
   const [filterYear, setFilterYear] = useState('ALL');
   const [filterClass, setFilterClass] = useState('ALL');
-  const [filterShift, setFilterShift] = useState('ALL');
   const [filterStatus, setFilterStatus] = useState('ALL');
 
   // Selected students for batch actions
@@ -84,12 +76,10 @@ export default function StudentManagementPage() {
     name: '',
     stream: 'Science',
     year: '1st Year',
-    class: 'Class A',
-    shift: 'Morning Shift',
+    class: 'FTB - 1',
     roll_number: '',
     parent_phone: '',
     parent_name: '',
-    email: '',
     notes: ''
   });
   const [regRollCheck, setRegRollCheck] = useState({ checking: false, available: true, message: '' });
@@ -100,8 +90,7 @@ export default function StudentManagementPage() {
   const [shiftForm, setShiftForm] = useState({
     targetStream: 'Science',
     targetYear: '1st Year',
-    targetClass: 'Class A',
-    targetShift: 'Morning Shift',
+    targetClass: 'FTB - 1',
     targetRollNumber: ''
   });
   const [shiftRollCheck, setShiftRollCheck] = useState({ checking: false, available: true, message: '' });
@@ -111,8 +100,7 @@ export default function StudentManagementPage() {
   const [batchShiftForm, setBatchShiftForm] = useState({
     targetStream: 'Science',
     targetYear: '1st Year',
-    targetClass: 'Class A',
-    targetShift: 'Morning Shift'
+    targetClass: 'FTB - 1'
   });
   const [batchShiftSubmitting, setBatchShiftSubmitting] = useState(false);
 
@@ -276,7 +264,7 @@ export default function StudentManagementPage() {
   async function openRegisterModal(prefill = null) {
     const stream = prefill?.stream || 'Science';
     const year = prefill?.year || '1st Year';
-    const classes = CLASS_OPTIONS[`${stream}|${year}`] || ['Class A'];
+    const classes = CLASS_OPTIONS[`${stream}|${year}`] || ['FTB - 1'];
     const cls = prefill?.class || classes[0];
 
     const nextRoll = await getNextAvailableRollNumber(stream, year, cls);
@@ -286,11 +274,9 @@ export default function StudentManagementPage() {
       stream,
       year,
       class: cls,
-      shift: prefill?.shift || 'Morning Shift',
       roll_number: nextRoll.toString(),
       parent_phone: prefill?.parent_phone || '',
       parent_name: prefill?.parent_name || '',
-      email: prefill?.email || '',
       notes: prefill?.notes || ''
     });
 
@@ -341,14 +327,13 @@ export default function StudentManagementPage() {
   async function openShiftModal(student) {
     setTargetStudent(student);
 
-    // Default target: same stream/year, next class, or switch shift
+    // Default target: same stream/year, next class
     const nextRoll = await getNextAvailableRollNumber(student.stream, student.year, student.class);
 
     setShiftForm({
       targetStream: student.stream,
       targetYear: student.year,
       targetClass: student.class,
-      targetShift: student.shift === 'Morning Shift' ? 'Evening Shift' : 'Morning Shift',
       targetRollNumber: student.roll_number ? student.roll_number.toString() : nextRoll.toString()
     });
 
@@ -370,13 +355,12 @@ export default function StudentManagementPage() {
         targetStream: shiftForm.targetStream,
         targetYear: shiftForm.targetYear,
         targetClass: shiftForm.targetClass,
-        targetShift: shiftForm.targetShift,
         targetRollNumber: shiftForm.targetRollNumber
       });
 
       // Update local state
       setStudents(prev => prev.map(s => s.id === targetStudent.id ? { ...s, ...updated } : s));
-      toast.success(`Successfully shifted "${targetStudent.name}" to ${shiftForm.targetStream} - ${shiftForm.targetClass} (${shiftForm.targetShift})!`);
+      toast.success(`Successfully shifted "${targetStudent.name}" to ${shiftForm.targetStream} - ${shiftForm.targetClass}!`);
       setIsShiftModalOpen(false);
       setTargetStudent(null);
     } catch (err) {
@@ -398,8 +382,7 @@ export default function StudentManagementPage() {
     setBatchShiftForm({
       targetStream: firstStudent ? firstStudent.stream : 'Science',
       targetYear: firstStudent ? firstStudent.year : '1st Year',
-      targetClass: firstStudent ? firstStudent.class : 'Class A',
-      targetShift: 'Morning Shift'
+      targetClass: firstStudent ? firstStudent.class : 'FTB - 1'
     });
 
     setIsBatchShiftModalOpen(true);
@@ -416,15 +399,14 @@ export default function StudentManagementPage() {
       const shifted = await batchShiftStudents(idArray, {
         targetStream: batchShiftForm.targetStream,
         targetYear: batchShiftForm.targetYear,
-        targetClass: batchShiftForm.targetClass,
-        targetShift: batchShiftForm.targetShift
+        targetClass: batchShiftForm.targetClass
       });
 
       // Update local state
       const shiftedMap = new Map(shifted.map(s => [s.id, s]));
       setStudents(prev => prev.map(s => shiftedMap.has(s.id) ? { ...s, ...shiftedMap.get(s.id) } : s));
 
-      toast.success(`Batch Shift Complete! ${shifted.length} students moved to ${batchShiftForm.targetStream} - ${batchShiftForm.targetClass} (${batchShiftForm.targetShift}) with unique roll numbers.`);
+      toast.success(`Batch Shift Complete! ${shifted.length} students moved to ${batchShiftForm.targetStream} - ${batchShiftForm.targetClass} with unique roll numbers.`);
       setIsBatchShiftModalOpen(false);
       setSelectedIds(new Set());
     } catch (err) {
@@ -520,26 +502,21 @@ export default function StudentManagementPage() {
       // Class
       const matchClass = filterClass === 'ALL' || s.class === filterClass;
 
-      // Shift
-      const currentShift = s.shift || 'Morning Shift';
-      const matchShift = filterShift === 'ALL' || currentShift === filterShift;
-
       // Status
       const currentStatus = s.status || 'Active';
       const matchStatus = filterStatus === 'ALL' || currentStatus === filterStatus;
 
-      return matchSearch && matchStream && matchYear && matchClass && matchShift && matchStatus;
+      return matchSearch && matchStream && matchYear && matchClass && matchStatus;
     });
-  }, [students, searchTerm, filterStream, filterYear, filterClass, filterShift, filterStatus]);
+  }, [students, searchTerm, filterStream, filterYear, filterClass, filterStatus]);
 
   // Statistics
   const stats = useMemo(() => {
     const total = students.length;
-    const morning = students.filter(s => (s.shift || 'Morning Shift') === 'Morning Shift').length;
-    const afternoonEvening = total - morning;
+    const active = students.filter(s => (s.status || 'Active') === 'Active').length;
     const science = students.filter(s => s.stream === 'Science').length;
     const commerce = students.filter(s => s.stream === 'Commerce').length;
-    return { total, morning, afternoonEvening, science, commerce };
+    return { total, active, science, commerce };
   }, [students]);
 
   // Distinct classes for filter dropdown and Classes tab
@@ -552,18 +529,11 @@ export default function StudentManagementPage() {
           name: s.class,
           stream: s.stream,
           year: s.year,
-          count: 0,
-          morningCount: 0,
-          otherCount: 0
+          count: 0
         });
       }
       const item = map.get(key);
       item.count++;
-      if ((s.shift || 'Morning Shift') === 'Morning Shift') {
-        item.morningCount++;
-      } else {
-        item.otherCount++;
-      }
     });
     return Array.from(map.values());
   }, [students]);
@@ -582,7 +552,7 @@ export default function StudentManagementPage() {
             </h1>
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', margin: 0 }}>
-            Register new students, assign & shift batches, manage shifts (Morning/Evening), and oversee student profiles with full data continuity.
+            Register new students, assign batches & sections, manage unique roll numbers, and oversee student profiles with full data continuity.
           </p>
         </div>
 
@@ -623,22 +593,12 @@ export default function StudentManagementPage() {
         </div>
 
         <div style={{ background: 'var(--bg-surface)', padding: '16px 20px', borderRadius: 14, border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#FEF3C7', color: '#92400E', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Sun size={22} />
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#ECFDF5', color: '#065F46', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <UserCheck size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Morning Shift</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#92400E' }}>{stats.morning}</div>
-          </div>
-        </div>
-
-        <div style={{ background: 'var(--bg-surface)', padding: '16px 20px', borderRadius: 14, border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#EEF2FF', color: '#3730A3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Moon size={22} />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Evening / Other Shifts</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#3730A3' }}>{stats.afternoonEvening}</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Active Students</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#065F46' }}>{stats.active}</div>
           </div>
         </div>
 
@@ -647,8 +607,18 @@ export default function StudentManagementPage() {
             <BookOpen size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Streams (Sci / Comm)</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0369A1' }}>{stats.science} / {stats.commerce}</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Science Stream</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0369A1' }}>{stats.science}</div>
+          </div>
+        </div>
+
+        <div style={{ background: 'var(--bg-surface)', padding: '16px 20px', borderRadius: 14, border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 10, background: '#FEF3C7', color: '#92400E', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Layers size={22} />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Commerce Stream</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#92400E' }}>{stats.commerce}</div>
           </div>
         </div>
       </div>
@@ -709,7 +679,7 @@ export default function StudentManagementPage() {
             gap: 8
           }}
         >
-          <Layers size={18} /> Classes & Shift Allocations ({allClasses.length})
+          <Layers size={18} /> Classes & Sections ({allClasses.length})
         </button>
       </div>
 
@@ -757,26 +727,12 @@ export default function StudentManagementPage() {
                 <option value="2nd Year">2nd Year</option>
               </select>
 
-              {/* Shift Filter */}
-              <select
-                value={filterShift}
-                onChange={e => setFilterShift(e.target.value)}
-                style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: '#FAFAFA', fontSize: '0.85rem', fontWeight: 500, outline: 'none', cursor: 'pointer' }}
-              >
-                <option value="ALL">All Shifts</option>
-                <option value="Morning Shift">Morning Shift</option>
-                <option value="Afternoon Shift">Afternoon Shift</option>
-                <option value="Evening Shift">Evening Shift</option>
-                <option value="Regular Shift">Regular Shift</option>
-              </select>
-
               {/* Reset Filters */}
-              {(filterStream !== 'ALL' || filterYear !== 'ALL' || filterShift !== 'ALL' || searchTerm) && (
+              {(filterStream !== 'ALL' || filterYear !== 'ALL' || filterClass !== 'ALL' || searchTerm) && (
                 <button
                   onClick={() => {
                     setFilterStream('ALL');
                     setFilterYear('ALL');
-                    setFilterShift('ALL');
                     setFilterClass('ALL');
                     setSearchTerm('');
                   }}
@@ -842,7 +798,6 @@ export default function StudentManagementPage() {
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Student Name</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Stream & Year</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Class / Section</th>
-                    <th style={{ padding: '14px 16px', fontWeight: 600 }}>Shift</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Parent Contact</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Status</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600, textAlign: 'right' }}>Actions (Shift / Remove)</th>
@@ -851,7 +806,7 @@ export default function StudentManagementPage() {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="9" style={{ padding: '60px 20px', textAlign: 'center' }}>
+                      <td colSpan="8" style={{ padding: '60px 20px', textAlign: 'center' }}>
                         <div className="spinner" style={{ margin: '0 auto 12px auto' }}></div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading institutional student roster...</div>
                       </td>
@@ -859,9 +814,6 @@ export default function StudentManagementPage() {
                   ) : filteredStudents.length > 0 ? (
                     filteredStudents.map((stu) => {
                       const isSelected = selectedIds.has(stu.id);
-                      const currentShift = stu.shift || 'Morning Shift';
-                      const isMorning = currentShift === 'Morning Shift';
-                      const isEvening = currentShift === 'Evening Shift';
 
                       return (
                         <tr
@@ -902,9 +854,6 @@ export default function StudentManagementPage() {
                                 >
                                   {stu.name}
                                 </div>
-                                {stu.email && (
-                                  <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>{stu.email}</div>
-                                )}
                               </div>
                             </div>
                           </td>
@@ -918,26 +867,6 @@ export default function StudentManagementPage() {
                           {/* Class */}
                           <td style={{ padding: '14px 16px', fontSize: '0.88rem', fontWeight: 600 }}>
                             {stu.class}
-                          </td>
-
-                          {/* Shift Badge */}
-                          <td style={{ padding: '14px 16px' }}>
-                            <span
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 5,
-                                padding: '4px 10px',
-                                borderRadius: 12,
-                                fontSize: '0.78rem',
-                                fontWeight: 700,
-                                background: isMorning ? '#FEF3C7' : isEvening ? '#EEF2FF' : '#E0F2FE',
-                                color: isMorning ? '#92400E' : isEvening ? '#3730A3' : '#0369A1'
-                              }}
-                            >
-                              {isMorning ? <Sun size={12} /> : <Moon size={12} />}
-                              {currentShift}
-                            </span>
                           </td>
 
                           {/* Parent Phone */}
@@ -959,7 +888,7 @@ export default function StudentManagementPage() {
                             </span>
                           </td>
 
-                          {/* Actions: View / Shift / Remove */}
+                          {/* Actions: View / Attendance / Shift / Remove */}
                           <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                             <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
                               <button
@@ -971,8 +900,16 @@ export default function StudentManagementPage() {
                               </button>
 
                               <button
+                                onClick={() => navigate(`/attendance?stream=${stu.stream}&year=${stu.year}&class=${encodeURIComponent(stu.class)}`)}
+                                title="Edit Class Attendance"
+                                style={{ background: '#F0F9FF', border: '1px solid #BAE6FD', color: '#0369A1', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
+                              >
+                                <UserCheck size={14} /> Attendance
+                              </button>
+
+                              <button
                                 onClick={() => openShiftModal(stu)}
-                                title="Shift / Transfer Student to another Class or Shift"
+                                title="Shift / Transfer Student to another Class or Section"
                                 style={{ background: '#FCEFEF', border: '1px solid #F5C6CB', color: 'var(--maroon-900)', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
                               >
                                 <ArrowRightLeft size={14} /> Shift
@@ -992,7 +929,7 @@ export default function StudentManagementPage() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan="9" style={{ padding: '60px 20px', textAlign: 'center' }}>
+                      <td colSpan="8" style={{ padding: '60px 20px', textAlign: 'center' }}>
                         <Users size={40} style={{ opacity: 0.3, margin: '0 auto 12px auto', color: 'var(--maroon-900)' }} />
                         <h3 style={{ margin: '0 0 6px 0', fontSize: '1.1rem', color: 'var(--text-main)' }}>No students match your criteria</h3>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 auto 16px auto', maxWidth: 400 }}>
@@ -1090,7 +1027,7 @@ export default function StudentManagementPage() {
       )}
 
       {/* ═══════════════════════════════════════════════════
-          TAB 3: CLASSES & SHIFTS OVERVIEW
+          TAB 3: CLASSES & SECTIONS OVERVIEW
       ═══════════════════════════════════════════════════ */}
       {activeTab === 'classes' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 20 }}>
@@ -1107,19 +1044,9 @@ export default function StudentManagementPage() {
                   </span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, background: '#FAFAFA', padding: 12, borderRadius: 10, marginBottom: 16 }}>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Morning Shift</div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#92400E' }}>{cls.morningCount} students</div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Other Shifts</div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#3730A3' }}>{cls.otherCount} students</div>
-                  </div>
-                </div>
-
-                <div style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: 16 }}>
-                  Total Enrolled: {cls.count}
+                <div style={{ background: '#FAFAFA', padding: '12px 16px', borderRadius: 10, marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--border-color)' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>Total Enrolled</span>
+                  <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--maroon-900)' }}>{cls.count} students</span>
                 </div>
               </div>
 
@@ -1241,37 +1168,22 @@ export default function StudentManagementPage() {
                 </div>
               </div>
 
-              {/* Class & Shift Selection */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6, color: 'var(--text-main)' }}>Class / Section *</label>
-                  <select
-                    value={regForm.class}
-                    onChange={e => {
-                      const newClass = e.target.value;
-                      setRegForm(prev => ({ ...prev, class: newClass }));
-                      handleSuggestRegRoll(regForm.stream, regForm.year, newClass);
-                    }}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
-                  >
-                    {currentClassOptions.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6, color: 'var(--text-main)' }}>Assigned Shift *</label>
-                  <select
-                    value={regForm.shift}
-                    onChange={e => setRegForm({ ...regForm, shift: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
-                  >
-                    {SHIFT_OPTIONS.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
+              {/* Class Selection */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6, color: 'var(--text-main)' }}>Class / Section *</label>
+                <select
+                  value={regForm.class}
+                  onChange={e => {
+                    const newClass = e.target.value;
+                    setRegForm(prev => ({ ...prev, class: newClass }));
+                    handleSuggestRegRoll(regForm.stream, regForm.year, newClass);
+                  }}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
+                >
+                  {currentClassOptions.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Unique Roll Number with live availability check */}
@@ -1329,18 +1241,6 @@ export default function StudentManagementPage() {
                     style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
                   />
                 </div>
-              </div>
-
-              {/* Email */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6, color: 'var(--text-main)' }}>Student / Parent Email (Optional)</label>
-                <input
-                  type="email"
-                  placeholder="e.g. student@example.com"
-                  value={regForm.email}
-                  onChange={e => setRegForm({ ...regForm, email: e.target.value })}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
-                />
               </div>
 
               {/* Submit Buttons */}
@@ -1402,7 +1302,6 @@ export default function StudentManagementPage() {
                 <div style={{ display: 'flex', gap: 12, marginTop: 4, fontSize: '0.85rem', color: 'var(--text-main)', flexWrap: 'wrap' }}>
                   <span><strong>Current Batch:</strong> {targetStudent.stream} • {targetStudent.year} • {targetStudent.class}</span>
                   <span><strong>Roll No:</strong> #{targetStudent.roll_number}</span>
-                  <span><strong>Shift:</strong> {targetStudent.shift || 'Morning Shift'}</span>
                 </div>
               </div>
 
@@ -1414,7 +1313,7 @@ export default function StudentManagementPage() {
                     value={shiftForm.targetStream}
                     onChange={e => {
                       const newStream = e.target.value;
-                      const nextClasses = CLASS_OPTIONS[`${newStream}|${shiftForm.targetYear}`] || ['Class A'];
+                      const nextClasses = CLASS_OPTIONS[`${newStream}|${shiftForm.targetYear}`] || ['FTB - 1'];
                       setShiftForm(prev => ({ ...prev, targetStream: newStream, targetClass: nextClasses[0] }));
                     }}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
@@ -1430,7 +1329,7 @@ export default function StudentManagementPage() {
                     value={shiftForm.targetYear}
                     onChange={e => {
                       const newYear = e.target.value;
-                      const nextClasses = CLASS_OPTIONS[`${shiftForm.targetStream}|${newYear}`] || ['Class A'];
+                      const nextClasses = CLASS_OPTIONS[`${shiftForm.targetStream}|${newYear}`] || ['FTB - 1'];
                       setShiftForm(prev => ({ ...prev, targetYear: newYear, targetClass: nextClasses[0] }));
                     }}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
@@ -1441,33 +1340,18 @@ export default function StudentManagementPage() {
                 </div>
               </div>
 
-              {/* Destination Class & Shift */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Class / Section</label>
-                  <select
-                    value={shiftForm.targetClass}
-                    onChange={e => setShiftForm({ ...shiftForm, targetClass: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
-                  >
-                    {shiftTargetClassOptions.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Shift</label>
-                  <select
-                    value={shiftForm.targetShift}
-                    onChange={e => setShiftForm({ ...shiftForm, targetShift: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
-                  >
-                    {SHIFT_OPTIONS.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
+              {/* Destination Class */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Class / Section</label>
+                <select
+                  value={shiftForm.targetClass}
+                  onChange={e => setShiftForm({ ...shiftForm, targetClass: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none', fontSize: '0.9rem' }}
+                >
+                  {shiftTargetClassOptions.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Target Roll Number */}
@@ -1566,7 +1450,7 @@ export default function StudentManagementPage() {
                     value={batchShiftForm.targetStream}
                     onChange={e => {
                       const newStream = e.target.value;
-                      const nextClasses = CLASS_OPTIONS[`${newStream}|${batchShiftForm.targetYear}`] || ['Class A'];
+                      const nextClasses = CLASS_OPTIONS[`${newStream}|${batchShiftForm.targetYear}`] || ['FTB - 1'];
                       setBatchShiftForm(prev => ({ ...prev, targetStream: newStream, targetClass: nextClasses[0] }));
                     }}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
@@ -1582,7 +1466,7 @@ export default function StudentManagementPage() {
                     value={batchShiftForm.targetYear}
                     onChange={e => {
                       const newYear = e.target.value;
-                      const nextClasses = CLASS_OPTIONS[`${batchShiftForm.targetStream}|${newYear}`] || ['Class A'];
+                      const nextClasses = CLASS_OPTIONS[`${batchShiftForm.targetStream}|${newYear}`] || ['FTB - 1'];
                       setBatchShiftForm(prev => ({ ...prev, targetYear: newYear, targetClass: nextClasses[0] }));
                     }}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
@@ -1593,32 +1477,17 @@ export default function StudentManagementPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Class / Section</label>
-                  <select
-                    value={batchShiftForm.targetClass}
-                    onChange={e => setBatchShiftForm({ ...batchShiftForm, targetClass: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
-                  >
-                    {batchShiftTargetClassOptions.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Shift</label>
-                  <select
-                    value={batchShiftForm.targetShift}
-                    onChange={e => setBatchShiftForm({ ...batchShiftForm, targetShift: e.target.value })}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
-                  >
-                    {SHIFT_OPTIONS.map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.82rem', fontWeight: 600, marginBottom: 6 }}>Target Class / Section</label>
+                <select
+                  value={batchShiftForm.targetClass}
+                  onChange={e => setBatchShiftForm({ ...batchShiftForm, targetClass: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid var(--border-color)', outline: 'none' }}
+                >
+                  {batchShiftTargetClassOptions.map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 8 }}>

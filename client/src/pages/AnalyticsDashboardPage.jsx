@@ -284,9 +284,12 @@ export default function AnalyticsDashboardPage() {
           <div className="form-group" style={{ marginBottom: 0, flex: 1 }}>
             <label className="form-label">Class</label>
             <select className="form-input" value={cls} onChange={e => setCls(e.target.value)}>
-              <option value="1st FTB">1st FTB</option>
-              <option value="2nd FTB - 01">2nd FTB - 01</option>
-              <option value="2nd FTB - 02">2nd FTB - 02</option>
+              <option value="1st FTB - 1">1st FTB - 1</option>
+              <option value="2nd FTB - 1">2nd FTB - 1</option>
+              <option value="1st FTB - 2">1st FTB - 2</option>
+              <option value="2nd FTB - 2">2nd FTB - 2</option>
+              <option value="1st CS">1st CS</option>
+              <option value="2nd CS">2nd CS</option>
               <option value="1st Class A">1st Class A</option>
               <option value="2nd Class A">2nd Class A</option>
               <option value="1st Class B">1st Class B</option>

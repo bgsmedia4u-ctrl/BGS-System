@@ -111,3 +111,26 @@ export async function saveAttendance(stream, year, cls, date, records, userId) {
 
   return session;
 }
+
+export async function toggleAttendanceRecord(recordId, currentIsAbsent) {
+  const { data, error } = await supabase
+    .from('attendance_records')
+    .update({ is_absent: !currentIsAbsent })
+    .eq('id', recordId)
+    .select('*, attendance_sessions(*)')
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function setStudentAttendanceStatus(sessionId, studentId, isAbsent) {
+  const { data, error } = await supabase
+    .from('attendance_records')
+    .upsert({ session_id: sessionId, student_id: studentId, is_absent: isAbsent }, { onConflict: 'session_id,student_id' })
+    .select('*, attendance_sessions(*)')
+    .single();
+
+  if (error) throw error;
+  return data;
+}

@@ -2,10 +2,10 @@ import { supabase } from './supabase';
 
 // ─── Batch class options ───
 export const CLASS_OPTIONS = {
-  'Science|1st Year': ['FTB', 'Class A', 'Class B', 'Inspire'],
-  'Science|2nd Year': ['FTB - 01', 'FTB - 02', 'Class A', 'Class B', 'Inspire'],
-  'Commerce|1st Year': ['FTB', 'Class A', 'Class B', 'Inspire'],
-  'Commerce|2nd Year': ['FTB - 01', 'FTB - 02', 'Class A', 'Class B', 'Inspire'],
+  'Science|1st Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
+  'Science|2nd Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
+  'Commerce|1st Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
+  'Commerce|2nd Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
 };
 
 export function getClassOptions(stream, year) {

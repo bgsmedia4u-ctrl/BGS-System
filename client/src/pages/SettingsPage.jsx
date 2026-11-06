@@ -36,9 +36,12 @@ const AVAILABLE_YEARS = [
 ];
 
 const STANDARD_CLASSES = [
-  '1st FTB',
-  '2nd FTB - 01',
-  '2nd FTB - 02',
+  '1st FTB - 1',
+  '2nd FTB - 1',
+  '1st FTB - 2',
+  '2nd FTB - 2',
+  '1st CS',
+  '2nd CS',
   '1st Class A',
   '2nd Class A',
   '1st Class B',

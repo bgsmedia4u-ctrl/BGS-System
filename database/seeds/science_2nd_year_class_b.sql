@@ -60,3 +60,7 @@ INSERT INTO public.students (name, roll_number, stream, year, class, parent_name
 ('Varun Kumar V', 56, 'Science', '2nd Year', 'Class B', 'Venkatesh V', '9632556718'),
 ('Manasa D', 57, 'Science', '2nd Year', 'Class B', 'Dyavanappa', '9353487016'),
 ('Yashwanth K.R', 58, 'Science', '2nd Year', 'Class B', 'Ramesh K.P', '8105369721');
+
+
+
+

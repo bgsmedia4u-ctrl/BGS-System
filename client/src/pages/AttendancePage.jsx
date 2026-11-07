@@ -233,45 +233,45 @@ export default function AttendancePage() {
         {currentView === 'MARK_ATTENDANCE' && !loading && students.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             
-            {/* Status Information Banner */}
-            <div style={{
-              background: isExistingSession ? '#F0F9FF' : '#ECFDF5',
-              border: `1px solid ${isExistingSession ? '#BAE6FD' : '#A7F3D0'}`,
-              borderRadius: 12,
-              padding: '12px 18px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: 12
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                {isExistingSession ? <PenLine size={18} color="#0369A1" /> : <UserCheck size={18} color="#059669" />}
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.92rem', color: isExistingSession ? '#0369A1' : '#065F46' }}>
-                    {isExistingSession ? 'Editing Existing Attendance Session' : 'Taking Attendance — All Students Initially Present'}
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: isExistingSession ? '#0c4a6e' : '#047857' }}>
-                    {isExistingSession 
-                      ? 'You are editing saved attendance records. Click any student tile to toggle Present/Absent.' 
-                      : 'All students are in Present state by default. Simply click on any student who is Absent.'}
+            {/* Status Information Banner (Only when editing a saved session) */}
+            {isExistingSession && (
+              <div style={{
+                background: '#F0F9FF',
+                border: '1px solid #BAE6FD',
+                borderRadius: 12,
+                padding: '12px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 12
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <PenLine size={18} color="#0369A1" />
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: '0.92rem', color: '#0369A1' }}>
+                      Editing Saved Attendance Session
+                    </div>
+                    <div style={{ fontSize: '0.82rem', color: '#0c4a6e' }}>
+                      You are editing previously saved records. Click any student tile to toggle Present/Absent.
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{
-                  background: isExistingSession ? '#0284C7' : '#059669',
-                  color: '#fff',
-                  padding: '4px 10px',
-                  borderRadius: 20,
-                  fontSize: '0.78rem',
-                  fontWeight: 700
-                }}>
-                  {isExistingSession ? 'Saved Record' : 'Initial: All Present'}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{
+                    background: '#0284C7',
+                    color: '#fff',
+                    padding: '4px 10px',
+                    borderRadius: 20,
+                    fontSize: '0.78rem',
+                    fontWeight: 700
+                  }}>
+                    Saved Record
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* ── Stats Bar ── */}
             <div className="attendance-stats-bar" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
@@ -521,10 +521,6 @@ function BatchSelectView({ stream, setStream, year, setYear, cls, setCls, date, 
             <option value="">-- Select Class --</option>
             {classOptions.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
-        </div>
-
-        <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 8, padding: 12, fontSize: '0.84rem', color: '#065F46' }}>
-          ℹ️ <strong>Taking Attendance:</strong> All students start in <strong>Present</strong> state by default. When the sheet opens, simply tap the students who are <strong>Absent</strong>.
         </div>
 
         <button 

@@ -75,7 +75,7 @@ function App() {
           {/* Protected Admin Routes (sidebar-based) */}
           <Route path="/admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
           <Route path="/admin/attendance" element={<AdminRoute><AdminAttendanceDashboard /></AdminRoute>} />
-          <Route path="/students" element={<AdminRoute><StudentManagementPage /></AdminRoute>} />
+          <Route path="/students" element={<ProtectedRoute allowAdmin={true}><StudentManagementPage /></ProtectedRoute>} />
           <Route path="/personnel" element={<AdminRoute><StaffManagementPage /></AdminRoute>} />
           <Route path="/academic" element={<AdminRoute><AcademicManagementPage /></AdminRoute>} />
           <Route path="/admin/export" element={<AdminRoute><AdminExportPage /></AdminRoute>} />

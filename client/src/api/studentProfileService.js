@@ -47,7 +47,6 @@ export async function getStudentMarks(studentId) {
     .select('*, tests(*)')
     .eq('student_id', studentId);
 
-
   if (error) throw error;
   // Sort by test date/creation descending
   const sorted = (data || []).sort((a, b) => {
@@ -57,6 +56,114 @@ export async function getStudentMarks(studentId) {
   });
 
   return sorted;
+}
+
+// ─── Query Comprehensive Test & Marks Report ───
+export async function getStudentTestReport(studentId, stream, year, cls) {
+  // 1. Fetch all tests conducted for this student's batch
+  let batchTests = [];
+  try {
+    const { data, error } = await supabase
+      .from('tests')
+      .select('*')
+      .eq('stream', stream)
+      .eq('year', year)
+      .eq('class', cls)
+      .order('created_at', { ascending: false });
+    if (!error && data) {
+      batchTests = data;
+    }
+  } catch (e) {
+    console.warn('Failed to fetch batch tests:', e);
+  }
+
+  // 2. Fetch all mark entries recorded for this student
+  let markEntries = [];
+  try {
+    const { data, error } = await supabase
+      .from('mark_entries')
+      .select('*, tests(*)')
+      .eq('student_id', studentId);
+    if (!error && data) {
+      markEntries = data;
+    }
+  } catch (e) {
+    console.warn('Failed to fetch student mark entries:', e);
+  }
+
+  const markMap = new Map();
+  markEntries.forEach(me => {
+    markMap.set(me.test_id, me);
+  });
+
+  // Build combined list of tests: start with all batch tests conducted
+  const allTests = [...batchTests];
+  // Add any test the student wrote from previous classes or batches
+  markEntries.forEach(me => {
+    if (me.tests && !allTests.some(t => t.id === me.test_id)) {
+      allTests.push(me.tests);
+    }
+  });
+
+  // Sort tests by creation date descending
+  allTests.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+  const testReports = allTests.map(test => {
+    const entry = markMap.get(test.id);
+    const isRecorded = Boolean(entry);
+    const isAbsent = Boolean(!entry || entry.is_absent);
+    const isAttended = Boolean(entry && !entry.is_absent);
+    const marksObj = entry?.marks || {};
+
+    const subjects = (test.subjects || []).map(s => {
+      const name = typeof s === 'string' ? s : s.name;
+      const maxMarks = typeof s === 'string' ? 100 : (Number(s.maxMarks) || 100);
+      const score = marksObj[name] !== undefined && marksObj[name] !== '' ? Number(marksObj[name]) : null;
+      return { name, maxMarks, score };
+    });
+
+    let totalScore = 0;
+    let totalMaxMarks = 0;
+    subjects.forEach(sub => {
+      totalMaxMarks += sub.maxMarks;
+      if (sub.score !== null && !isNaN(sub.score)) {
+        totalScore += sub.score;
+      }
+    });
+
+    const percentage = totalMaxMarks > 0 && isAttended ? Math.round((totalScore / totalMaxMarks) * 100) : 0;
+
+    return {
+      testId: test.id,
+      testName: test.name,
+      createdAt: test.created_at,
+      subjects,
+      marks: marksObj,
+      totalScore,
+      totalMaxMarks,
+      percentage,
+      isRecorded,
+      isAttended,
+      isAbsent
+    };
+  });
+
+  const testsConducted = allTests.length;
+  const testsAttended = testReports.filter(t => t.isAttended).length;
+  const testsAbsent = testsConducted - testsAttended;
+
+  const attendedReports = testReports.filter(t => t.isAttended && t.totalMaxMarks > 0);
+  const averageScore = attendedReports.length > 0
+    ? Math.round(attendedReports.reduce((sum, r) => sum + r.percentage, 0) / attendedReports.length)
+    : 0;
+
+  return {
+    testsConducted,
+    testsAttended,
+    testsAbsent,
+    averageScore,
+    testReports
+  };
 }
 
 // ─── Query Student Attendance History ───

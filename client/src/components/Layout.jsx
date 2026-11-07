@@ -25,7 +25,8 @@ import {
   Clock,
   ExternalLink,
   X,
-  Menu
+  Menu,
+  FileText
 } from 'lucide-react';
 import '../layout.css';
 
@@ -191,14 +192,20 @@ export default function Layout({ children }) {
               <NavLink to="/dashboard" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <LayoutDashboard size={20} /> Dashboard
               </NavLink>
+              <NavLink to="/students" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+                <GraduationCap size={20} /> Student Reports
+              </NavLink>
+              <NavLink to="/marks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+                <ClipboardList size={20} /> Mark Entry
+              </NavLink>
+              <NavLink to="/attendance" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
+                <Users size={20} /> Attendance
+              </NavLink>
               <NavLink to="/tasks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <CheckSquare size={20} /> Event Tasks
               </NavLink>
               <NavLink to="/timetable" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <Calendar size={20} /> Timetable
-              </NavLink>
-              <NavLink to="/marks" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <ClipboardList size={20} /> Mark Entry
               </NavLink>
               <NavLink to="/syllabus" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <BookOpen size={20} /> Syllabus Tracker
@@ -206,11 +213,8 @@ export default function Layout({ children }) {
               <NavLink to="/meetings" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
                 <Video size={20} /> Meetings
               </NavLink>
-              <NavLink to="/attendance" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <Users size={20} /> Attendance
-              </NavLink>
               <NavLink to="/report" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`}>
-                <GraduationCap size={20} /> Reports
+                <FileText size={20} /> Daily Report
               </NavLink>
             </>
           )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import toast from 'react-hot-toast';
 import { 
@@ -46,6 +47,9 @@ import '../layout.css';
 
 export default function StudentManagementPage() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const isAdmin = profile?.role === 'admin';
+
   const [activeTab, setActiveTab] = useState('directory'); // 'directory' | 'admissions' | 'classes'
   const [students, setStudents] = useState([]);
   const [admissions, setAdmissions] = useState([]);
@@ -548,36 +552,40 @@ export default function StudentManagementPage() {
               <Users size={22} />
             </div>
             <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--maroon-900)', margin: 0 }}>
-              Student Management & Registration
+              {isAdmin ? 'Student Management & Registration' : 'Student Directory & Academic Reports'}
             </h1>
           </div>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', margin: 0 }}>
-            Register new students, assign batches & sections, manage unique roll numbers, and oversee student profiles with full data continuity.
+            {isAdmin 
+              ? 'Register new students, assign batches & sections, manage unique roll numbers, and oversee student profiles with full data continuity.'
+              : 'Browse students across classes, view individual academic reports, test marks, tests conducted vs attended, and college attendance records.'}
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button
-            onClick={() => openRegisterModal()}
-            style={{
-              background: 'var(--maroon-900)',
-              color: '#fff',
-              border: 'none',
-              padding: '10px 18px',
-              borderRadius: 10,
-              fontWeight: 600,
-              fontSize: '0.92rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(115, 19, 19, 0.25)',
-              transition: 'all 0.15s ease'
-            }}
-          >
-            <UserPlus size={18} /> Register Student
-          </button>
-        </div>
+        {isAdmin && (
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              onClick={() => openRegisterModal()}
+              style={{
+                background: 'var(--maroon-900)',
+                color: '#fff',
+                border: 'none',
+                padding: '10px 18px',
+                borderRadius: 10,
+                fontWeight: 600,
+                fontSize: '0.92rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(115, 19, 19, 0.25)',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <UserPlus size={18} /> Register Student
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── Metric Summary Cards ── */}
@@ -644,24 +652,26 @@ export default function StudentManagementPage() {
           <Users size={18} /> Student Directory ({students.length})
         </button>
 
-        <button
-          onClick={() => setActiveTab('admissions')}
-          style={{
-            background: 'none',
-            border: 'none',
-            padding: '10px 4px',
-            fontSize: '0.95rem',
-            fontWeight: activeTab === 'admissions' ? 700 : 500,
-            color: activeTab === 'admissions' ? 'var(--maroon-900)' : 'var(--text-muted)',
-            borderBottom: activeTab === 'admissions' ? '3px solid var(--maroon-900)' : '3px solid transparent',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8
-          }}
-        >
-          <FileText size={18} /> Admissions Queue ({admissions.filter(a => a.status !== 'Approved').length})
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => setActiveTab('admissions')}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: '10px 4px',
+              fontSize: '0.95rem',
+              fontWeight: activeTab === 'admissions' ? 700 : 500,
+              color: activeTab === 'admissions' ? 'var(--maroon-900)' : 'var(--text-muted)',
+              borderBottom: activeTab === 'admissions' ? '3px solid var(--maroon-900)' : '3px solid transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8
+            }}
+          >
+            <FileText size={18} /> Admissions Queue ({admissions.filter(a => a.status !== 'Approved').length})
+          </button>
+        )}
 
         <button
           onClick={() => setActiveTab('classes')}
@@ -749,7 +759,7 @@ export default function StudentManagementPage() {
           </div>
 
           {/* Batch Actions Banner (when students selected) */}
-          {selectedIds.size > 0 && (
+          {isAdmin && selectedIds.size > 0 && (
             <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 12, padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--maroon-900)', fontWeight: 600, fontSize: '0.92rem' }}>
                 <CheckSquare size={18} /> {selectedIds.size} student(s) selected
@@ -786,27 +796,29 @@ export default function StudentManagementPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: '#FAFAFA', borderBottom: '2px solid var(--border-color)', fontSize: '0.82rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    <th style={{ padding: '14px 16px', width: 44, textAlign: 'center' }}>
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.size === filteredStudents.length && filteredStudents.length > 0}
-                        onChange={toggleSelectAll}
-                        style={{ cursor: 'pointer', width: 16, height: 16, accentColor: 'var(--maroon-900)' }}
-                      />
-                    </th>
+                    {isAdmin && (
+                      <th style={{ padding: '14px 16px', width: 44, textAlign: 'center' }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.size === filteredStudents.length && filteredStudents.length > 0}
+                          onChange={toggleSelectAll}
+                          style={{ cursor: 'pointer', width: 16, height: 16, accentColor: 'var(--maroon-900)' }}
+                        />
+                      </th>
+                    )}
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Roll No</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Student Name</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Stream & Year</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Class / Section</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Parent Contact</th>
                     <th style={{ padding: '14px 16px', fontWeight: 600 }}>Status</th>
-                    <th style={{ padding: '14px 16px', fontWeight: 600, textAlign: 'right' }}>Actions (Shift / Remove)</th>
+                    <th style={{ padding: '14px 16px', fontWeight: 600, textAlign: 'right' }}>{isAdmin ? 'Actions (Shift / Remove)' : 'Academic Report'}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="8" style={{ padding: '60px 20px', textAlign: 'center' }}>
+                      <td colSpan={isAdmin ? 8 : 7} style={{ padding: '60px 20px', textAlign: 'center' }}>
                         <div className="spinner" style={{ margin: '0 auto 12px auto' }}></div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Loading institutional student roster...</div>
                       </td>
@@ -824,14 +836,16 @@ export default function StudentManagementPage() {
                             transition: 'background 0.1s'
                           }}
                         >
-                          <td style={{ padding: '14px 16px', textAlign: 'center' }}>
-                            <input
-                              type="checkbox"
-                              checked={isSelected}
-                              onChange={() => toggleSelectStudent(stu.id)}
-                              style={{ cursor: 'pointer', width: 16, height: 16, accentColor: 'var(--maroon-900)' }}
-                            />
-                          </td>
+                          {isAdmin && (
+                            <td style={{ padding: '14px 16px', textAlign: 'center' }}>
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleSelectStudent(stu.id)}
+                                style={{ cursor: 'pointer', width: 16, height: 16, accentColor: 'var(--maroon-900)' }}
+                              />
+                            </td>
+                          )}
 
                           {/* Roll Number */}
                           <td style={{ padding: '14px 16px', fontWeight: 700, color: 'var(--maroon-900)' }}>
@@ -890,46 +904,66 @@ export default function StudentManagementPage() {
 
                           {/* Actions: View / Attendance / Shift / Remove */}
                           <td style={{ padding: '14px 16px', textAlign: 'right' }}>
-                            <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
-                              <button
-                                onClick={() => navigate(`/student/${stu.id}`)}
-                                title="View Full Student Profile"
-                                style={{ background: '#F5F5F5', border: '1px solid var(--border-color)', color: 'var(--text-main)', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem' }}
-                              >
-                                <Eye size={14} /> Profile
-                              </button>
+                            {isAdmin ? (
+                              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
+                                <button
+                                  onClick={() => navigate(`/student/${stu.id}`)}
+                                  title="View Full Student Profile & Reports"
+                                  style={{ background: '#F5F5F5', border: '1px solid var(--border-color)', color: 'var(--text-main)', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem' }}
+                                >
+                                  <Eye size={14} /> Profile
+                                </button>
 
-                              <button
-                                onClick={() => navigate(`/attendance?stream=${stu.stream}&year=${stu.year}&class=${encodeURIComponent(stu.class)}`)}
-                                title="Edit Class Attendance"
-                                style={{ background: '#F0F9FF', border: '1px solid #BAE6FD', color: '#0369A1', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
-                              >
-                                <UserCheck size={14} /> Attendance
-                              </button>
+                                <button
+                                  onClick={() => navigate(`/attendance?stream=${stu.stream}&year=${stu.year}&class=${encodeURIComponent(stu.class)}`)}
+                                  title="Edit Class Attendance"
+                                  style={{ background: '#F0F9FF', border: '1px solid #BAE6FD', color: '#0369A1', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
+                                >
+                                  <UserCheck size={14} /> Attendance
+                                </button>
 
-                              <button
-                                onClick={() => openShiftModal(stu)}
-                                title="Move / Shift Student to Another Class"
-                                style={{ background: '#FCEFEF', border: '1px solid #F5C6CB', color: 'var(--maroon-900)', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
-                              >
-                                <ArrowRightLeft size={14} /> Move Class
-                              </button>
+                                <button
+                                  onClick={() => openShiftModal(stu)}
+                                  title="Move / Shift Student to Another Class"
+                                  style={{ background: '#FCEFEF', border: '1px solid #F5C6CB', color: 'var(--maroon-900)', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
+                                >
+                                  <ArrowRightLeft size={14} /> Move Class
+                                </button>
 
-                              <button
-                                onClick={() => openRemoveModal(stu)}
-                                title="Permanently Delete Student from Application"
-                                style={{ background: '#FEE2E2', border: '1px solid #FCA5A5', color: '#DC2626', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
-                              >
-                                <Trash2 size={14} /> Delete
-                              </button>
-                            </div>
+                                <button
+                                  onClick={() => openRemoveModal(stu)}
+                                  title="Permanently Delete Student from Application"
+                                  style={{ background: '#FEE2E2', border: '1px solid #FCA5A5', color: '#DC2626', padding: '6px 10px', borderRadius: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.8rem', fontWeight: 600 }}
+                                >
+                                  <Trash2 size={14} /> Delete
+                                </button>
+                              </div>
+                            ) : (
+                              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', alignItems: 'center' }}>
+                                <button
+                                  onClick={() => navigate(`/student/${stu.id}`)}
+                                  title="View Individual Academic & Attendance Report"
+                                  style={{ background: 'var(--maroon-900)', border: 'none', color: '#fff', padding: '7px 14px', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.82rem', fontWeight: 600 }}
+                                >
+                                  <GraduationCap size={15} /> View Report
+                                </button>
+
+                                <button
+                                  onClick={() => navigate(`/attendance?stream=${stu.stream}&year=${stu.year}&class=${encodeURIComponent(stu.class)}`)}
+                                  title="Open Class Attendance Sheet"
+                                  style={{ background: '#F0F9FF', border: '1px solid #BAE6FD', color: '#0369A1', padding: '7px 12px', borderRadius: 8, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: '0.82rem', fontWeight: 600 }}
+                                >
+                                  <UserCheck size={14} /> Attendance
+                                </button>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       );
                     })
                   ) : (
                     <tr>
-                      <td colSpan="8" style={{ padding: '60px 20px', textAlign: 'center' }}>
+                      <td colSpan={isAdmin ? 8 : 7} style={{ padding: '60px 20px', textAlign: 'center' }}>
                         <Users size={40} style={{ opacity: 0.3, margin: '0 auto 12px auto', color: 'var(--maroon-900)' }} />
                         <h3 style={{ margin: '0 0 6px 0', fontSize: '1.1rem', color: 'var(--text-main)' }}>No students match your criteria</h3>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: '0 auto 16px auto', maxWidth: 400 }}>

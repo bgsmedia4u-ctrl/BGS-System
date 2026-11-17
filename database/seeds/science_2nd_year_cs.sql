@@ -1,6 +1,5 @@
 -- Seed script for Science 2nd Year CS (Computer Science) Students
 -- Total: 36 students (Roll No 1 to 36)
-
 INSERT INTO public.students (name, roll_number, stream, year, class, parent_name, parent_phone) VALUES
 ('Ambhika S', 1, 'Science', '2nd Year', 'CS', 'Subbarayappa', '8277493056'),
 ('Amruth Sagar P', 2, 'Science', '2nd Year', 'CS', 'Pradeep N', '9008395464'),

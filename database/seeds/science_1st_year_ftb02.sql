@@ -79,3 +79,6 @@ DO UPDATE SET
   name = EXCLUDED.name,
   parent_name = COALESCE(EXCLUDED.parent_name, public.students.parent_name),
   parent_phone = COALESCE(EXCLUDED.parent_phone, public.students.parent_phone);
+
+
+

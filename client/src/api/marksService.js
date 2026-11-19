@@ -2,25 +2,62 @@ import { supabase } from './supabase';
 
 // ─── Batch class options ───
 export const CLASS_OPTIONS = {
-  'Science|1st Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
-  'Science|2nd Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
-  'Commerce|1st Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
-  'Commerce|2nd Year': ['FTB - 1', 'FTB - 2', 'CS', 'Class A', 'Class B', 'Inspire'],
+  'Science|1st Year': ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'],
+  'Science|2nd Year': ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'],
+  'Commerce|1st Year': ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'],
+  'Commerce|2nd Year': ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'],
 };
 
 export function getClassOptions(stream, year) {
   return CLASS_OPTIONS[`${stream}|${year}`] || [];
 }
 
+// Helper to normalize and match class name variants (e.g. 'FTB - 1', 'FTB 01', 'FTB-01', 'CS', 'Class A')
+export function getClassVariants(cls) {
+  if (!cls) return [];
+  const normalized = cls.trim();
+  const variants = new Set([normalized]);
+
+  // Match FTB variations (FTB - 1, FTB-1, FTB 01, FTB-01, FTB 1, etc.)
+  const ftbMatch = normalized.match(/ftb\s*[-_]?\s*0?([1-9])/i);
+  if (ftbMatch) {
+    const num = ftbMatch[1];
+    variants.add(`FTB - ${num}`);
+    variants.add(`FTB-${num}`);
+    variants.add(`FTB ${num}`);
+    variants.add(`FTB - 0${num}`);
+    variants.add(`FTB-0${num}`);
+    variants.add(`FTB 0${num}`);
+  }
+
+  // Match CS variations
+  if (/^(cs|computer science)$/i.test(normalized)) {
+    variants.add('CS');
+    variants.add('Computer Science');
+  }
+
+  // Match Class A / Class B variations
+  const classMatch = normalized.match(/class\s*([a-z])/i);
+  if (classMatch) {
+    const letter = classMatch[1].toUpperCase();
+    variants.add(`Class ${letter}`);
+    variants.add(`Class-${letter}`);
+    variants.add(`Class${letter}`);
+  }
+
+  return Array.from(variants);
+}
+
 // ─── Students ───
 export async function getStudentsByBatch(stream, year, cls) {
   try {
+    const variants = getClassVariants(cls);
     const { data, error } = await supabase
       .from('students')
       .select('*')
       .eq('stream', stream)
       .eq('year', year)
-      .eq('class', cls);
+      .in('class', variants.length > 0 ? variants : [cls]);
 
     if (error) {
       console.error('Students query failed:', error.message);
@@ -54,12 +91,13 @@ async function assertNotAdmin() {
 // ─── Tests ───
 export async function getTestsByBatch(stream, year, cls) {
   await assertNotAdmin();
+  const variants = getClassVariants(cls);
   const { data, error } = await supabase
     .from('tests')
     .select('*')
     .eq('stream', stream)
     .eq('year', year)
-    .eq('class', cls)
+    .in('class', variants.length > 0 ? variants : [cls])
     .order('created_at', { ascending: false });
 
   if (error) throw error;

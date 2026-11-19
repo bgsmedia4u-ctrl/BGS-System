@@ -40,6 +40,8 @@ const STANDARD_CLASSES = [
   '2nd FTB - 1',
   '1st FTB - 2',
   '2nd FTB - 2',
+  '1st FTB - 3',
+  '2nd FTB - 3',
   '1st CS',
   '2nd CS',
   '1st Class A',

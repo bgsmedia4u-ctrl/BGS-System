@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { getClassVariants } from './marksService';
 
 // ─── Query Individual Student ───
 export async function getStudentById(studentId) {
@@ -63,12 +64,13 @@ export async function getStudentTestReport(studentId, stream, year, cls) {
   // 1. Fetch all tests conducted for this student's batch
   let batchTests = [];
   try {
+    const variants = getClassVariants ? getClassVariants(cls) : [cls];
     const { data, error } = await supabase
       .from('tests')
       .select('*')
       .eq('stream', stream)
       .eq('year', year)
-      .eq('class', cls)
+      .in('class', variants.length > 0 ? variants : [cls])
       .order('created_at', { ascending: false });
     if (!error && data) {
       batchTests = data;
@@ -214,12 +216,13 @@ export async function checkRollNumberAvailable(stream, year, cls, rollNumber, ex
   if (isNaN(rollInt) || rollInt <= 0) return false;
 
   try {
+    const variants = getClassVariants ? getClassVariants(cls) : [cls];
     let query = supabase
       .from('students')
       .select('id, name, roll_number')
       .eq('stream', stream)
       .eq('year', year)
-      .eq('class', cls);
+      .in('class', variants.length > 0 ? variants : [cls]);
 
     if (excludeStudentId) {
       query = query.neq('id', excludeStudentId);
@@ -240,12 +243,13 @@ export async function checkRollNumberAvailable(stream, year, cls, rollNumber, ex
 
 export async function getNextAvailableRollNumber(stream, year, cls) {
   try {
+    const variants = getClassVariants ? getClassVariants(cls) : [cls];
     const { data, error } = await supabase
       .from('students')
       .select('roll_number')
       .eq('stream', stream)
       .eq('year', year)
-      .eq('class', cls);
+      .in('class', variants.length > 0 ? variants : [cls]);
 
     if (error || !data || data.length === 0) return 1;
 

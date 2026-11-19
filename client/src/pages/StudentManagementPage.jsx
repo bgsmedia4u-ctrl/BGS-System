@@ -133,17 +133,17 @@ export default function StudentManagementPage() {
   // Calculate dynamic class options for registration & shift
   const currentClassOptions = useMemo(() => {
     const key = `${regForm.stream}|${regForm.year}`;
-    return CLASS_OPTIONS[key] || ['Class A', 'Class B', 'FTB', 'Inspire'];
+    return CLASS_OPTIONS[key] || ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'];
   }, [regForm.stream, regForm.year]);
 
   const shiftTargetClassOptions = useMemo(() => {
     const key = `${shiftForm.targetStream}|${shiftForm.targetYear}`;
-    return CLASS_OPTIONS[key] || ['Class A', 'Class B', 'FTB', 'Inspire'];
+    return CLASS_OPTIONS[key] || ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'];
   }, [shiftForm.targetStream, shiftForm.targetYear]);
 
   const batchShiftTargetClassOptions = useMemo(() => {
     const key = `${batchShiftForm.targetStream}|${batchShiftForm.targetYear}`;
-    return CLASS_OPTIONS[key] || ['Class A', 'Class B', 'FTB', 'Inspire'];
+    return CLASS_OPTIONS[key] || ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'];
   }, [batchShiftForm.targetStream, batchShiftForm.targetYear]);
 
   // Check roll number uniqueness live for Registration

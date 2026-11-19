@@ -3,10 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
-import { 
-  getStudentById, 
-  getStudentMarks, 
-  getStudentAttendance, 
+import {
+  getStudentById,
+  getStudentMarks,
+  getStudentAttendance,
   getStudentCompliances,
   getStudentTestReport,
   shiftStudent,
@@ -16,16 +16,16 @@ import {
 } from '../api/studentProfileService';
 import { toggleAttendanceRecord } from '../api/attendanceService';
 import { CLASS_OPTIONS } from '../api/marksService';
-import { 
-  User, 
-  BookOpen, 
-  Clock, 
-  AlertTriangle, 
-  ArrowLeft, 
-  ArrowRightLeft, 
-  Trash2, 
-  Phone, 
-  CheckCircle2, 
+import {
+  User,
+  BookOpen,
+  Clock,
+  AlertTriangle,
+  ArrowLeft,
+  ArrowRightLeft,
+  Trash2,
+  Phone,
+  CheckCircle2,
   PenLine,
   X,
   Printer,
@@ -46,7 +46,7 @@ export default function StudentProfilePage() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const isAdmin = profile?.role === 'admin';
-  
+
   const [student, setStudent] = useState(null);
   const [marks, setMarks] = useState([]);
   const [attendance, setAttendance] = useState([]);
@@ -81,7 +81,7 @@ export default function StudentProfilePage() {
       try {
         const studentData = await getStudentById(id);
         setStudent(studentData);
-        
+
         if (studentData) {
           const [marksData, attData, compData, testReportData] = await Promise.all([
             getStudentMarks(id),
@@ -89,7 +89,7 @@ export default function StudentProfilePage() {
             getStudentCompliances(id),
             getStudentTestReport(id, studentData.stream, studentData.year, studentData.class)
           ]);
-          
+
           setMarks(marksData || []);
           setAttendance(attData || []);
           setCompliances(compData || []);
@@ -107,13 +107,13 @@ export default function StudentProfilePage() {
         setLoading(false);
       }
     }
-    
+
     if (id) fetchData();
   }, [id]);
 
   const targetClassOptions = useMemo(() => {
     const key = `${shiftForm.targetStream}|${shiftForm.targetYear}`;
-    return CLASS_OPTIONS[key] || ['Class A', 'Class B', 'FTB', 'Inspire'];
+    return CLASS_OPTIONS[key] || ['FTB - 1', 'FTB - 2', 'FTB - 3', 'CS', 'Class A', 'Class B', 'Inspire'];
   }, [shiftForm.targetStream, shiftForm.targetYear]);
 
   // Open Shift modal with student's current settings
@@ -282,8 +282,8 @@ export default function StudentProfilePage() {
       <div style={{ padding: '0 0 24px 0' }}>
         {/* Navigation & Header Actions */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <button 
-            onClick={() => navigate('/students')} 
+          <button
+            onClick={() => navigate('/students')}
             style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 500 }}
           >
             <ArrowLeft size={16} /> Back to Student Directory
@@ -308,7 +308,7 @@ export default function StudentProfilePage() {
             <Printer size={15} /> Print Student Report
           </button>
         </div>
-        
+
         {/* Header Profile Card */}
         <div style={{ background: 'var(--bg-surface)', padding: 28, borderRadius: 16, border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
@@ -318,15 +318,15 @@ export default function StudentProfilePage() {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <h1 style={{ fontSize: '1.7rem', fontWeight: 700, color: 'var(--maroon-900)', margin: '0 0 4px 0' }}>{student.name}</h1>
-                <span style={{ 
-                  display: 'inline-flex', 
-                  alignItems: 'center', 
-                  background: '#ECFDF5', 
-                  color: '#065F46', 
-                  padding: '3px 10px', 
-                  borderRadius: 12, 
-                  fontSize: '0.78rem', 
-                  fontWeight: 700 
+                <span style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: '#ECFDF5',
+                  color: '#065F46',
+                  padding: '3px 10px',
+                  borderRadius: 12,
+                  fontSize: '0.78rem',
+                  fontWeight: 700
                 }}>
                   {student.status || 'Active'}
                 </span>
@@ -404,8 +404,8 @@ export default function StudentProfilePage() {
                 {attendanceStats.percentage}%
               </div>
               <div style={{ fontSize: '0.86rem', color: 'var(--text-main)', fontWeight: 600 }}>
-                {attendanceStats.totalDays === 0 
-                  ? 'Starts at 0% (0 days taken)' 
+                {attendanceStats.totalDays === 0
+                  ? 'Starts at 0% (0 days taken)'
                   : `${attendanceStats.attendedDays} attended / ${attendanceStats.totalDays} days took`}
               </div>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 4 }}>
@@ -588,13 +588,13 @@ export default function StudentProfilePage() {
 
                         <td style={{ padding: '14px 16px', textAlign: 'right' }}>
                           {t.isAttended ? (
-                            <span style={{ 
-                              background: t.percentage >= 75 ? '#ECFDF5' : t.percentage >= 50 ? '#EFF6FF' : '#FEF2F2', 
-                              color: t.percentage >= 75 ? '#065F46' : t.percentage >= 50 ? '#1D4ED8' : '#DC2626', 
-                              padding: '4px 12px', 
-                              borderRadius: 8, 
-                              fontWeight: 700, 
-                              fontSize: '0.9rem' 
+                            <span style={{
+                              background: t.percentage >= 75 ? '#ECFDF5' : t.percentage >= 50 ? '#EFF6FF' : '#FEF2F2',
+                              color: t.percentage >= 75 ? '#065F46' : t.percentage >= 50 ? '#1D4ED8' : '#DC2626',
+                              padding: '4px 12px',
+                              borderRadius: 8,
+                              fontWeight: 700,
+                              fontSize: '0.9rem'
                             }}>
                               {t.percentage}%
                             </span>
@@ -630,7 +630,7 @@ export default function StudentProfilePage() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#6B7280' }} domain={[0, 100]} />
-                    <Tooltip 
+                    <Tooltip
                       cursor={{ fill: '#F3F4F6' }}
                       contentStyle={{ borderRadius: 8, border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                     />
@@ -678,8 +678,8 @@ export default function StudentProfilePage() {
                 <div style={{ color: '#DC2626', fontWeight: 600 }}>{attendanceStats.absentDays} absent</div>
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>
-                {attendanceStats.totalDays === 0 
-                  ? 'Attendance starts from 0% until attendance is taken.' 
+                {attendanceStats.totalDays === 0
+                  ? 'Attendance starts from 0% until attendance is taken.'
                   : `Percentage: (${attendanceStats.attendedDays} / ${attendanceStats.totalDays}) × 100 = ${attendanceStats.percentage}%`}
               </div>
             </div>

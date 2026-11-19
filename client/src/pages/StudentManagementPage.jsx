@@ -111,7 +111,7 @@ export default function StudentManagementPage() {
   // Initial Fetch
   useEffect(() => {
     fetchInitialData();
-  }, []);
+  }, [isAdmin]);
 
   async function fetchInitialData() {
     setLoading(true);
@@ -542,6 +542,11 @@ export default function StudentManagementPage() {
     return Array.from(map.values());
   }, [students]);
 
+  // Unique class names for filtering
+  const uniqueClassNames = useMemo(() => {
+    return Array.from(new Set(students.map(s => s.class).filter(Boolean))).sort();
+  }, [students]);
+
   return (
     <Layout>
       {/* ── Page Header ── */}
@@ -735,6 +740,18 @@ export default function StudentManagementPage() {
                 <option value="ALL">All Years</option>
                 <option value="1st Year">1st Year</option>
                 <option value="2nd Year">2nd Year</option>
+              </select>
+
+              {/* Class Filter */}
+              <select
+                value={filterClass}
+                onChange={e => setFilterClass(e.target.value)}
+                style={{ padding: '7px 12px', borderRadius: 8, border: '1px solid var(--border-color)', background: '#FAFAFA', fontSize: '0.85rem', fontWeight: 500, outline: 'none', cursor: 'pointer' }}
+              >
+                <option value="ALL">All Classes</option>
+                {uniqueClassNames.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
               </select>
 
               {/* Reset Filters */}
@@ -1089,6 +1106,7 @@ export default function StudentManagementPage() {
                   onClick={() => {
                     setFilterStream(cls.stream);
                     setFilterYear(cls.year);
+                    setFilterClass(cls.name);
                     setActiveTab('directory');
                   }}
                   style={{

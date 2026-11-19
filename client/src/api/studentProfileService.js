@@ -15,48 +15,87 @@ export async function getStudentById(studentId) {
 
 // ─── Query All Students ───
 export async function getAllStudents() {
-  const { data, error } = await supabase
-    .from('students')
-    .select('*')
-    .order('stream', { ascending: true })
-    .order('year', { ascending: true })
-    .order('class', { ascending: true });
-  if (error) throw error;
+  try {
+    const { data, error } = await supabase
+      .from('students')
+      .select('*')
+      .limit(5000)
+      .order('stream', { ascending: true })
+      .order('year', { ascending: true })
+      .order('class', { ascending: true });
+    if (error) throw error;
 
-  // Natural numeric sort by roll number so seeded students and registered students sort identically (1, 2, ... 10)
-  return (data || []).sort((a, b) => {
-    if (a.stream !== b.stream) return (a.stream || '').localeCompare(b.stream || '');
-    if (a.year !== b.year) return (a.year || '').localeCompare(b.year || '');
-    if (a.class !== b.class) return (a.class || '').localeCompare(b.class || '');
-    const rollA = parseInt(a.roll_number, 10);
-    const rollB = parseInt(b.roll_number, 10);
-    if (!isNaN(rollA) && !isNaN(rollB)) {
-      if (rollA !== rollB) return rollA - rollB;
-    } else if (!isNaN(rollA)) {
-      return -1;
-    } else if (!isNaN(rollB)) {
-      return 1;
-    }
-    return (a.name || '').localeCompare(b.name || '');
-  });
+    // Natural numeric sort by roll number so seeded students and registered students sort identically (1, 2, ... 10)
+    return (data || []).sort((a, b) => {
+      if (a.stream !== b.stream) return (a.stream || '').localeCompare(b.stream || '');
+      if (a.year !== b.year) return (a.year || '').localeCompare(b.year || '');
+      if (a.class !== b.class) return (a.class || '').localeCompare(b.class || '');
+      const rollA = parseInt(a.roll_number, 10);
+      const rollB = parseInt(b.roll_number, 10);
+      if (!isNaN(rollA) && !isNaN(rollB)) {
+        if (rollA !== rollB) return rollA - rollB;
+      } else if (!isNaN(rollA)) {
+        return -1;
+      } else if (!isNaN(rollB)) {
+        return 1;
+      }
+      return (a.name || '').localeCompare(b.name || '');
+    });
+  } catch (err) {
+    console.error('getAllStudents error:', err);
+    return [];
+  }
 }
 
 // ─── Query Student Marks with Test Metadata ───
 export async function getStudentMarks(studentId) {
-  const { data, error } = await supabase
-    .from('mark_entries')
-    .select('*, tests(*)')
-    .eq('student_id', studentId);
+  try {
+    let markEntries = [];
+    // Attempt standard relationship join
+    const { data, error } = await supabase
+      .from('mark_entries')
+      .select('*, tests(*)')
+      .eq('student_id', studentId);
 
-  if (error) throw error;
-  // Sort by test date/creation descending
-  const sorted = (data || []).sort((a, b) => {
-    const dateA = new Date(a.tests?.created_at || 0);
-    const dateB = new Date(b.tests?.created_at || 0);
-    return dateB - dateA;
-  });
+    if (error) {
+      // Fallback: Query mark_entries and hydrate tests separately
+      const { data: rawEntries, error: rawError } = await supabase
+        .from('mark_entries')
+        .select('*')
+        .eq('student_id', studentId);
 
-  return sorted;
+      if (!rawError && rawEntries && rawEntries.length > 0) {
+        const testIds = [...new Set(rawEntries.map(e => e.test_id).filter(Boolean))];
+        if (testIds.length > 0) {
+          const { data: testRows } = await supabase
+            .from('tests')
+            .select('*')
+            .in('id', testIds);
+          const testMap = new Map((testRows || []).map(t => [t.id, t]));
+          markEntries = rawEntries.map(e => ({
+            ...e,
+            tests: testMap.get(e.test_id) || null
+          }));
+        } else {
+          markEntries = rawEntries;
+        }
+      }
+    } else if (data) {
+      markEntries = data;
+    }
+
+    // Sort by test date/creation descending
+    const sorted = markEntries.sort((a, b) => {
+      const dateA = new Date(a.tests?.created_at || a.created_at || 0);
+      const dateB = new Date(b.tests?.created_at || b.created_at || 0);
+      return dateB - dateA;
+    });
+
+    return sorted;
+  } catch (err) {
+    console.error('getStudentMarks error:', err);
+    return [];
+  }
 }
 
 // ─── Query Comprehensive Test & Marks Report ───
@@ -79,14 +118,38 @@ export async function getStudentTestReport(studentId, stream, year, cls) {
     console.warn('Failed to fetch batch tests:', e);
   }
 
-  // 2. Fetch all mark entries recorded for this student
+  // 2. Fetch all mark entries recorded for this student (with relational fallback)
   let markEntries = [];
   try {
     const { data, error } = await supabase
       .from('mark_entries')
       .select('*, tests(*)')
       .eq('student_id', studentId);
-    if (!error && data) {
+
+    if (error) {
+      // Fallback query if embedded join fails
+      const { data: rawEntries } = await supabase
+        .from('mark_entries')
+        .select('*')
+        .eq('student_id', studentId);
+
+      if (rawEntries && rawEntries.length > 0) {
+        const testIds = [...new Set(rawEntries.map(e => e.test_id).filter(Boolean))];
+        if (testIds.length > 0) {
+          const { data: testRows } = await supabase
+            .from('tests')
+            .select('*')
+            .in('id', testIds);
+          const testMap = new Map((testRows || []).map(t => [t.id, t]));
+          markEntries = rawEntries.map(e => ({
+            ...e,
+            tests: testMap.get(e.test_id) || null
+          }));
+        } else {
+          markEntries = rawEntries;
+        }
+      }
+    } else if (data) {
       markEntries = data;
     }
   } catch (e) {
@@ -115,14 +178,42 @@ export async function getStudentTestReport(studentId, stream, year, cls) {
     const isRecorded = Boolean(entry);
     const isAbsent = Boolean(!entry || entry.is_absent);
     const isAttended = Boolean(entry && !entry.is_absent);
-    const marksObj = entry?.marks || {};
 
-    const subjects = (test.subjects || []).map(s => {
-      const name = typeof s === 'string' ? s : s.name;
-      const maxMarks = typeof s === 'string' ? 100 : (Number(s.maxMarks) || 100);
-      const score = marksObj[name] !== undefined && marksObj[name] !== '' ? Number(marksObj[name]) : null;
-      return { name, maxMarks, score };
-    });
+    // Safely parse marks JSON if returned as a string
+    let marksObj = entry?.marks || {};
+    if (typeof marksObj === 'string') {
+      try {
+        marksObj = JSON.parse(marksObj);
+      } catch (e) {
+        marksObj = {};
+      }
+    }
+
+    // Safely parse test subjects
+    let rawSubjects = test.subjects || [];
+    if (typeof rawSubjects === 'string') {
+      try {
+        rawSubjects = JSON.parse(rawSubjects);
+      } catch (e) {
+        rawSubjects = [];
+      }
+    }
+
+    let subjects = [];
+    if (Array.isArray(rawSubjects) && rawSubjects.length > 0) {
+      subjects = rawSubjects.map(s => {
+        const name = typeof s === 'string' ? s : (s?.name || 'Subject');
+        const maxMarks = typeof s === 'string' ? 100 : (Number(s?.maxMarks) || 100);
+        const score = marksObj[name] !== undefined && marksObj[name] !== '' && marksObj[name] !== null ? Number(marksObj[name]) : null;
+        return { name, maxMarks, score };
+      });
+    } else if (marksObj && typeof marksObj === 'object' && Object.keys(marksObj).length > 0) {
+      subjects = Object.entries(marksObj).map(([name, val]) => ({
+        name,
+        maxMarks: 100,
+        score: val !== '' && val !== null ? Number(val) : null
+      }));
+    }
 
     let totalScore = 0;
     let totalMaxMarks = 0;
@@ -170,44 +261,104 @@ export async function getStudentTestReport(studentId, stream, year, cls) {
 
 // ─── Query Student Attendance History ───
 export async function getStudentAttendance(studentId) {
-  const { data, error } = await supabase
-    .from('attendance_records')
-    .select('*, attendance_sessions(*)')
-    .eq('student_id', studentId);
+  try {
+    let attendanceData = [];
+    const { data, error } = await supabase
+      .from('attendance_records')
+      .select('*, attendance_sessions(*)')
+      .eq('student_id', studentId);
 
-  if (error) throw error;
+    if (error) {
+      // Fallback query if embedded join fails
+      const { data: rawRecords, error: rawError } = await supabase
+        .from('attendance_records')
+        .select('*')
+        .eq('student_id', studentId);
 
-  // Sort by session date descending
-  const sorted = (data || []).sort((a, b) => {
-    const dateA = new Date(a.attendance_sessions?.date || 0);
-    const dateB = new Date(b.attendance_sessions?.date || 0);
-    return dateB - dateA;
-  });
+      if (!rawError && rawRecords && rawRecords.length > 0) {
+        const sessionIds = [...new Set(rawRecords.map(r => r.session_id).filter(Boolean))];
+        if (sessionIds.length > 0) {
+          const { data: sessionRows } = await supabase
+            .from('attendance_sessions')
+            .select('*')
+            .in('id', sessionIds);
+          const sessionMap = new Map((sessionRows || []).map(s => [s.id, s]));
+          attendanceData = rawRecords.map(r => ({
+            ...r,
+            attendance_sessions: sessionMap.get(r.session_id) || null
+          }));
+        } else {
+          attendanceData = rawRecords;
+        }
+      }
+    } else if (data) {
+      attendanceData = data;
+    }
 
-  return sorted;
+    // Sort by session date descending
+    const sorted = attendanceData.sort((a, b) => {
+      const dateA = new Date(a.attendance_sessions?.date || a.created_at || 0);
+      const dateB = new Date(b.attendance_sessions?.date || b.created_at || 0);
+      return dateB - dateA;
+    });
+
+    return sorted;
+  } catch (err) {
+    console.error('getStudentAttendance error:', err);
+    return [];
+  }
 }
 
 // ─── Query Compliances & Teacher Remarks ───
 export async function getStudentCompliances(studentId) {
-  const { data, error } = await supabase
-    .from('attendance_records')
-    .select('remarks, attendance_sessions(date)')
-    .eq('student_id', studentId)
-    .not('remarks', 'is', null)
-    .not('remarks', 'eq', '');
+  try {
+    let records = [];
+    const { data, error } = await supabase
+      .from('attendance_records')
+      .select('remarks, attendance_sessions(date)')
+      .eq('student_id', studentId)
+      .not('remarks', 'is', null)
+      .not('remarks', 'eq', '');
 
-  if (error) throw error;
+    if (error) {
+      // Fallback query
+      const { data: rawRecords } = await supabase
+        .from('attendance_records')
+        .select('remarks, session_id')
+        .eq('student_id', studentId)
+        .not('remarks', 'is', null)
+        .not('remarks', 'eq', '');
 
-  const sorted = (data || []).sort((a, b) => {
-    const dateA = new Date(a.attendance_sessions?.date || 0);
-    const dateB = new Date(b.attendance_sessions?.date || 0);
-    return dateB - dateA;
-  });
+      if (rawRecords && rawRecords.length > 0) {
+        const sessionIds = [...new Set(rawRecords.map(r => r.session_id).filter(Boolean))];
+        const { data: sessionRows } = await supabase
+          .from('attendance_sessions')
+          .select('id, date')
+          .in('id', sessionIds);
+        const sessionMap = new Map((sessionRows || []).map(s => [s.id, s.date]));
+        records = rawRecords.map(r => ({
+          remarks: r.remarks,
+          attendance_sessions: { date: sessionMap.get(r.session_id) || null }
+        }));
+      }
+    } else if (data) {
+      records = data;
+    }
 
-  return sorted.map(item => ({
-    date: item.attendance_sessions?.date,
-    remark: item.remarks
-  }));
+    const sorted = records.sort((a, b) => {
+      const dateA = new Date(a.attendance_sessions?.date || 0);
+      const dateB = new Date(b.attendance_sessions?.date || 0);
+      return dateB - dateA;
+    });
+
+    return sorted.map(item => ({
+      date: item.attendance_sessions?.date,
+      remark: item.remarks
+    }));
+  } catch (err) {
+    console.error('getStudentCompliances error:', err);
+    return [];
+  }
 }
 
 // ─── Uniqueness & Roll Number Helpers ───

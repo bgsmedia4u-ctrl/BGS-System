@@ -83,26 +83,29 @@ export default function StudentProfilePage() {
         setStudent(studentData);
 
         if (studentData) {
-          const [marksData, attData, compData, testReportData] = await Promise.all([
+          const [marksRes, attRes, compRes, reportRes] = await Promise.allSettled([
             getStudentMarks(id),
             getStudentAttendance(id),
             getStudentCompliances(id),
             getStudentTestReport(id, studentData.stream, studentData.year, studentData.class)
           ]);
 
-          setMarks(marksData || []);
-          setAttendance(attData || []);
-          setCompliances(compData || []);
-          setTestReport(testReportData || {
+          setMarks(marksRes.status === 'fulfilled' && Array.isArray(marksRes.value) ? marksRes.value : []);
+          setAttendance(attRes.status === 'fulfilled' && Array.isArray(attRes.value) ? attRes.value : []);
+          setCompliances(compRes.status === 'fulfilled' && Array.isArray(compRes.value) ? compRes.value : []);
+          setTestReport(reportRes.status === 'fulfilled' && reportRes.value ? reportRes.value : {
             testsConducted: 0,
             testsAttended: 0,
             testsAbsent: 0,
             averageScore: 0,
             testReports: []
           });
+        } else {
+          toast.error('Student profile not found.');
         }
       } catch (err) {
         console.error('Error fetching student profile:', err);
+        toast.error('Failed to load student profile details.');
       } finally {
         setLoading(false);
       }
@@ -281,7 +284,7 @@ export default function StudentProfilePage() {
     <Layout>
       <div style={{ padding: '0 0 24px 0' }}>
         {/* Navigation & Header Actions */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <button
             onClick={() => navigate('/students')}
             style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 500 }}
@@ -313,7 +316,7 @@ export default function StudentProfilePage() {
         <div style={{ background: 'var(--bg-surface)', padding: 28, borderRadius: 16, border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 20, marginBottom: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
             <div style={{ width: 76, height: 76, borderRadius: '50%', background: 'var(--maroon-900)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 700, boxShadow: '0 4px 12px rgba(115, 19, 19, 0.25)' }}>
-              {student.name.charAt(0)}
+              {student.name ? student.name.charAt(0) : 'S'}
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -347,7 +350,7 @@ export default function StudentProfilePage() {
 
           {/* Admin Management Actions: Move Class / Permanent Delete */}
           {isAdmin && (
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div className="no-print" style={{ display: 'flex', gap: 10 }}>
               <button
                 onClick={openShiftModal}
                 style={{
@@ -497,6 +500,7 @@ export default function StudentProfilePage() {
               </span>
 
               <button
+                className="no-print"
                 onClick={() => navigate(`/marks?stream=${student.stream}&year=${student.year}&class=${encodeURIComponent(student.class)}`)}
                 style={{
                   background: '#FCEFEF',
@@ -649,6 +653,7 @@ export default function StudentProfilePage() {
                 <h2 style={{ fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>College Attendance Record</h2>
               </div>
               <button
+                className="no-print"
                 onClick={() => navigate(`/attendance?stream=${student.stream}&year=${student.year}&class=${encodeURIComponent(student.class)}`)}
                 style={{
                   background: '#FCEFEF',
